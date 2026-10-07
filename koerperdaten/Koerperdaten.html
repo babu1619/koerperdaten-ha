@@ -1,0 +1,1799 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Körperdaten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* Layout: Maßband-Kopf, Tabs, Übersicht als Kachelraster mit Bewertung, darunter Monatstrend */
+:root{
+  --bg:#F2F3EF; --surface:#FFFFFF; --sunk:#E8EAE4; --ink:#1C2422; --ink-2:#56625F; --line:#D5D9D2;
+  --tape:#E6B42E; --tape-ink:#3A2E06; --accent:#1F6F78; --accent-ink:#FFFFFF; --danger:#A8402F;
+  --good:#2E7D4F; --mid:#8A6D00; --warn:#B4610E; --bad:#A8402F; --info:#56625F;
+  --s1:#1F6F78; --s2:#C2860A; --s3:#A8402F; --s4:#5F7424; --s5:#6A4C7D; --s6:#3F6596; --s7:#8A5A3C; --s8:#2E8A5C;
+  --font:"Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --cond:"Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141918; --surface:#1D2422; --sunk:#182020; --ink:#E6EAE5; --ink-2:#9AA6A2; --line:#33403C;
+    --tape:#D9A622; --tape-ink:#2A2104; --accent:#5FB3BC; --accent-ink:#0E1B1C; --danger:#E07B69;
+    --good:#6CC28F; --mid:#D9B84A; --warn:#E89A55; --bad:#E07B69; --info:#9AA6A2;
+    --s1:#5FB3BC; --s2:#E6B42E; --s3:#E07B69; --s4:#A3BE5A; --s5:#B394C9; --s6:#7FA6D8; --s7:#C99A7A; --s8:#5CC296;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141918; --surface:#1D2422; --sunk:#182020; --ink:#E6EAE5; --ink-2:#9AA6A2; --line:#33403C;
+  --tape:#D9A622; --tape-ink:#2A2104; --accent:#5FB3BC; --accent-ink:#0E1B1C; --danger:#E07B69;
+  --good:#6CC28F; --mid:#D9B84A; --warn:#E89A55; --bad:#E07B69; --info:#9AA6A2;
+  --s1:#5FB3BC; --s2:#E6B42E; --s3:#E07B69; --s4:#A3BE5A; --s5:#B394C9; --s6:#7FA6D8; --s7:#C99A7A; --s8:#5CC296;
+  color-scheme: dark;
+}
+*,*::before,*::after{ box-sizing:border-box; }
+[hidden]{ display:none !important; }
+html{ padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--font); font-size:16px; line-height:1.45; -webkit-font-smoothing:antialiased; }
+button,input,select,textarea{ font:inherit; color:inherit; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+.wrap{ max-width:1180px; margin:0 auto; padding:0 16px 48px; }
+h1,h2,h3{ text-wrap:balance; }
+
+header.top{ padding:16px 0 0; }
+.titlebar{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; padding-bottom:10px; }
+h1{ font-family:var(--cond); font-weight:700; font-size:clamp(2.2rem,7vw,3.4rem); line-height:.9; margin:0; letter-spacing:-.01em; }
+.filebar{ display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:6px 10px; }
+.sync{ font-size:.85rem; color:var(--ink-2); }
+.sync.unsaved{ color:var(--warn); font-weight:500; }
+.storage-file{ margin:0 0 10px; overflow-wrap:anywhere; }
+.login-card{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; max-width:620px; margin:0 0 18px; display:grid; gap:10px; }
+.login-card h2{ font-family:var(--cond); font-weight:600; font-size:1.5rem; margin:0; }
+.login-card .hint{ margin:0; }
+.login-fields{ display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; margin-bottom:10px; }
+.login-fields input{ width:100%; }
+.login-msg{ margin:0; color:var(--bad); font-weight:500; min-height:0; }
+.login-msg:empty{ display:none; }
+details.sub{ border-top:1px solid var(--line); padding:10px 0 0; margin-top:10px; }
+details.sub summary{ cursor:pointer; font-weight:500; }
+.sub-body{ padding-top:10px; display:grid; grid-template-columns:minmax(0,1fr); gap:8px; }
+details.sub, #storageInfo{ min-width:0; }
+.sub-h{ font-size:1rem; margin:12px 0 0; }
+.actions{ display:inline-flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+.tape{ height:30px; border-radius:3px; background-color:var(--tape); position:relative; overflow:hidden;
+  background-image:repeating-linear-gradient(90deg, var(--tape-ink) 0 1.5px, transparent 1.5px 60px),repeating-linear-gradient(90deg, var(--tape-ink) 0 1px, transparent 1px 30px),repeating-linear-gradient(90deg, var(--tape-ink) 0 1px, transparent 1px 6px);
+  background-size:100% 60%, 100% 42%, 100% 26%; background-repeat:no-repeat; box-shadow: inset 0 -1px 0 rgba(0,0,0,.18); }
+.tape-read{ position:absolute; right:10px; bottom:2px; font-family:var(--cond); font-weight:600; font-size:.95rem; color:var(--tape-ink); background:var(--tape); padding:0 6px; line-height:1.3; }
+
+nav.tabs{ display:flex; gap:4px; margin:14px 0 0; border-bottom:1px solid var(--line); overflow-x:auto; }
+.sticky-head{ position:sticky; top:env(safe-area-inset-top,0px); z-index:20; background:var(--bg); margin:0 -16px 16px; padding:0 16px; }
+.sticky-head.scrolled{ box-shadow:0 6px 12px -10px rgba(0,0,0,.35); }
+html{ scroll-padding-top:calc(var(--headH,160px) + 8px); }
+nav.tabs button{ background:none; border:0; padding:10px 14px; font-weight:500; color:var(--ink-2); border-bottom:3px solid transparent; margin-bottom:-1px; cursor:pointer; white-space:nowrap; }
+nav.tabs button[aria-selected="true"]{ color:var(--ink); border-bottom-color:var(--tape); }
+
+.toolbar{ display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin-bottom:8px; }
+.seg{ display:inline-flex; background:var(--sunk); border-radius:8px; padding:3px; flex-wrap:wrap; }
+.seg button{ border:0; background:none; padding:6px 11px; border-radius:6px; cursor:pointer; font-weight:500; color:var(--ink-2); }
+.seg button[aria-pressed="true"]{ background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.12); }
+.field{ display:flex; flex-direction:column; gap:3px; font-size:.85rem; color:var(--ink-2); }
+.inline{ display:flex; align-items:center; gap:8px; font-size:.9rem; color:var(--ink-2); }
+input[type=date], input[type=text], input[type=password], select, textarea{ background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:7px 9px; min-width:0; font-size:1rem; }
+textarea{ width:100%; resize:vertical; min-height:64px; }
+.custom-range{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.rangeinfo{ font-size:.9rem; color:var(--ink-2); margin:0 0 18px; }
+
+.btn{ border:1px solid var(--line); background:var(--surface); border-radius:6px; padding:8px 14px; cursor:pointer; font-weight:500; }
+.btn.primary{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+.btn.danger{ color:var(--danger); }
+.btn.small{ padding:4px 10px; font-size:.88rem; }
+.btn:disabled{ opacity:.5; cursor:default; }
+.row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.hint{ font-size:.85rem; color:var(--ink-2); margin:6px 0 0; }
+
+/* Übersicht */
+.dash-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.dash-head p{ margin:0; color:var(--ink-2); font-size:.92rem; }
+.notice{ background:var(--sunk); border-radius:8px; padding:10px 14px; font-size:.92rem; margin-bottom:14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:space-between; }
+.tiles{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px; margin-bottom:24px; }
+.tile{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:3px; min-width:0; }
+.t-head{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:4px 8px; }
+.t-name{ font-weight:500; color:var(--ink-2); font-size:.92rem; }
+.badge{ font-size:.78rem; font-weight:600; padding:2px 8px; border-radius:99px; white-space:nowrap; letter-spacing:.01em; }
+.lvl-good .badge{ color:var(--good); background:color-mix(in srgb, var(--good) 15%, transparent); }
+.lvl-ok .badge{ color:var(--mid); background:color-mix(in srgb, var(--mid) 16%, transparent); }
+.lvl-warn .badge{ color:var(--warn); background:color-mix(in srgb, var(--warn) 16%, transparent); }
+.lvl-bad .badge{ color:var(--bad); background:color-mix(in srgb, var(--bad) 16%, transparent); }
+.lvl-info .badge{ color:var(--info); background:var(--sunk); }
+.t-val{ font-family:var(--cond); font-weight:600; font-size:2.1rem; line-height:1.05; font-variant-numeric:tabular-nums; }
+.t-val small{ font-family:var(--font); font-size:.95rem; font-weight:500; color:var(--ink-2); margin-left:3px; }
+.t-when, .t-ref{ font-size:.8rem; color:var(--ink-2); }
+.t-trend{ font-size:.88rem; font-variant-numeric:tabular-nums; }
+.spark{ width:100%; height:34px; display:block; margin:4px 0 2px; }
+.tr-good{ color:var(--good); } .tr-bad{ color:var(--bad); } .tr-neutral{ color:var(--ink); }
+.hidden-list{ font-size:.85rem; color:var(--ink-2); margin:-12px 0 22px; }
+.section-title{ font-family:var(--cond); font-weight:600; font-size:1.6rem; margin:0 0 10px; }
+.trend-grid{ display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:18px; align-items:start; }
+@media (max-width:860px){ .trend-grid{ grid-template-columns:minmax(0,1fr); } }
+.trend-sum{ display:grid; gap:6px; margin:8px 0 4px; font-size:.92rem; }
+
+.charts{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr)); gap:18px; }
+.chart-card{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 14px 10px; min-width:0; }
+.chart-card header{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+.chart-card h2{ font-family:var(--cond); font-weight:600; font-size:1.45rem; margin:0; line-height:1.1; }
+.stats{ display:flex; flex-wrap:wrap; gap:6px 18px; margin:8px 0 6px; }
+.stat{ display:grid; grid-template-columns:auto auto; column-gap:6px; align-items:baseline; }
+.stat .sw{ width:10px; height:10px; border-radius:2px; display:inline-block; }
+.stat .nm{ font-size:.82rem; color:var(--ink-2); display:flex; gap:6px; align-items:center; grid-column:1 / -1; }
+.stat .now{ font-family:var(--cond); font-weight:600; font-size:1.35rem; }
+.stat .meta{ font-size:.8rem; color:var(--ink-2); }
+.canvas-wrap{ position:relative; height:260px; }
+.nodata{ height:200px; display:grid; place-items:center; color:var(--ink-2); font-size:.95rem; text-align:center; padding:0 12px; }
+.add-chart{ border:1.5px dashed var(--line); border-radius:10px; background:none; min-height:120px; cursor:pointer; color:var(--ink-2); font-weight:500; }
+
+.empty{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:28px 20px; max-width:620px; }
+.empty h2{ font-family:var(--cond); font-size:1.7rem; margin:0 0 6px; }
+.empty p{ margin:0 0 16px; color:var(--ink-2); }
+
+.entry{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; max-width:820px; }
+.grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; margin:14px 0 14px; }
+.grid label{ display:flex; flex-direction:column; gap:3px; font-size:.86rem; color:var(--ink-2); }
+.calc{ background:var(--sunk); border-radius:8px; padding:8px 12px; font-size:.9rem; color:var(--ink-2); margin:0 0 14px; display:flex; flex-wrap:wrap; gap:4px 18px; font-variant-numeric:tabular-nums; }
+.calc b{ color:var(--ink); font-weight:600; }
+
+.tablewrap{ overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--surface); }
+table{ border-collapse:collapse; width:100%; font-size:.92rem; font-variant-numeric:tabular-nums; }
+th,td{ padding:7px 10px; text-align:right; white-space:nowrap; border-bottom:1px solid var(--line); }
+th{ font-weight:500; color:var(--ink-2); background:var(--sunk); }
+th:first-child, td:first-child{ text-align:left; }
+td.calc-cell{ color:var(--ink-2); }
+td.note, th.note{ text-align:left; white-space:normal; min-width:200px; max-width:340px; }
+/* Datentabelle: Kopfzeile oben, Bearbeiten und Datum links fixiert */
+.tablewrap.data-wrap{ overflow:auto; max-height:calc(100vh - var(--headH,160px) - 140px); max-height:calc(100dvh - var(--headH,160px) - 140px); min-height:220px; }
+table.data-table{ border-collapse:separate; border-spacing:0; }
+.data-table thead th{ position:sticky; top:0; z-index:2; }
+.data-table .stick{ position:sticky; left:0; z-index:1; background:var(--surface); box-shadow:inset -1px 0 0 var(--line); }
+.data-table thead th.stick{ z-index:3; background:var(--sunk); padding-left:48px; }
+.data-table tbody tr:hover td{ background:color-mix(in srgb, var(--accent) 5%, var(--surface)); }
+.datecell{ display:inline-flex; align-items:center; gap:8px; }
+.edit-btn{ display:inline-grid; place-items:center; width:30px; height:28px; border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--accent); cursor:pointer; padding:0; flex:none; }
+.edit-btn svg{ width:15px; height:15px; }
+.imp-body{ display:grid; gap:12px; }
+.imp-stats{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; }
+.imp-stat{ background:var(--sunk); border-radius:8px; padding:8px 10px; display:grid; gap:2px; }
+.imp-stat b{ font-family:var(--cond); font-size:1.5rem; line-height:1; font-variant-numeric:tabular-nums; }
+.imp-stat span{ font-size:.82rem; color:var(--ink-2); }
+.imp-stat.warn b{ color:var(--warn); }
+.imp-opt{ border:1px solid var(--line); border-radius:8px; padding:8px 12px 10px; margin:0; display:grid; gap:6px; }
+.imp-opt legend{ font-weight:500; padding:0 4px; }
+.imp-table{ max-height:260px; overflow:auto; }
+.imp-table th{ position:sticky; top:0; }
+.imp-table th, .imp-table td{ text-align:left; white-space:normal; overflow-wrap:anywhere; }
+.imp-table td:first-child{ white-space:nowrap; }
+.pager{ display:flex; gap:10px; align-items:center; margin-top:10px; font-size:.9rem; color:var(--ink-2); }
+.mt{ margin-top:6px; }
+.mt th, .mt td{ padding:6px 8px; }
+.mt small{ font-size:.78rem; }
+
+.settings{ display:grid; grid-template-columns:minmax(0,1fr); gap:18px; max-width:820px; }
+.box{ min-width:0; }
+select, input[type=text], input[type=password], input[type=date]{ max-width:100%; }
+.box{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; }
+.box h2{ font-family:var(--cond); font-weight:600; font-size:1.35rem; margin:0 0 10px; }
+.mlist{ display:grid; gap:6px; }
+.mrow{ display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px solid var(--line); }
+.mrow:last-child{ border-bottom:0; }
+.mrow .lbl{ flex:1; min-width:0; }
+.mrow .lbl small{ color:var(--ink-2); }
+
+dialog{ border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--ink); padding:0; width:min(560px,calc(100vw - 24px)); max-height:calc(100vh - 40px); }
+dialog::backdrop{ background:rgba(10,14,13,.5); }
+.dlg{ padding:18px; display:flex; flex-direction:column; gap:14px; }
+.dlg h2{ font-family:var(--cond); font-size:1.5rem; margin:0; }
+.checks{ display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:6px 12px; max-height:260px; overflow:auto; padding:4px 2px; }
+.checks label{ display:flex; gap:7px; align-items:center; font-size:.95rem; }
+.dlist{ display:grid; max-height:50vh; overflow:auto; border:1px solid var(--line); border-radius:8px; }
+.drow{ display:grid; grid-template-columns:auto minmax(0,1fr) auto auto; gap:8px; align-items:center; padding:5px 10px; border-bottom:1px solid var(--line); font-size:.95rem; }
+.drow:last-child{ border-bottom:0; }
+.drow .mv{ display:flex; gap:2px; }
+.drow .mv button{ border:1px solid var(--line); background:var(--surface); border-radius:5px; width:30px; height:28px; cursor:pointer; }
+.drow label{ display:flex; gap:5px; align-items:center; font-size:.82rem; color:var(--ink-2); }
+.dlg footer{ display:flex; gap:8px; justify-content:space-between; flex-wrap:wrap; }
+
+.toast{ position:fixed; left:50%; bottom:calc(18px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:9px 16px; border-radius:8px; font-size:.92rem; opacity:0; pointer-events:none; transition:opacity .2s; max-width:calc(100vw - 32px); }
+.toast.show{ opacity:1; }
+@media (prefers-reduced-motion: reduce){ .toast{ transition:none; } }
+@media (max-width:560px){ header.top{ padding-top:10px; } h1{ font-size:2rem; } .tape{ height:20px; } .tape-read{ font-size:.8rem; line-height:1.2; } .titlebar{ padding-bottom:6px; } nav.tabs{ margin-top:8px; } nav.tabs button{ padding:8px 10px; } .canvas-wrap{ height:220px; } .tiles{ grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:10px; } .t-val{ font-size:1.75rem; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sticky-head" id="stickyHead">
+  <header class="top">
+    <div class="titlebar">
+      <h1>Körperdaten</h1>
+      <div class="filebar"><span class="sync" id="sync">Lädt …</span><span class="row" id="fileBtns"></span></div>
+    </div>
+    <div class="tape" aria-hidden="true"><span class="tape-read" id="tapeRead"></span></div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="dash" aria-selected="true">Übersicht</button>
+    <button role="tab" data-tab="charts" aria-selected="false">Diagramme</button>
+    <button role="tab" data-tab="entry" aria-selected="false">Erfassen</button>
+    <button role="tab" data-tab="data" aria-selected="false">Daten</button>
+    <button role="tab" data-tab="settings" aria-selected="false">Einstellungen</button>
+  </nav>
+  </div>
+
+  <section class="panel" id="p-dash"><div id="dashArea"></div></section>
+
+  <section class="panel" id="p-charts" hidden>
+    <div class="toolbar">
+      <div class="seg" id="presets" role="group" aria-label="Zeitraum">
+        <button data-p="1m">1 Monat</button><button data-p="3m">3 Monate</button><button data-p="6m">6 Monate</button>
+        <button data-p="1y">1 Jahr</button><button data-p="3y">3 Jahre</button><button data-p="all">Alles</button><button data-p="custom">Frei</button>
+      </div>
+      <label class="inline">Mittelwert
+        <select id="gran">
+          <option value="auto">Automatisch</option><option value="day">Tageswerte</option><option value="week">Wochenmittel</option>
+          <option value="month">Monatsmittel</option><option value="quarter">Quartalsmittel</option><option value="year">Jahresmittel</option>
+        </select>
+      </label>
+      <div class="custom-range" id="customRange" hidden>
+        <input type="date" id="from" aria-label="Von"> <span>bis</span> <input type="date" id="to" aria-label="Bis">
+      </div>
+    </div>
+    <p class="rangeinfo" id="rangeInfo"></p>
+    <div id="chartsArea"></div>
+  </section>
+
+  <section class="panel" id="p-entry" hidden>
+    <form class="entry" id="entryForm" autocomplete="off">
+      <div class="row">
+        <label class="field">Datum <input type="date" id="entryDate" required></label>
+        <span class="hint" id="entryState"></span>
+      </div>
+      <div class="grid" id="entryGrid"></div>
+      <div class="calc" id="entryCalc"></div>
+      <label class="field" style="margin-bottom:14px">Anmerkung
+        <textarea id="entryNote" placeholder="z. B. Diät, Refeed, nach Training gewogen"></textarea>
+      </label>
+      <div class="row">
+        <button class="btn primary" type="submit">Eintrag speichern</button>
+        <button class="btn" type="button" id="entryClear">Felder leeren</button>
+        <button class="btn danger" type="button" id="entryDelete" hidden>Eintrag löschen</button>
+      </div>
+      <p class="hint">Dezimalzahlen mit Komma oder Punkt. Leere Felder werden nicht gespeichert. BMI, Grundumsatz, Kalorienbilanz und Fettverlust berechnet die App selbst.</p>
+    </form>
+  </section>
+
+  <section class="panel" id="p-data" hidden>
+    <div class="row" style="margin-bottom:14px">
+      <button class="btn primary" id="btnImport">CSV importieren</button>
+      <button class="btn" id="btnExport">CSV exportieren</button>
+      <input type="file" id="fileInput" accept=".csv,text/csv,text/plain" hidden>
+      <input type="file" id="xmlInput" accept=".xml,application/xml,text/xml" hidden>
+      <span class="hint" id="dataCount"></span>
+    </div>
+    <div id="tableArea"></div>
+  </section>
+
+  <section class="panel" id="p-settings" hidden>
+    <div class="settings">
+      <div class="box">
+        <h2>Speicherort</h2>
+        <div id="storageInfo"></div>
+      </div>
+      <div class="box">
+        <h2>Persönliche Angaben</h2>
+        <div class="row" style="align-items:flex-end">
+          <label class="field">Körpergröße (cm)<input type="text" inputmode="decimal" id="height" placeholder="z. B. 182" style="width:120px"></label>
+          <label class="field">Geschlecht<select id="sex"><option value="">nicht angegeben</option><option value="m">männlich</option><option value="f">weiblich</option></select></label>
+          <label class="field">Geburtsdatum<input type="date" id="birth"></label>
+        </div>
+        <p class="hint">Wird für BMI, Taille/Größe, Grundumsatz nach Mifflin-St Jeor und die alters- und geschlechtsabhängigen Bewertungen gebraucht.</p>
+      </div>
+      <div class="box">
+        <h2>Kalorien</h2>
+        <label class="field" style="max-width:460px">Was trägst du als Kalorienverbrauch ein?
+          <select id="burnMode">
+            <option value="total">Gesamtverbrauch des Tages (inkl. Grundumsatz)</option>
+            <option value="active">Nur Aktivitätsverbrauch – Grundumsatz wird addiert</option>
+          </select>
+        </label>
+        <p class="hint">Kalorienbilanz = Verbrauch − Aufnahme, positiv heißt Defizit. Theoretischer Fettverlust = Defizit ÷ 7.700 kcal je kg Körperfett.</p>
+      </div>
+      <div class="box">
+        <h2>CSV-Format</h2>
+        <label class="field" style="max-width:340px">Trennzeichen beim Export
+          <select id="delim"><option value=";">Semikolon, Dezimalkomma (Excel deutsch)</option><option value=",">Komma, Dezimalpunkt (international)</option></select>
+        </label>
+        <label class="inline" style="margin-top:10px"><input type="checkbox" id="expDerived"> Berechnete Spalten mit exportieren</label>
+        <p class="hint">Beim Import werden Trennzeichen, Dezimalformat und Datumsformat automatisch erkannt, auch der WeightFit-Export. Spalten wie Note, Tags oder Notiz landen in der Anmerkung. Unbekannte Zahlenspalten werden als neue Messgrößen angelegt.</p>
+      </div>
+      <div class="box">
+        <h2>Messgrößen</h2>
+        <p class="hint" style="margin:0 0 10px">Ausgeblendete Größen erscheinen nicht im Erfassungsformular. Daten bleiben erhalten.</p>
+        <div class="mlist" id="mlist"></div>
+        <h3 style="font-size:1rem;margin:16px 0 8px">Eigene Messgröße hinzufügen</h3>
+        <div class="row">
+          <input type="text" id="newLabel" placeholder="Name, z. B. Wadenumfang" style="flex:2;min-width:160px">
+          <input type="text" id="newUnit" placeholder="Einheit, z. B. cm" style="flex:1;min-width:90px">
+          <select id="newDec"><option value="0">0 Nachkommast.</option><option value="1" selected>1 Nachkommast.</option><option value="2">2 Nachkommast.</option></select>
+          <button class="btn" id="btnAddMetric">Hinzufügen</button>
+        </div>
+      </div>
+      <div class="box">
+        <h2>Daten zurücksetzen</h2>
+        <p class="hint" style="margin:0 0 10px">Löscht alle Messwerte. Exportiere vorher eine CSV-Datei, wenn du sie behalten möchtest.</p>
+        <button class="btn danger" id="btnReset">Alle Messwerte löschen</button>
+      </div>
+      <p class="hint" id="versionInfo"></p>
+    </div>
+  </section>
+</div>
+
+<dialog id="chartDlg">
+  <form method="dialog" class="dlg" id="chartForm">
+    <h2 id="chartDlgTitle">Diagramm bearbeiten</h2>
+    <label class="field">Titel <input type="text" id="cTitle" required></label>
+    <div>
+      <div class="field" style="margin-bottom:6px">Messgrößen (Einheiten bekommen eigene Achsen)</div>
+      <div class="checks" id="cMetrics"></div>
+    </div>
+    <label class="field" style="max-width:200px">Darstellung
+      <select id="cType"><option value="line">Linie</option><option value="bar">Balken</option><option value="scatter">Punkte</option></select>
+    </label>
+    <label class="inline"><input type="checkbox" id="cBand"> Spannweite (Min–Max) bei Mittelwerten zeigen</label>
+    <label class="inline"><input type="checkbox" id="cSmooth"> Bei Tageswerten 7-Tage-Mittel als Trendlinie zeigen</label>
+    <footer>
+      <div class="row">
+        <button class="btn small" type="button" id="cUp">Nach oben</button>
+        <button class="btn small" type="button" id="cDown">Nach unten</button>
+        <button class="btn small danger" type="button" id="cDelete">Löschen</button>
+      </div>
+      <div class="row">
+        <button class="btn" type="button" id="cCancel">Abbrechen</button>
+        <button class="btn primary" type="submit">Übernehmen</button>
+      </div>
+    </footer>
+  </form>
+</dialog>
+
+<dialog id="dashDlg">
+  <form method="dialog" class="dlg" id="dashForm">
+    <h2>Übersicht anpassen</h2>
+    <p class="hint" style="margin:0">„Kachel“ zeigt den letzten Wert mit Bewertung, „Trend“ nimmt die Größe ins Monatstrend-Diagramm auf. Mit den Pfeilen änderst du die Reihenfolge.</p>
+    <div class="dlist" id="dlist"></div>
+    <footer>
+      <button class="btn small" type="button" id="dashDefault">Standard wiederherstellen</button>
+      <div class="row">
+        <button class="btn" type="button" id="dashCancel">Abbrechen</button>
+        <button class="btn primary" type="submit">Übernehmen</button>
+      </div>
+    </footer>
+  </form>
+</dialog>
+
+<dialog id="askDlg">
+  <form method="dialog" class="dlg">
+    <h2 id="askTitle">Bist du sicher?</h2>
+    <p id="askMsg" style="margin:0"></p>
+    <footer>
+      <span></span>
+      <div class="row">
+        <button class="btn" value="no">Abbrechen</button>
+        <button class="btn primary" value="yes" id="askOk">Löschen</button>
+      </div>
+    </footer>
+  </form>
+</dialog>
+
+<dialog id="importDlg">
+  <form method="dialog" class="dlg" id="importForm">
+    <h2>Import prüfen</h2>
+    <div id="importBody" class="imp-body"></div>
+    <footer>
+      <span></span>
+      <div class="row">
+        <button class="btn" type="button" id="importCancel">Abbrechen</button>
+        <button class="btn primary" type="submit" id="importGo">Importieren</button>
+      </div>
+    </footer>
+  </form>
+</dialog>
+
+<dialog id="pwDlg">
+  <form method="dialog" class="dlg">
+    <h2 id="pwTitle">Neues Passwort</h2>
+    <label class="field">Neues Passwort (mind. 8 Zeichen)<input type="password" id="pwNew" autocomplete="new-password"></label>
+    <footer>
+      <span></span>
+      <div class="row">
+        <button class="btn" value="">Abbrechen</button>
+        <button class="btn primary" value="ok">Speichern</button>
+      </div>
+    </footer>
+  </form>
+</dialog>
+
+<dialog id="chooseDlg">
+  <form method="dialog" class="dlg">
+    <h2 id="chooseTitle">Welche Daten verwenden?</h2>
+    <p id="chooseMsg" style="margin:0"></p>
+    <footer>
+      <button class="btn" value="">Abbrechen</button>
+      <div class="row">
+        <button class="btn" value="b" id="chooseB">B</button>
+        <button class="btn primary" value="a" id="chooseA">A</button>
+      </div>
+    </footer>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+const DAY = 864e5;
+const TRACKER_VERSION = '2.2';
+const toOverview = () => { showTab('dash'); window.scrollTo(0,0); };
+/* better: -1 = sinkend ist günstig, 1 = steigend ist günstig, 0 = neutral. dash: wie die Kachel den Wert bildet */
+const DEFAULT_METRICS = [
+  {key:'weight',  label:'Gewicht',          unit:'kg',      dec:1, csv:'gewicht_kg',           better:-1, alias:['gewicht','weight','kg','body_weight']},
+  {key:'waist',   label:'Taillenumfang',    unit:'cm',      dec:1, csv:'taille_cm',            better:-1, alias:['taille','taillenumfang','waist']},
+  {key:'belly',   label:'Bauchumfang',      unit:'cm',      dec:1, csv:'bauch_cm',             better:-1, alias:['bauch','bauchumfang','belly','abdomen']},
+  {key:'hip',     label:'Hüftumfang',       unit:'cm',      dec:1, csv:'huefte_cm',            better:0,  alias:['huefte','hueftumfang','hip','hips']},
+  {key:'bodyfat', label:'Körperfett',       unit:'%',       dec:1, csv:'koerperfett_prozent',  better:-1, alias:['koerperfett','kfa','fett','bodyfat','body_fat','koerperfettanteil','fat']},
+  {key:'bmi',     label:'BMI',              unit:'kg/m²',   dec:1, csv:'bmi',                  better:-1, alias:['bmi']},
+  {key:'muscle',  label:'Muskelmasse',      unit:'kg',      dec:1, csv:'muskelmasse_kg',       better:1,  alias:['muskelmasse','muskeln','muscle','muscle_mass']},
+  {key:'water',   label:'Körperwasser',     unit:'%',       dec:1, csv:'koerperwasser_prozent',better:0,  alias:['koerperwasser','wasser','water','body_water']},
+  {key:'visceral',label:'Viszeralfett',     unit:'Stufe',   dec:0, csv:'viszeralfett',         better:-1, alias:['viszeralfett','visceral','visceral_fat']},
+  {key:'chest',   label:'Brustumfang',      unit:'cm',      dec:1, csv:'brust_cm',             better:0,  alias:['brust','brustumfang','chest']},
+  {key:'arm',     label:'Oberarm',          unit:'cm',      dec:1, csv:'oberarm_cm',           better:0,  alias:['oberarm','arm','bizeps']},
+  {key:'thigh',   label:'Oberschenkel',     unit:'cm',      dec:1, csv:'oberschenkel_cm',      better:0,  alias:['oberschenkel','thigh']},
+  {key:'rhr',     label:'Ruhepuls',         unit:'bpm',     dec:0, csv:'ruhepuls_bpm',         better:-1, alias:['ruhepuls','puls','rhr','resting_hr','resting_heart_rate']},
+  {key:'steps',   label:'Schritte',         unit:'Schritte',dec:0, csv:'schritte',             better:1,  dash:'avg7', alias:['schritte','steps']},
+  {key:'sleep',   label:'Schlaf',           unit:'h',       dec:1, csv:'schlaf_h',             better:0,  dash:'avg7', alias:['schlaf','sleep']},
+  {key:'kcalOut', label:'Kalorienverbrauch',unit:'kcal',    dec:0, csv:'kalorien_verbrauch_kcal', better:0, dash:'avg7', alias:['verbrauch','kalorienverbrauch','kcal_out','burned','calories_burned','energy_burned','active_energy']},
+  {key:'kcalIn',  label:'Kalorienaufnahme', unit:'kcal',    dec:0, csv:'kalorien_aufnahme_kcal',  better:0, dash:'avg7', alias:['aufnahme','kalorienaufnahme','kcal_in','intake','calories_in','calories_consumed','energy_intake']},
+];
+const DERIVED = [
+  {key:'whr',     label:'Taille/Hüfte (WHR)',  unit:'',     dec:2, csv:'whr',                   better:-1, derived:true},
+  {key:'whtr',    label:'Taille/Größe (WHtR)', unit:'',     dec:2, csv:'whtr',                  better:-1, derived:true},
+  {key:'bmr',     label:'Grundumsatz (BMR)',   unit:'kcal', dec:0, csv:'grundumsatz_kcal',      better:0,  derived:true},
+  {key:'balance', label:'Kalorienbilanz',      unit:'kcal', dec:0, csv:'kalorienbilanz_kcal',   better:0,  derived:true, dash:'avg7'},
+  {key:'fatloss', label:'Theor. Fettverlust',  unit:'g',    dec:0, csv:'fettverlust_theor_g',   better:0,  derived:true, dash:'sum30'},
+];
+const NOTE_HEADS = ['note','notes','notiz','notizen','anmerkung','anmerkungen','kommentar','kommentare','comment','comments','tags','tag','bemerkung','bemerkungen'];
+const DEFAULT_CHARTS = [
+  {id:'c1', title:'Gewicht und Körperfett', metrics:['weight','bodyfat'], type:'line', band:true, smooth:true},
+  {id:'c2', title:'Umfänge', metrics:['waist','belly','hip'], type:'line', band:false, smooth:true},
+  {id:'c3', title:'Kalorien', metrics:['kcalIn','kcalOut','balance'], type:'line', band:false, smooth:true},
+  {id:'c4', title:'BMI', metrics:['bmi'], type:'line', band:false, smooth:false},
+];
+const DEFAULT_DASH = { tiles:['weight','bmi','bodyfat','waist','belly','whr','whtr','muscle','visceral','water','rhr','sleep','steps','kcalIn','kcalOut','balance','fatloss','bmr'], trend:['weight'] };
+const DEFAULT_VIEW = { preset:'6m', from:null, to:null, gran:'auto' };
+
+const S = {
+  rows: {},
+  settings: { height:null, sex:'', birth:'', burnMode:'total', delim:';', exportDerived:false, custom:[], hidden:[],
+              charts:JSON.parse(JSON.stringify(DEFAULT_CHARTS)), dash:JSON.parse(JSON.stringify(DEFAULT_DASH)), view:{...DEFAULT_VIEW} }
+};
+
+/* ---------- Hilfsfunktionen ---------- */
+const $ = s => document.querySelector(s);
+const el = (tag, attrs={}, ...kids) => { const e=document.createElement(tag); for (const [k,v] of Object.entries(attrs)) { if (k==='class') e.className=v; else if (k==='text') e.textContent=v; else if (k.startsWith('on')) e.addEventListener(k.slice(2),v); else if (v!==false && v!=null) e.setAttribute(k, v===true?'':v); } for (const k of kids) if (k!=null) e.append(k); return e; };
+const pad = n => String(n).padStart(2,'0');
+const tsOf = d => Date.UTC(+d.slice(0,4), +d.slice(5,7)-1, +d.slice(8,10));
+const dOf = ts => { const x=new Date(ts); return x.getUTCFullYear()+'-'+pad(x.getUTCMonth()+1)+'-'+pad(x.getUTCDate()); };
+const todayStr = () => { const n=new Date(); return n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate()); };
+const deDate = d => d ? d.slice(8,10)+'.'+d.slice(5,7)+'.'+d.slice(0,4) : '';
+const nfCache = {};
+const fmt = (v, dec) => { if (v==null || !isFinite(v)) return '–'; return (nfCache[dec] ||= new Intl.NumberFormat('de-DE',{minimumFractionDigits:dec, maximumFractionDigits:dec})).format(v); };
+const sgn = (v, dec, u='') => (Math.abs(v) < Math.pow(10,-dec)/2 ? '±' : v>0 ? '+' : '−') + fmt(Math.abs(v),dec) + u;
+const norm = s => String(s||'').toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+const toast = msg => { const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('show'), 3200); };
+const parseInputNum = s => { s=String(s||'').trim().replace(/\s/g,'').replace(',','.'); if (!s) return null; const n=Number(s); return isFinite(n)?n:NaN; };
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function ask(msg, ok='Löschen', title='Bist du sicher?'){
+  return new Promise(res=>{ const d=$('#askDlg'); $('#askTitle').textContent=title; $('#askMsg').textContent=msg; $('#askOk').textContent=ok; d.returnValue=''; d.onclose=()=>res(d.returnValue==='yes'); d.showModal(); });
+}
+
+const storedMetrics = () => DEFAULT_METRICS.concat(S.settings.custom||[]);
+const allMetrics = () => storedMetrics().concat(DERIVED);
+const metric = k => allMetrics().find(m=>m.key===k);
+
+let sdc=null, wc=null;
+function invalidate(){ sdc=null; wc=null; }
+const sortedDates = () => sdc || (sdc = Object.keys(S.rows).sort());
+function weightOn(d){
+  if (!wc){ wc=new Map(); let last=null; for (const x of sortedDates()){ const w=S.rows[x].weight; if (w!=null) last=w; wc.set(x,last); } }
+  return wc.get(d) ?? null;
+}
+function ageAt(d){
+  const b=S.settings.birth; if (!b) return null;
+  let a = +d.slice(0,4) - +b.slice(0,4); if (d.slice(5) < b.slice(5)) a--; return a;
+}
+function bmrOn(d){
+  const h=S.settings.height, sx=S.settings.sex, a=ageAt(d), w=weightOn(d);
+  if (!h || !sx || a==null || w==null) return null;
+  return 10*w + 6.25*h - 5*a + (sx==='m' ? 5 : -161);
+}
+/* Wert einer Messgröße an einem Tag – gespeichert oder berechnet */
+function val(d, k){
+  const r=S.rows[d]; if (!r) return null;
+  const h=S.settings.height;
+  switch(k){
+    case 'bmi': if (r.bmi!=null) return r.bmi; return (h && r.weight!=null) ? r.weight/((h/100)**2) : null;
+    case 'whtr': return (h && r.waist!=null) ? r.waist/h : null;
+    case 'whr': return (r.waist!=null && r.hip) ? r.waist/r.hip : null;
+    case 'bmr': return (r.weight!=null || r.kcalIn!=null || r.kcalOut!=null) ? bmrOn(d) : null;
+    case 'balance': {
+      if (r.kcalIn==null || r.kcalOut==null) return null;
+      let out=r.kcalOut;
+      if (S.settings.burnMode==='active'){ const b=bmrOn(d); if (b==null) return null; out+=b; }
+      return out - r.kcalIn;
+    }
+    case 'fatloss': { const b=val(d,'balance'); return b==null ? null : b/7.7; }
+  }
+  const v=r[k]; return (typeof v!=='number' || !isFinite(v)) ? null : v;
+}
+function colorFor(k){ const i=allMetrics().findIndex(m=>m.key===k); return cssVar('--s'+((i%8)+1)) || '#1F6F78'; }
+function trendClass(m, delta){ if (!m.better || Math.abs(delta)<1e-9) return 'tr-neutral'; return (Math.sign(delta)===m.better) ? 'tr-good' : 'tr-bad'; }
+
+/* ---------- Datenhaltung: Browser (Standard), eigener Server oder XML-Datei ---------- */
+const CFG_KEY='koerperdaten-config', LS='koerperdaten-v1';
+const lsOk=(()=>{ try { localStorage.setItem('__kd','1'); localStorage.removeItem('__kd'); return true; } catch(e){ return false; } })();
+const cfg=(()=>{ const d={mode:'browser', url:'', token:''}; try { return {...d, ...JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}; } catch(e){ return d; } })();
+const cfgSaved=(()=>{ try { return localStorage.getItem(CFG_KEY)!=null; } catch(e){ return false; } })();
+function saveCfg(){ try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch(e){} }
+const MODE_LABEL={browser:'Im Browser (Standard)', server:'Auf eigenem Server (mit Anmeldung)', xml:'In einer XML-Datei'};
+
+const FSA = typeof window.showSaveFilePicker==='function' && typeof window.showOpenFilePicker==='function' && window.self===window.top;
+const XML_TYPES=[{description:'Körperdaten (XML)', accept:{'application/xml':['.xml']}}];
+let fileHandle=null, fileName='', fileState='none';
+let srvState='none', srvVersion=null, srvAuth=false, retryTimer=null, conflictOpen=false;
+let dirty=false, version=0, saving=false, saveTimer=null, lastSaved=null, errMsg='';
+const hasData=()=>Object.keys(S.rows).length>0;
+const setSync=t=>{ $('#sync').textContent=t; };
+
+function defaultSettings(){
+  return { height:null, sex:'', birth:'', burnMode:'total', delim:';', exportDerived:false, custom:[], hidden:[],
+    charts:JSON.parse(JSON.stringify(DEFAULT_CHARTS)), dash:JSON.parse(JSON.stringify(DEFAULT_DASH)), view:{...DEFAULT_VIEW} };
+}
+function mergeSettings(s){
+  S.settings={...S.settings, ...(s||{})};
+  S.settings.view={...DEFAULT_VIEW, ...(S.settings.view||{})};
+  S.settings.dash={...JSON.parse(JSON.stringify(DEFAULT_DASH)), ...(S.settings.dash||{})};
+  S.settings.custom ||= []; S.settings.hidden ||= [];
+}
+function setData(rows, settings){ S.rows=rows||{}; S.settings=defaultSettings(); mergeSettings(settings); invalidate(); }
+function loaded(msg){ dirty=false; lastSaved=null; page=0; renderAll(); updateStorageUI(); if (msg) toast(msg); }
+function choose(msg, a, b, title='Welche Daten verwenden?'){
+  return new Promise(res=>{ const d=$('#chooseDlg'); $('#chooseTitle').textContent=title; $('#chooseMsg').textContent=msg; $('#chooseA').textContent=a; $('#chooseB').textContent=b; d.returnValue=''; d.onclose=()=>res(d.returnValue||null); d.showModal(); });
+}
+
+/* Speichern – je nach Speicherort */
+function markDirty(){
+  invalidate(); version++; dirty=true; updateStorageUI();
+  const delay = cfg.mode==='browser' ? 300 : cfg.mode==='server' ? 800 : 600;
+  clearTimeout(saveTimer); saveTimer=setTimeout(saveNow, delay);
+}
+async function saveNow(force=false){
+  if (saving){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>saveNow(force), 400); return; }
+  if (cfg.mode==='xml' && !(FSA && fileHandle && fileState==='ready')) { updateStorageUI(); return; }
+  if (cfg.mode==='server' && !(srvState==='ok' || srvState==='error')) { updateStorageUI(); return; }
+  saving=true; const v=version; let ok=false;
+  try {
+    if (cfg.mode==='browser'){
+      if (!lsOk) throw new Error('Dieser Browser erlaubt hier keine dauerhafte Speicherung.');
+      localStorage.setItem(LS, JSON.stringify({rows:S.rows, settings:S.settings})); ok=true;
+    } else if (cfg.mode==='server'){
+      ok=await serverPut(force);
+    } else {
+      const w=await fileHandle.createWritable(); await w.write(toXml()); await w.close(); ok=true;
+    }
+    if (ok){ if (version===v) dirty=false; lastSaved=new Date(); errMsg=''; if (cfg.mode==='server') srvState='ok'; }
+  } catch(e){
+    errMsg=e.message;
+    if (cfg.mode==='xml' && (e.name==='NotAllowedError' || e.name==='SecurityError')) fileState='needPerm';
+    if (cfg.mode==='server' && e.status!==401){ srvState='error'; clearTimeout(retryTimer); retryTimer=setTimeout(()=>{ if (dirty) saveNow(); }, 30000); }
+    if (cfg.mode!=='server') toast('Speichern fehlgeschlagen: '+e.message);
+  } finally { saving=false; updateStorageUI(); }
+}
+
+/* ---- Server mit Benutzerkonten ---- */
+let srvUser=null, dataOwner=null, srvInfo=null;   // dataOwner: wem die angezeigten Daten gehören (null = lokal, noch niemandem zugeordnet)
+const srvBase=()=>cfg.url.trim().replace(/\/+$/,'');
+class ApiErr extends Error{ constructor(status,msg){ super(msg); this.status=status; } }
+async function api(path, opts={}){
+  const headers={...(opts.headers||{})}; if (cfg.token) headers['Authorization']='Bearer '+cfg.token;
+  let body=opts.body; if (opts.json!==undefined){ headers['Content-Type']='application/json'; body=JSON.stringify(opts.json); }
+  let r;
+  try { r=await fetch(srvBase()+path, {method:opts.method||'GET', headers, body, cache:'no-store'}); }
+  catch(e){ throw new ApiErr(0, 'Server unter '+srvBase()+' nicht erreichbar.'+(/^https:/i.test(srvBase()) && srvBase()!==pageBase() ? ' Bei selbst signiertem Zertifikat die Adresse einmal direkt im Browser öffnen und die Warnung bestätigen.' : '')); }
+  if (r.status===401 && path!=='/api/anmelden' && path!=='/api/ich/passwort'){ cfg.token=''; saveCfg(); srvUser=null; srvState='login'; throw new ApiErr(401,'Bitte neu anmelden'); }
+  return r;
+}
+async function apiJson(path, opts){ const r=await api(path, opts); const j=await r.json().catch(()=>({})); if (!r.ok) throw new ApiErr(r.status, j.fehler||('Server meldet Fehler '+r.status)); return j; }
+async function serverGet(){
+  const r=await api('/api/daten');
+  if (r.status===404){ srvVersion=null; return null; }
+  if (!r.ok) throw new ApiErr(r.status, 'Server meldet Fehler '+r.status);
+  srvVersion=r.headers.get('ETag'); return await r.text();
+}
+async function serverPut(force){
+  if (!srvUser || dataOwner!==srvUser.name) return false;      // niemals Daten eines anderen Benutzers hochladen
+  const headers={'Content-Type':'application/xml; charset=utf-8'}; if (!force) headers['If-Match']=srvVersion||'"neu"';
+  const r=await api('/api/daten', {method:'PUT', headers, body:toXml()});
+  if (r.status===412){ onConflict(); return false; }
+  const j=await r.json().catch(()=>({}));
+  if (!r.ok) throw new ApiErr(r.status, j.fehler||('Server meldet Fehler '+r.status));
+  srvVersion=r.headers.get('ETag')||j.etag||null; return true;
+}
+async function onConflict(){
+  if (conflictOpen) return; conflictOpen=true;
+  const c=await choose('Deine Daten auf dem Server wurden inzwischen geändert, zum Beispiel vom Handy aus. Deine letzten Änderungen hier sind noch nicht gespeichert.', 'Server-Stand laden', 'Meine Version speichern', 'Daten auf dem Server geändert');
+  conflictOpen=false;
+  if (c==='a'){ try { const t=await serverGet(); if (t){ const n=fromXml(t); loaded('Server-Stand geladen, '+n+' Messtage'); } } catch(e){ toast(e.message); } }
+  else if (c==='b'){ await saveNow(true); toast('Deine Version ist auf dem Server gespeichert'); }
+  else updateStorageUI();
+}
+async function serverConnect(interactive){
+  if (!cfg.url){ srvState='none'; updateStorageUI(); return; }
+  srvState='connecting'; errMsg=''; updateStorageUI();
+  try {
+    const info=await apiJson('/api/status'); srvInfo=info;
+    if (info.app!=='koerperdaten') throw new ApiErr(0,'Unter dieser Adresse läuft kein Körperdaten-Server');
+    if (info.einrichtung_noetig){ srvState='setup'; srvUser=null; updateStorageUI(); return; }
+    if (!cfg.token){ srvState='login'; srvUser=null; updateStorageUI(); return; }
+    srvUser=await apiJson('/api/ich');
+    await loadUserData(interactive);
+  } catch(e){ if (srvState!=='login'){ srvState='error'; errMsg=e.message; } updateStorageUI(); }
+}
+async function loadUserData(interactive){
+  const me=srvUser.name, txt=await serverGet();
+  srvState='ok';
+  const mineUnsaved = dirty && dataOwner===me;
+  const local = hasData() && dataOwner===null;
+  if (dataOwner && dataOwner!==me){ setData({},null); dirty=false; }      // Daten verschiedener Benutzer nie mischen
+  if (mineUnsaved){ updateStorageUI(); await saveNow(); return; }
+  if (txt==null){
+    if (local){
+      const c = interactive ? await choose('Für '+me+' sind auf dem Server noch keine Daten gespeichert. Sollen die gerade angezeigten '+Object.keys(S.rows).length+' Messtage übernommen werden?', 'Übernehmen', 'Leer beginnen', 'Daten übernehmen?') : 'b';
+      if (c==='a'){ dataOwner=me; version++; dirty=true; await saveNow(); toast('Daten wurden für '+me+' gespeichert'); return; }
+    }
+    dataOwner=me; setData({},null); loaded(''); return;
+  }
+  if (local && interactive){
+    const c=await choose('Für '+me+' liegen auf dem Server bereits Daten. Welche sollen gelten?', 'Server-Daten laden', 'Aktuelle Daten hochladen');
+    if (c==='b'){ dataOwner=me; version++; dirty=true; await saveNow(true); toast('Aktuelle Daten wurden hochgeladen'); return; }
+  }
+  dataOwner=me; const n=fromXml(txt); loaded(interactive ? 'Daten von '+me+' geladen, '+n+' Messtage' : '');
+}
+async function doLogin(path, body){
+  const j=await apiJson(path, {method:'POST', json:body});
+  cfg.token=j.token; saveCfg(); srvUser=j.benutzer; srvState='connecting'; updateStorageUI();
+  await loadUserData(true); updateStorageUI();
+}
+async function logout(){
+  if (dirty && hasData() && !await ask('Es gibt noch nicht gespeicherte Änderungen. Sie gehen beim Abmelden verloren.','Trotzdem abmelden','Abmelden')) return;
+  try { await api('/api/abmelden', {method:'POST'}); } catch(e){}
+  cfg.token=''; saveCfg(); srvUser=null; dataOwner=null; srvVersion=null; setData({},null); srvState='login'; loaded('Abgemeldet');
+}
+function pwPrompt(title){
+  return new Promise(res=>{ const d=$('#pwDlg'); $('#pwTitle').textContent=title; $('#pwNew').value=''; d.returnValue=''; d.onclose=()=>res(d.returnValue==='ok' ? $('#pwNew').value : null); d.showModal(); });
+}
+addEventListener('online', ()=>{ if (cfg.mode==='server' && dirty) saveNow(); });
+
+/* ---- Browser ---- */
+function browserStored(){ try { const j=JSON.parse(localStorage.getItem(LS)||'null'); return j && j.rows ? j : null; } catch(e){ return null; } }
+
+/* ---- XML-Datei ---- */
+function idb(){ return new Promise((res,rej)=>{ const r=indexedDB.open('koerperdaten-datei',1); r.onupgradeneeded=()=>r.result.createObjectStore('h'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
+async function idbGet(k){ try { const d=await idb(); return await new Promise(res=>{ const q=d.transaction('h').objectStore('h').get(k); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); } catch(e){ return null; } }
+async function idbSet(k,v){ try { const d=await idb(); await new Promise(res=>{ const t=d.transaction('h','readwrite'); v==null ? t.objectStore('h').delete(k) : t.objectStore('h').put(v,k); t.oncomplete=res; t.onerror=res; }); } catch(e){} }
+const xa=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\r?\n/g,'&#10;');
+const xt=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const XML_NAME=/^[A-Za-z_][A-Za-z0-9_.-]*$/;
+function toXml(){
+  const st=S.settings, L=[], dates=sortedDates(), custom=new Set(st.custom.map(c=>c.key));
+  L.push('<?xml version="1.0" encoding="UTF-8"?>');
+  L.push('<koerperdaten version="1" gespeichert="'+new Date().toISOString()+'">');
+  L.push('  <einstellungen>');
+  L.push('    <koerpergroesse_cm>'+(st.height??'')+'</koerpergroesse_cm>');
+  L.push('    <geschlecht>'+xt(st.sex||'')+'</geschlecht>');
+  L.push('    <geburtsdatum>'+xt(st.birth||'')+'</geburtsdatum>');
+  L.push('    <kalorienverbrauch>'+(st.burnMode==='active'?'aktiv':'gesamt')+'</kalorienverbrauch>');
+  L.push('    <csv_trennzeichen>'+xt(st.delim||';')+'</csv_trennzeichen>');
+  L.push('    <csv_berechnete_spalten>'+(st.exportDerived?'ja':'nein')+'</csv_berechnete_spalten>');
+  L.push('    <ausgeblendet>'+st.hidden.map(k=>'<messgroesse>'+xt(k)+'</messgroesse>').join('')+'</ausgeblendet>');
+  L.push('  </einstellungen>');
+  L.push('  <messgroessen>');
+  for (const m of storedMetrics()) L.push('    <messgroesse schluessel="'+xa(m.key)+'" name="'+xa(m.label)+'" einheit="'+xa(m.unit||'')+'" nachkommastellen="'+m.dec+'" csv="'+xa(m.csv||m.key)+'"'+(custom.has(m.key)?' eigene="ja"':'')+'/>');
+  L.push('  </messgroessen>');
+  L.push('  <ansicht><![CDATA['+JSON.stringify({charts:st.charts, dash:st.dash, view:st.view}).replace(/]]>/g,']]]]><![CDATA[>')+']]></ansicht>');
+  L.push('  <eintraege anzahl="'+dates.length+'">');
+  for (const d of dates){
+    const r=S.rows[d];
+    const attrs=Object.keys(r).filter(k=>k!=='note' && typeof r[k]==='number' && isFinite(r[k]) && XML_NAME.test(k)).map(k=>' '+k+'="'+r[k]+'"').join('');
+    L.push('    <eintrag datum="'+d+'"'+attrs+(r.note ? '><anmerkung>'+xt(r.note)+'</anmerkung></eintrag>' : '/>'));
+  }
+  L.push('  </eintraege>');
+  L.push('</koerperdaten>');
+  return L.join('\n')+'\n';
+}
+function fromXml(text){
+  const doc=new DOMParser().parseFromString(text,'application/xml');
+  if (doc.getElementsByTagName('parsererror').length) throw new Error('Die Datei ist kein gültiges XML.');
+  const root=doc.documentElement;
+  if (root.nodeName!=='koerperdaten') throw new Error('Das ist keine Körperdaten-Datei (Element <koerperdaten> fehlt).');
+  const kid=(p,n)=>p ? [...p.children].filter(c=>c.nodeName===n) : [];
+  const one=(p,n)=>kid(p,n)[0]||null;
+  const rows={};
+  for (const e of kid(one(root,'eintraege'),'eintrag')){
+    const d=e.getAttribute('datum'); if (!/^\d{4}-\d{2}-\d{2}$/.test(d||'')) continue;
+    const r={};
+    for (const a of e.attributes){ if (a.name==='datum' || a.value.trim()==='') continue; const n=Number(a.value); if (isFinite(n)) r[a.name]=n; }
+    const note=one(e,'anmerkung')?.textContent; if (note) r.note=note;
+    if (Object.keys(r).length) rows[d]=r;
+  }
+  const st={}, E=one(root,'einstellungen'), g=n=>one(E,n)?.textContent ?? '';
+  if (E){
+    const h=parseFloat(g('koerpergroesse_cm')); st.height=isFinite(h)?h:null;
+    st.sex=['m','f'].includes(g('geschlecht'))?g('geschlecht'):''; st.birth=/^\d{4}-\d{2}-\d{2}$/.test(g('geburtsdatum'))?g('geburtsdatum'):'';
+    st.burnMode=g('kalorienverbrauch')==='aktiv'?'active':'total'; st.delim=g('csv_trennzeichen')===','?',':';';
+    st.exportDerived=g('csv_berechnete_spalten')==='ja';
+    st.hidden=kid(one(E,'ausgeblendet'),'messgroesse').map(x=>x.textContent);
+  }
+  st.custom=kid(one(root,'messgroessen'),'messgroesse').filter(x=>x.getAttribute('eigene')==='ja').map(x=>{
+    const key=x.getAttribute('schluessel'); return {key, label:x.getAttribute('name')||key, unit:x.getAttribute('einheit')||'', dec:Math.min(3,Math.max(0,+(x.getAttribute('nachkommastellen')??1)||0)), csv:x.getAttribute('csv')||key, better:0};
+  }).filter(m=>m.key && XML_NAME.test(m.key));
+  const A=one(root,'ansicht');
+  if (A){ try { const j=JSON.parse(A.textContent); if (Array.isArray(j.charts)) st.charts=j.charts; if (j.dash) st.dash=j.dash; if (j.view) st.view=j.view; } catch(e){} }
+  setData(rows, st);
+  return Object.keys(rows).length;
+}
+async function attach(h, loadIt){
+  if (await h.requestPermission({mode:'readwrite'})!=='granted'){ toast('Ohne Schreibzugriff kann der Tracker nicht in '+h.name+' speichern.'); return; }
+  fileHandle=h; fileName=h.name; fileState='ready'; await idbSet('datei',h);
+  if (loadIt){ const n=fromXml(await (await h.getFile()).text()); loaded(h.name+' geöffnet, '+n+' Messtage'); }
+  else { version++; dirty=true; await saveNow(); toast('Daten werden jetzt in '+h.name+' gespeichert'); }
+}
+async function pickNewFile(){
+  try { const h=await showSaveFilePicker({suggestedName:'koerperdaten.xml', types:XML_TYPES}); await attach(h,false); }
+  catch(e){ if (e.name!=='AbortError') toast('Datei konnte nicht angelegt werden: '+e.message); }
+}
+async function pickOpenFile(){
+  if (dirty && hasData() && !await ask('Die aktuellen Daten sind noch nicht gespeichert und werden durch die geöffnete Datei ersetzt.','Trotzdem öffnen','Ungespeicherte Änderungen')) return;
+  try { const [h]=await showOpenFilePicker({types:XML_TYPES, multiple:false}); await attach(h,true); }
+  catch(e){ if (e.name!=='AbortError') toast('Datei konnte nicht geöffnet werden: '+e.message); }
+}
+async function reconnect(){
+  try {
+    if (await fileHandle.requestPermission({mode:'readwrite'})!=='granted'){ toast('Zugriff auf '+fileName+' wurde nicht erlaubt.'); return; }
+    fileState='ready';
+    if (dirty && hasData()){ await saveNow(); return; }
+    const n=fromXml(await (await fileHandle.getFile()).text()); loaded(fileName+' geöffnet, '+n+' Messtage');
+  } catch(e){ toast(fileName+' konnte nicht geöffnet werden: '+e.message+'. Wähle die Datei neu aus.'); fileState='none'; fileHandle=null; await idbSet('datei',null); updateStorageUI(); }
+}
+async function disconnect(){
+  if (!await ask('Der Tracker speichert danach nicht mehr in '+fileName+'. Die Datei selbst bleibt erhalten.','Trennen','Datei trennen')) return;
+  fileHandle=null; fileName=''; fileState='none'; await idbSet('datei',null);
+  setData({}, null); dirty=false; renderAll(); updateStorageUI();
+}
+async function openXmlFallback(){
+  if (dirty && hasData() && !await ask('Die aktuellen Daten sind noch nicht gespeichert und werden durch die geöffnete Datei ersetzt.','Trotzdem öffnen','Ungespeicherte Änderungen')) return;
+  $('#xmlInput').click();
+}
+$('#xmlInput').addEventListener('change', e=>{
+  const f=e.target.files[0]; if (!f) return;
+  const rd=new FileReader();
+  rd.onload=()=>{ try { const n=fromXml(String(rd.result)); fileName=f.name; loaded(f.name+' geöffnet, '+n+' Messtage'); } catch(err){ toast(err.message); } e.target.value=''; };
+  rd.readAsText(f,'utf-8');
+});
+async function saveXmlFallback(){
+  const v=version;
+  if (await download(fileName||'koerperdaten.xml', toXml(), 'application/xml')){ if (version===v) dirty=false; lastSaved=new Date(); if (!fileName) fileName='koerperdaten.xml'; updateStorageUI(); }
+}
+
+/* ---- Speicherort wechseln ---- */
+async function switchMode(m){
+  if (m===cfg.mode) return;
+  if (cfg.mode==='server'){ dataOwner=null; }
+  if (m==='browser'){
+    const st=browserStored(), sn=st?Object.keys(st.rows).length:0;
+    let take='mine';
+    if (sn && hasData()){
+      const c=await choose('In diesem Browser sind noch '+sn+' Messtage aus einer früheren Nutzung gespeichert.', 'Browser-Daten laden', 'Aktuelle Daten übernehmen');
+      if (!c){ renderStorageBox(true); return; } take = c==='a' ? 'stored' : 'mine';
+    } else if (sn) take='stored';
+    cfg.mode='browser'; saveCfg();
+    if (take==='stored'){ setData(st.rows, st.settings); loaded('Browser-Daten geladen, '+sn+' Messtage'); }
+    else { version++; dirty=true; await saveNow(); toast('Daten werden jetzt im Browser gespeichert'); }
+  } else if (m==='server'){
+    cfg.mode='server'; srvVersion=null;
+    if (!cfg.url && /^https?:/.test(location.protocol) && await isTrackerServer(pageBase())) cfg.url=pageBase();
+    saveCfg(); await serverConnect(true);
+  } else {
+    cfg.mode='xml'; saveCfg(); fileHandle=null; fileName=''; fileState='none'; dirty=hasData();
+    if (FSA){ const h=await idbGet('datei'); if (h){ fileHandle=h; fileName=h.name; fileState='needPerm'; dirty=false; } }
+  }
+  updateStorageUI();
+}
+const pageBase=()=>new URL('.', location.href).href.replace(/\/+$/,'');
+async function isTrackerServer(base){
+  try { const r=await fetch(base+'/api/status',{cache:'no-store'}); const j=await r.json(); return j.app==='koerperdaten'; } catch(e){ return false; }
+}
+
+/* ---- Anzeige ---- */
+const timeStr=d=>d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+const dtStr=s=>{ try { return new Date(s).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); } catch(e){ return s||''; } };
+function statusText(){
+  if (cfg.mode==='browser'){
+    if (!lsOk) return 'Achtung: Dieser Browser speichert nicht – Daten gehen beim Schließen verloren';
+    return dirty ? 'Speichert …' : 'Im Browser gespeichert';
+  }
+  if (cfg.mode==='server'){
+    if (srvState==='none') return 'Server-Adresse fehlt';
+    if (srvState==='connecting') return 'Verbinde mit dem Server …';
+    if (srvState==='setup') return 'Server noch nicht eingerichtet';
+    if (srvState==='login') return 'Nicht angemeldet';
+    if (srvState==='error') return 'Server-Verbindung fehlgeschlagen'+(dirty?' – Änderungen noch nicht gespeichert':'');
+    const who=srvUser?srvUser.name+': ':'';
+    return who+(dirty ? 'speichert …' : lastSaved ? 'gespeichert um '+timeStr(lastSaved) : 'auf dem Server');
+  }
+  if (FSA){
+    if (fileState==='ready') return dirty ? 'Speichert in '+fileName+' …' : 'Gespeichert in '+fileName+(lastSaved?' um '+timeStr(lastSaved):'');
+    if (fileState==='needPerm') return 'Zugriff auf '+fileName+' bestätigen';
+    return hasData() ? 'Nicht gespeichert – lege eine XML-Datei an' : 'Keine XML-Datei verbunden';
+  }
+  return (fileName||'Keine XML-Datei geöffnet')+(dirty && hasData() ? ' – ungespeicherte Änderungen' : lastSaved ? ' – gespeichert um '+timeStr(lastSaved) : '');
+}
+function fileButtons(primary){
+  const b=(t,fn,p)=>el('button',{type:'button', class:'btn small'+(p?' primary':''), text:t, onclick:fn});
+  if (cfg.mode==='browser') return [];
+  if (cfg.mode==='server'){
+    if (srvState==='error') return [b('Erneut verbinden', ()=>srvUser && dirty ? saveNow() : serverConnect(false), true)];
+    if (srvState==='none') return [b('Server einrichten', ()=>showTab('settings'), true)];
+    if (srvState==='ok' && srvUser) return [b('Abmelden', logout)];
+    return [];
+  }
+  if (FSA){
+    if (fileState==='needPerm') return [b(fileName+' wieder öffnen', reconnect, true)];
+    if (fileState==='none') return [b('Neue XML-Datei anlegen', pickNewFile, primary), b('XML-Datei öffnen', pickOpenFile)];
+    return [];
+  }
+  return [b('XML öffnen', openXmlFallback), b('XML speichern', saveXmlFallback, dirty)];
+}
+function updateStorageUI(){
+  setSync(statusText());
+  $('#versionInfo').textContent='Tracker-Version '+TRACKER_VERSION+(cfg.mode==='server' && srvInfo ? ', Server-Version '+srvInfo.version+(srvInfo.datenbank_version?' (Datenbank-Version '+srvInfo.datenbank_version+')':'') : '');
+  const warn=(cfg.mode==='server' && srvState==='error') || (cfg.mode==='browser' && !lsOk) || (cfg.mode==='xml' && dirty && hasData() && !(FSA && fileState==='ready'));
+  $('#sync').classList.toggle('unsaved', warn);
+  $('#sync').title=errMsg||'';
+  $('#fileBtns').replaceChildren(...fileButtons(true));
+  renderLoginCard();
+  renderStorageBox();
+}
+
+/* Anmeldung oben auf jeder Seite, solange sie nötig ist */
+function renderLoginCard(){
+  const need=cfg.mode==='server' && (srvState==='login' || srvState==='setup');
+  let card=$('#loginCard');
+  if (!need){ card?.remove(); return; }
+  const sig=srvState+'|'+cfg.url;
+  if (card && card.dataset.sig===sig) return;
+  card?.remove();
+  const setup=srvState==='setup';
+  const name=el('input',{type:'text', id:'lgName', autocomplete:'username', autocapitalize:'none', spellcheck:'false', required:true});
+  const pw=el('input',{type:'password', id:'lgPw', autocomplete:setup?'new-password':'current-password', required:true});
+  const pw2=setup ? el('input',{type:'password', id:'lgPw2', autocomplete:'new-password', required:true}) : null;
+  const msg=el('p',{class:'login-msg', role:'alert'});
+  const btn=el('button',{type:'submit', class:'btn primary', text:setup?'Administrator anlegen':'Anmelden'});
+  const form=el('form',{class:'login-card', id:'loginCard'},
+    el('h2',{text:setup?'Ersteinrichtung':'Anmelden'}),
+    el('p',{class:'hint', text:setup ? 'Auf dem Server gibt es noch keine Benutzer. Lege den ersten an – er wird Administrator und kann weitere Benutzer anlegen.' : 'Melde dich an, um deine Daten auf dem Server zu sehen. Jeder Benutzer sieht nur seine eigenen Daten.'}),
+    el('div',{class:'login-fields'},
+      el('label',{class:'field'}, document.createTextNode('Benutzername'), name),
+      el('label',{class:'field'}, document.createTextNode(setup?'Passwort (mind. 8 Zeichen)':'Passwort'), pw),
+      pw2 ? el('label',{class:'field'}, document.createTextNode('Passwort wiederholen'), pw2) : null),
+    msg,
+    el('div',{class:'row'}, btn, el('span',{class:'hint', text:'Server: '+srvBase()}),
+      el('button',{type:'button', class:'btn small', text:'Speicherort ändern', onclick:()=>showTab('settings')})));
+  form.dataset.sig=sig;
+  form.onsubmit=async e=>{
+    e.preventDefault(); msg.textContent='';
+    if (setup && pw.value!==pw2.value){ msg.textContent='Die Passwörter stimmen nicht überein.'; return; }
+    btn.disabled=true;
+    try { await doLogin(setup?'/api/einrichtung':'/api/anmelden', {name:name.value.trim(), passwort:pw.value}); }
+    catch(err){ msg.textContent=err.message; }
+    finally { btn.disabled=false; }
+  };
+  $('#stickyHead').after(form);
+}
+
+let storageSig='';
+function renderStorageBox(force){
+  const box=$('#storageInfo'); if (!box) return;
+  const sig=[cfg.mode, srvState, srvUser?.name, srvUser?.admin, fileState, fileName, cfg.url, FSA].join('|');
+  if (!force && sig===storageSig && box.firstChild){ const s=$('#storageStatus'); if (s) s.replaceChildren(el('b',{text:statusText()}), errMsg?document.createTextNode(' – '+errMsg):''); return; }
+  storageSig=sig;
+  const keepUrl=$('#srvUrl')?.value;
+  box.replaceChildren();
+  const b=(t,fn,cls='')=>el('button',{type:'button', class:'btn '+cls, text:t, onclick:fn});
+  const sel=el('select',{id:'storeMode'}, ...Object.entries(MODE_LABEL).map(([k,v])=>{ const o=el('option',{value:k, text:v}); o.selected=k===cfg.mode; return o; }));
+  sel.onchange=()=>switchMode(sel.value);
+  box.append(el('label',{class:'field', style:'max-width:420px; margin-bottom:12px'}, document.createTextNode('Wo sollen die Daten gespeichert werden?'), sel));
+  const status=el('p',{class:'storage-file', id:'storageStatus'}, el('b',{text:statusText()}), errMsg?document.createTextNode(' – '+errMsg):'');
+
+  if (cfg.mode==='browser'){
+    box.append(status, el('p',{class:'hint', text:'Die Daten liegen nur in diesem Browser auf diesem Gerät. Wer die Browserdaten löscht, löscht auch die Messwerte. Sichere sie regelmäßig über „CSV exportieren“ oder nutze den Server bzw. eine XML-Datei.'}));
+  } else if (cfg.mode==='server'){
+    const url=el('input',{type:'text', id:'srvUrl', inputmode:'url', placeholder:'https://raspberrypi.local:8443', autocomplete:'off', spellcheck:'false'}); url.value=keepUrl ?? cfg.url;
+    const connect=async()=>{ let u=url.value.trim(); if (u && !/^https?:\/\//i.test(u)) u='https://'+u; if (u!==cfg.url){ cfg.token=''; srvUser=null; srvVersion=null; if (hasData()) dataOwner=null; } cfg.url=u; saveCfg(); await serverConnect(true); };
+    box.append(el('div',{class:'row', style:'align-items:flex-end'},
+      el('label',{class:'field', style:'flex:1; min-width:220px'}, document.createTextNode('Server-Adresse'), url),
+      b('Verbinden', connect, 'primary')), status);
+    if (srvUser && srvState!=='login'){
+      box.append(el('div',{class:'row', style:'margin-bottom:12px'},
+        el('span',{text:'Angemeldet als '}), el('b',{text:srvUser.name+(srvUser.admin?' (Administrator)':'')}), b('Abmelden', logout, 'small')));
+      box.append(passwordSection(), backupSection());
+      if (srvUser.admin) box.append(adminSection());
+    }
+    box.append(el('p',{class:'hint', text:'Der Server läuft auf einem Raspberry Pi oder PC in deinem Heimnetz, verschlüsselt per HTTPS. Öffnest du die Server-Adresse direkt im Browser, liefert er den Tracker gleich mit aus – so geht es am einfachsten vom Handy.'}));
+  } else if (FSA){
+    box.append(el('p',{class:'storage-file'}, document.createTextNode('Datei: '), el('b',{text:fileName||'keine gewählt'}),
+      document.createTextNode(fileState==='ready' ? ' – jede Änderung wird automatisch gespeichert.' : fileState==='needPerm' ? ' – Zugriff muss nach dem Neustart des Browsers bestätigt werden.' : '')));
+    const row=el('div',{class:'row'});
+    if (fileState==='needPerm') row.append(b(fileName+' wieder öffnen', reconnect, 'primary'));
+    row.append(b(fileState==='none'?'Neue XML-Datei anlegen':'Speichern unter …', pickNewFile, fileState==='none'?'primary':''), b('Andere XML-Datei öffnen', pickOpenFile));
+    if (fileHandle) row.append(b('Datei trennen', disconnect, 'danger'));
+    box.append(row, el('p',{class:'hint', text:'„Neue XML-Datei anlegen“ übernimmt die aktuell angezeigten Daten in die neue Datei. Den Ordner wählst du im Dateidialog; der Browser zeigt aus Sicherheitsgründen nur den Dateinamen.'}));
+  } else {
+    box.append(el('p',{class:'storage-file'}, document.createTextNode('Datei: '), el('b',{text:fileName||'keine geöffnet'})));
+    box.append(el('div',{class:'row'}, b('XML öffnen', openXmlFallback), b('XML speichern', saveXmlFallback, 'primary')));
+    box.append(el('p',{class:'hint', text:'Dieser Browser kann nicht selbst in eine Datei schreiben. „XML speichern“ legt die Datei im Download-Ordner ab; ersetze damit die alte Datei.'}));
+  }
+}
+function subSection(title, ...kids){ return el('details',{class:'sub'}, el('summary',{text:title}), el('div',{class:'sub-body'}, ...kids)); }
+function passwordSection(){
+  const alt=el('input',{type:'password', id:'pwOld', autocomplete:'current-password'}), neu=el('input',{type:'password', id:'pwNew1', autocomplete:'new-password'}), neu2=el('input',{type:'password', id:'pwNew2', autocomplete:'new-password'});
+  const msg=el('p',{class:'hint', role:'status'});
+  const go=async()=>{
+    if (neu.value!==neu2.value){ msg.textContent='Die neuen Passwörter stimmen nicht überein.'; return; }
+    try { await apiJson('/api/ich/passwort', {method:'POST', json:{alt:alt.value, neu:neu.value}}); alt.value=neu.value=neu2.value=''; msg.textContent='Passwort geändert. Andere Geräte müssen sich neu anmelden.'; }
+    catch(e){ msg.textContent=e.message; }
+  };
+  return subSection('Passwort ändern',
+    el('div',{class:'login-fields'}, el('label',{class:'field'}, document.createTextNode('Bisheriges Passwort'), alt),
+      el('label',{class:'field'}, document.createTextNode('Neues Passwort'), neu), el('label',{class:'field'}, document.createTextNode('Neues Passwort wiederholen'), neu2)),
+    el('div',{class:'row'}, el('button',{type:'button', class:'btn', text:'Passwort ändern', onclick:go})), msg);
+}
+function backupSection(){
+  const area=el('div');
+  const d=subSection('Sicherungen meiner Daten', area);
+  d.addEventListener('toggle', ()=>{ if (d.open) loadBackups(area); });
+  return d;
+}
+async function loadBackups(area){
+  area.replaceChildren(el('p',{class:'hint', text:'Lädt …'}));
+  try {
+    const list=await apiJson('/api/sicherungen');
+    area.replaceChildren();
+    if (!list.length){ area.append(el('p',{class:'hint', text:'Noch keine Sicherungen. Der Server legt höchstens alle 10 Minuten eine an, sobald sich deine Daten ändern.'})); return; }
+    const tb=el('tbody');
+    for (const s of list) tb.append(el('tr',{}, el('td',{text:dtStr(s.angelegt)}), el('td',{text:Math.max(1,Math.round(s.groesse/1024))+' KB'}),
+      el('td',{}, el('button',{type:'button', class:'btn small', text:'Wiederherstellen', onclick:async()=>{
+        if (!await ask('Der Stand vom '+dtStr(s.angelegt)+' wird wiederhergestellt. Der aktuelle Stand wird vorher gesichert.','Wiederherstellen','Sicherung wiederherstellen')) return;
+        try { await apiJson('/api/sicherungen/'+s.id+'/wiederherstellen', {method:'POST'}); const t=await serverGet(); const n=fromXml(t); loaded('Stand vom '+dtStr(s.angelegt)+' wiederhergestellt, '+n+' Messtage'); loadBackups(area); }
+        catch(e){ toast(e.message); }
+      }}))));
+    area.append(el('div',{class:'tablewrap'}, el('table',{class:'mt'}, el('thead',{}, el('tr',{}, el('th',{text:'Stand vom'}), el('th',{text:'Größe'}), el('th',{text:''}))), tb)));
+  } catch(e){ area.replaceChildren(el('p',{class:'hint', text:e.message})); }
+}
+function adminSection(){
+  const area=el('div');
+  const d=subSection('Benutzerverwaltung', area);
+  d.addEventListener('toggle', ()=>{ if (d.open) loadUsers(area); });
+  return d;
+}
+async function loadUsers(area){
+  area.replaceChildren(el('p',{class:'hint', text:'Lädt …'}));
+  let list;
+  try { list=await apiJson('/api/benutzer'); } catch(e){ area.replaceChildren(el('p',{class:'hint', text:e.message})); return; }
+  area.replaceChildren();
+  const act=async(fn, okMsg)=>{ try { await fn(); if (okMsg) toast(okMsg); } catch(e){ toast(e.message); } loadUsers(area); };
+  const tb=el('tbody');
+  for (const u of list){
+    const self=srvUser && u.name.toLowerCase()===srvUser.name.toLowerCase();
+    const path='/api/benutzer/'+encodeURIComponent(u.name);
+    tb.append(el('tr',{},
+      el('td',{text:u.name+(self?' (du)':'')}),
+      el('td',{text:u.admin?'Administrator':'Benutzer'}),
+      el('td',{text:u.letzte_anmeldung?dtStr(u.letzte_anmeldung):'–'}),
+      el('td',{text:u.groesse?Math.max(1,Math.round(u.groesse/1024))+' KB':'keine'}),
+      el('td',{}, el('span',{class:'actions'},
+        el('button',{type:'button', class:'btn small', text:'Passwort', onclick:async()=>{ const pw=await pwPrompt('Neues Passwort für '+u.name); if (pw!=null) act(()=>apiJson(path,{method:'POST', json:{passwort:pw}}), 'Passwort für '+u.name+' gesetzt'); }}),
+        el('button',{type:'button', class:'btn small', text:u.admin?'Admin entziehen':'Zum Admin machen', onclick:()=>act(async()=>{ await apiJson(path,{method:'POST', json:{admin:!u.admin}}); if (self){ srvUser.admin=!u.admin; updateStorageUI(); } })}),
+        el('button',{type:'button', class:'btn small danger', text:'Löschen', onclick:async()=>{
+          if (!await ask(u.name+' wird mit allen Daten und Sicherungen gelöscht. Das lässt sich nicht rückgängig machen.','Löschen','Benutzer löschen')) return;
+          act(async()=>{ await apiJson(path,{method:'DELETE'}); if (self){ cfg.token=''; saveCfg(); srvUser=null; dataOwner=null; setData({},null); srvState='login'; loaded(''); } }, u.name+' gelöscht'); }})))));
+  }
+  const nName=el('input',{type:'text', id:'newUserName', autocomplete:'off', autocapitalize:'none', spellcheck:'false'});
+  const nPw=el('input',{type:'password', id:'newUserPw', autocomplete:'new-password'});
+  const nAdm=el('input',{type:'checkbox', id:'newUserAdmin'});
+  area.append(el('div',{class:'tablewrap'}, el('table',{class:'mt'}, el('thead',{}, el('tr',{}, ...['Name','Rolle','Letzte Anmeldung','Daten',''].map(t=>el('th',{text:t})))), tb)),
+    el('h3',{class:'sub-h', text:'Neuen Benutzer anlegen'}),
+    el('div',{class:'login-fields'}, el('label',{class:'field'}, document.createTextNode('Benutzername'), nName), el('label',{class:'field'}, document.createTextNode('Passwort (mind. 8 Zeichen)'), nPw)),
+    el('div',{class:'row'}, el('label',{class:'inline'}, nAdm, document.createTextNode('Administrator')),
+      el('button',{type:'button', class:'btn primary', text:'Benutzer anlegen', onclick:()=>act(()=>apiJson('/api/benutzer',{method:'POST', json:{name:nName.value.trim(), passwort:nPw.value, admin:nAdm.checked}}), 'Benutzer '+nName.value.trim()+' angelegt')})));
+}
+function showServerNotice(){
+  const n=el('div',{class:'notice', id:'srvNotice'},
+    el('span',{text:'Diese Seite kommt von deinem Körperdaten-Server. Melde dich an, um deine Daten dort zu speichern und auf allen Geräten zu sehen.'}),
+    el('span',{class:'row'},
+      el('button',{class:'btn small primary', text:'Anmelden', onclick:async()=>{ n.remove(); await switchMode('server'); }}),
+      el('button',{class:'btn small', text:'Im Browser bleiben', onclick:()=>{ n.remove(); saveCfg(); }})));
+  $('#stickyHead').after(n);
+}
+async function initStorage(){
+  if (cfg.mode==='browser'){
+    const st=browserStored(); if (st) setData(st.rows, st.settings);
+    loaded('');
+    if (!cfgSaved && /^https?:/.test(location.protocol) && await isTrackerServer(pageBase())) showServerNotice();
+  } else if (cfg.mode==='server'){
+    updateStorageUI(); await serverConnect(false);
+  } else {
+    updateStorageUI();
+    if (!FSA) return;
+    const h=await idbGet('datei'); if (!h) return;
+    fileHandle=h; fileName=h.name;
+    try {
+      if (await h.queryPermission({mode:'readwrite'})==='granted'){ const n=fromXml(await (await h.getFile()).text()); fileState='ready'; loaded(''); }
+      else { fileState='needPerm'; updateStorageUI(); }
+    } catch(e){ fileState='needPerm'; updateStorageUI(); }
+  }
+}
+addEventListener('beforeunload', e=>{
+  if (!dirty) return;
+  if (cfg.mode==='browser' && lsOk){ try { localStorage.setItem(LS, JSON.stringify({rows:S.rows, settings:S.settings})); } catch(err){} return; }
+  if (hasData()){ e.preventDefault(); e.returnValue=''; }
+});
+
+/* ---------- Zeitraum und Mittelwerte ---------- */
+const HALF={day:0, week:3.5*DAY, month:15*DAY, quarter:45*DAY, year:182*DAY};
+const GRAN_LABEL={day:'Tageswerte', week:'Wochenmittel', month:'Monatsmittel', quarter:'Quartalsmittel', year:'Jahresmittel'};
+function addMonths(d,n){ const y=+d.slice(0,4), m=+d.slice(5,7)-1+n, day=+d.slice(8,10); const last=new Date(Date.UTC(y,m+1,0)).getUTCDate(); return dOf(Date.UTC(y,m,Math.min(day,last))); }
+function rangeBounds(){
+  const dates=sortedDates(), v=S.settings.view;
+  if (v.preset==='custom' && v.from && v.to) return v.from<=v.to ? {from:v.from,to:v.to} : {from:v.to,to:v.from};
+  if (!dates.length) return null;
+  const end=dates[dates.length-1], months={'1m':1,'3m':3,'6m':6,'1y':12,'3y':36}[v.preset];
+  return {from: months ? addMonths(end,-months) : dates[0], to:end};
+}
+function autoGran(from,to){ const days=(tsOf(to)-tsOf(from))/DAY; if (days<=62) return 'day'; if (days<=280) return 'week'; if (days<=1100) return 'month'; return 'quarter'; }
+function bucketStart(ts,g){
+  const x=new Date(ts), y=x.getUTCFullYear(), m=x.getUTCMonth();
+  switch(g){ case 'day': return ts; case 'week': return ts-((x.getUTCDay()+6)%7)*DAY; case 'month': return Date.UTC(y,m,1); case 'quarter': return Date.UTC(y,m-m%3,1); case 'year': return Date.UTC(y,0,1); }
+}
+function isoWeek(ts){ const day=(new Date(ts).getUTCDay()+6)%7; const th=ts+(3-day)*DAY; const y=new Date(th).getUTCFullYear(); return {w:1+Math.floor((th-Date.UTC(y,0,1))/DAY/7), y}; }
+function bucketLabel(b,g){
+  const x=new Date(b);
+  switch(g){
+    case 'day': return x.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric',timeZone:'UTC'});
+    case 'week': { const {w,y}=isoWeek(b); return 'KW '+w+' '+y+' (ab '+deDate(dOf(b))+')'; }
+    case 'month': return x.toLocaleDateString('de-DE',{month:'long',year:'numeric',timeZone:'UTC'});
+    case 'quarter': return 'Q'+(Math.floor(x.getUTCMonth()/3)+1)+' '+x.getUTCFullYear();
+    case 'year': return String(x.getUTCFullYear());
+  }
+}
+function series(key, from, to, g){
+  const b=new Map();
+  for (const d of sortedDates()){
+    if (d<from || d>to) continue;
+    const v=val(d,key); if (v==null) continue;
+    const k=bucketStart(tsOf(d),g);
+    let o=b.get(k); if (!o){ o={b:k,sum:0,n:0,min:Infinity,max:-Infinity}; b.set(k,o); }
+    o.sum+=v; o.n++; if (v<o.min) o.min=v; if (v>o.max) o.max=v;
+  }
+  return [...b.values()].sort((a,c)=>a.b-c.b).map(o=>({x:o.b+HALF[g], b:o.b, y:o.sum/o.n, min:o.min, max:o.max, n:o.n, sum:o.sum}));
+}
+function movingAvg(pts, days=7){
+  const out=[]; let j=0, sum=0;
+  for (let i=0;i<pts.length;i++){ sum+=pts[i].y; while (pts[i].x-pts[j].x >= days*DAY){ sum-=pts[j].y; j++; } out.push({x:pts[i].x, y:sum/(i-j+1)}); }
+  return out;
+}
+/* Steigung der Ausgleichsgeraden je Tag; null bei zu wenig Daten */
+function slopePerDay(pts){
+  if (pts.length<4 || pts[pts.length-1].x-pts[0].x < 10*DAY) return null;
+  const n=pts.length, mx=pts.reduce((s,p)=>s+p.x,0)/n, my=pts.reduce((s,p)=>s+p.y,0)/n;
+  let num=0, den=0; for (const p of pts){ num+=(p.x-mx)*(p.y-my); den+=(p.x-mx)**2; }
+  return den ? num/den*DAY : null;
+}
+
+/* ---------- Bewertung nach Empfehlungen ---------- */
+const R = (lvl, txt, ref) => ({lvl, txt, ref});
+function bfBands(sex, age){
+  const T = sex==='m' ? [[39,8,20,25],[59,11,22,28],[999,13,25,30]] : [[39,21,33,39],[59,23,34,40],[999,24,36,42]];
+  const lbl = age<=39 ? '20–39' : age<=59 ? '40–59' : '60–79';
+  const r=T.find(t=>age<=t[0]); return {lo:r[1], hi:r[2], ob:r[3], lbl};
+}
+function rate(key, v, ctx){
+  const sx=S.settings.sex, age=ctx.age, M=sx==='m', needSex=R('info','Geschlecht angeben','Bewertung hängt vom Geschlecht ab');
+  switch(key){
+    case 'weight': {
+      if (ctx.slope==null) return R('info','Trend offen','Bewertung des Tempos ab 10 Tagen Daten');
+      const pct=ctx.slope*7/v*100, ref='Abnahme 0,5–1 % pro Woche empfohlen (DAG)';
+      const t='Trend '+sgn(ctx.slope*7,2,' kg')+'/Woche ('+sgn(pct,2,' %')+')';
+      if (pct<=-1) return R('warn','schnelle Abnahme', t+'. '+ref);
+      if (pct<=-0.5) return R('good','empfohlenes Tempo', t+'. '+ref);
+      if (pct<=-0.1) return R('ok','langsame Abnahme', t+'. '+ref);
+      if (pct<0.1) return R('info','stabil', t);
+      return R('info','Zunahme', t);
+    }
+    case 'bmi': {
+      const ref='WHO: 18,5–24,9 Normalgewicht';
+      if (v<18.5) return R('warn','Untergewicht',ref); if (v<25) return R('good','Normalgewicht',ref);
+      if (v<30) return R('ok','Übergewicht',ref); if (v<35) return R('warn','Adipositas Grad I',ref);
+      if (v<40) return R('bad','Adipositas Grad II',ref); return R('bad','Adipositas Grad III',ref);
+    }
+    case 'waist': case 'belly': {
+      if (!sx) return needSex;
+      const [a,b]=M?[94,102]:[80,88], ref=(key==='belly'?'Grenzwerte Taille, ':'')+'WHO/IDF '+(M?'Männer':'Frauen')+': ab '+a+' cm erhöht, ab '+b+' cm deutlich erhöht';
+      if (v<a) return R('good','unauffällig',ref); if (v<b) return R('warn','erhöhtes Risiko',ref); return R('bad','deutlich erhöht',ref);
+    }
+    case 'whr': {
+      if (!sx) return needSex;
+      const a=M?0.90:0.85, ref='WHO '+(M?'Männer':'Frauen')+': ab '+fmt(a,2)+' erhöhtes Risiko';
+      return v<a ? R('good','unauffällig',ref) : R('warn','erhöhtes Risiko',ref);
+    }
+    case 'whtr': {
+      const ref='NICE 2022: 0,40–0,49 gesund, ab 0,50 erhöht, ab 0,60 hoch';
+      if (v<0.4) return R('info','niedrig',ref); if (v<0.5) return R('good','gesund',ref);
+      if (v<0.6) return R('warn','erhöhtes Risiko',ref); return R('bad','hohes Risiko',ref);
+    }
+    case 'bodyfat': {
+      if (!sx || age==null) return R('info','Angaben fehlen','Bewertung braucht Geschlecht und Geburtsdatum');
+      const b=bfBands(sx,age), ref='Gesund '+b.lo+'–'+(b.hi-1)+' % ('+(M?'Männer':'Frauen')+' '+b.lbl+' J., Gallagher 2000)';
+      if (v<b.lo) return R('warn','niedrig',ref); if (v<b.hi) return R('good','gesund',ref);
+      if (v<b.ob) return R('ok','erhöht',ref); return R('bad','hoch',ref);
+    }
+    case 'visceral': return v<=12 ? R('good','gesund','Stufe 1–12 gesund (Tanita-Skala)') : R('warn','erhöht','Stufe 1–12 gesund (Tanita-Skala)');
+    case 'water': {
+      if (!sx) return needSex;
+      const [a,b]=M?[50,65]:[45,60], ref=(M?'Männer':'Frauen')+': '+a+'–'+b+' % üblich';
+      if (v<a) return R('warn','niedrig',ref); if (v<=b) return R('good','im Normbereich',ref); return R('ok','hoch',ref);
+    }
+    case 'rhr': {
+      const ref='Erwachsene 60–100 bpm normal, Trainierte oft darunter';
+      if (v<50) return R('info','sehr niedrig',ref); if (v<60) return R('good','sportlich',ref);
+      if (v<=80) return R('good','normal',ref); if (v<=100) return R('ok','oberer Normbereich',ref); return R('warn','erhöht',ref);
+    }
+    case 'sleep': {
+      const ref='Erwachsene: 7–9 Stunden empfohlen (AASM)';
+      if (v<6) return R('bad','zu wenig',ref); if (v<7) return R('warn','knapp',ref); if (v<=9) return R('good','empfohlen',ref); return R('ok','lang',ref);
+    }
+    case 'steps': {
+      const ref='Ab ca. 7.000 Schritten am Tag deutlich geringeres Sterberisiko (Metaanalysen)';
+      if (v<5000) return R('warn','wenig aktiv',ref); if (v<7000) return R('ok','mäßig aktiv',ref); if (v<10000) return R('good','aktiv',ref); return R('good','sehr aktiv',ref);
+    }
+    case 'balance': {
+      const ref='Zum Abnehmen 500–600 kcal Defizit am Tag empfohlen (DAG-Leitlinie)';
+      if (v<0) return R('info','Überschuss',ref); if (v<300) return R('ok','geringes Defizit',ref);
+      if (v<=800) return R('good','moderates Defizit',ref); if (v<=1000) return R('ok','hohes Defizit',ref); return R('warn','sehr hohes Defizit',ref);
+    }
+    case 'bmr': return R('info','berechnet','Mifflin-St Jeor aus Gewicht, Größe, Alter, Geschlecht');
+  }
+  return R('info','ohne Bewertung','');
+}
+
+/* ---------- Übersicht ---------- */
+function lastDateOf(key){ const d=sortedDates(); for (let i=d.length-1;i>=0;i--) if (val(d[i],key)!=null) return d[i]; return null; }
+function tileData(m){
+  const ld=lastDateOf(m.key); if (!ld) return null;
+  const from30=dOf(tsOf(ld)-29*DAY), win=series(m.key, from30, ld, 'day');
+  const mode=m.dash||'last';
+  let v, when, unit=m.unit, dec=m.dec;
+  if (mode==='avg7'){ const p=series(m.key, dOf(tsOf(ld)-6*DAY), ld, 'day'); v=p.reduce((s,x)=>s+x.y,0)/p.length; when='Ø '+p.length+(p.length===1?' Tag':' Tage')+' bis '+deDate(ld); }
+  else if (mode==='sum30'){ v=win.reduce((s,x)=>s+x.y,0); when='Summe aus '+win.length+' Tagen bis '+deDate(ld); }
+  else { v=val(ld,m.key); when='am '+deDate(ld); }
+  const slope=slopePerDay(win);
+  let disp=v, rating;
+  if (m.key==='fatloss'){
+    disp=v/1000; unit='kg'; dec=2;
+    const ws=slopePerDay(series('weight', from30, ld, 'day'));
+    rating = R(v>=0?'info':'info', v>=0?'theoretisch abgebaut':'theoretisch zugelegt', '7.700 kcal ≈ 1 kg Fett.'+(ws!=null?' Gewichtstrend gleicher Zeitraum: '+sgn(ws*30,1,' kg'):''));
+  } else rating = rate(m.key, v, {age:ageAt(ld), slope});
+  return {m, ld, v:disp, unit, dec, when, rating, change: slope==null?null:slope*30, win};
+}
+function sparkline(pts){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('class','spark'); svg.setAttribute('viewBox','0 0 120 34'); svg.setAttribute('preserveAspectRatio','none'); svg.setAttribute('aria-hidden','true');
+  if (pts.length<2) return svg;
+  const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y), x0=Math.min(...xs), x1=Math.max(...xs), y0=Math.min(...ys), y1=Math.max(...ys);
+  const X=x=>2+(x-x0)/((x1-x0)||1)*116, Y=y=>30-(y-y0)/((y1-y0)||1)*26;
+  const line=pts.map(p=>X(p.x).toFixed(1)+','+Y(p.y).toFixed(1)).join(' ');
+  const mk=(t,a)=>{ const e=document.createElementNS('http://www.w3.org/2000/svg',t); for (const k in a) e.setAttribute(k,a[k]); svg.append(e); };
+  mk('polygon',{points:X(x0)+',32 '+line+' '+X(x1)+',32', fill:'var(--accent)', 'fill-opacity':'.1'});
+  mk('polyline',{points:line, fill:'none', stroke:'var(--accent)', 'stroke-width':'1.6', 'vector-effect':'non-scaling-stroke', 'stroke-linejoin':'round'});
+  const lp=pts[pts.length-1]; mk('circle',{cx:X(lp.x), cy:Y(lp.y), r:'2.6', fill:'var(--accent)'});
+  return svg;
+}
+function emptyState(){
+  return el('div',{class:'empty'},
+    el('h2',{text:'Noch keine Messwerte'}),
+    el('p',{text:'Öffne deine XML-Datei oder lege eine neue an. Danach kannst du Einträge erfassen oder eine CSV-Datei importieren, zum Beispiel den Export aus WeightFit. Zum Ausprobieren gibt es Beispieldaten.'}),
+    el('div',{class:'row'}, ...fileButtons(true),
+      el('button',{class:'btn', text:'Ersten Eintrag erfassen', onclick:()=>showTab('entry')}),
+      el('button',{class:'btn', text:'CSV importieren', onclick:()=>$('#fileInput').click()}),
+      el('button',{class:'btn', text:'Beispieldaten laden', onclick:loadSample})));
+}
+function renderDash(){
+  destroyCharts(true);
+  const area=$('#dashArea'); area.replaceChildren();
+  const dates=sortedDates();
+  if (!dates.length){ area.append(emptyState()); return; }
+  const last=dates[dates.length-1], ago=Math.round((tsOf(todayStr())-tsOf(last))/DAY);
+  area.append(el('div',{class:'dash-head'},
+    el('p',{text:'Letzte Messung am '+deDate(last)+(ago===0?' (heute)':ago===1?' (gestern)':ago>1?' (vor '+ago+' Tagen)':'')+'. Trends über die letzten 30 Tage, Ausgleichsgerade statt Einzelwerte.'}),
+    el('button',{class:'btn small', text:'Übersicht anpassen', onclick:openDashDlg})));
+  const st=S.settings, miss=[];
+  if (!st.height) miss.push('Körpergröße');
+  if (!st.sex) miss.push('Geschlecht');
+  if (!st.birth) miss.push('Geburtsdatum');
+  if (miss.length) area.append(el('div',{class:'notice'},
+    el('span',{text:'Für BMI, Grundumsatz und eine genaue Bewertung fehlen noch: '+miss.join(', ')+'.'}),
+    el('button',{class:'btn small', text:'Angaben ergänzen', onclick:()=>showTab('settings')})));
+
+  const tiles=el('div',{class:'tiles'}), empty=[];
+  for (const k of st.dash.tiles){
+    const m=metric(k); if (!m) continue;
+    const t=tileData(m); if (!t){ empty.push(m.label); continue; }
+    const u=t.unit?' '+t.unit:'';
+    const tile=el('article',{class:'tile lvl-'+t.rating.lvl},
+      el('div',{class:'t-head'}, el('span',{class:'t-name', text:m.label}), el('span',{class:'badge', text:t.rating.txt})),
+      el('div',{class:'t-val'}, document.createTextNode(fmt(t.v,t.dec)), t.unit?el('small',{text:t.unit}):null),
+      el('div',{class:'t-when', text:t.when}),
+      sparkline(t.win));
+    if (t.change!=null && m.key!=='fatloss' && m.key!=='bmr') tile.append(el('div',{class:'t-trend'}, document.createTextNode('30 Tage: '), el('b',{class:trendClass(m,t.change), text:sgn(t.change, m.dec, m.unit?' '+m.unit:'')})));
+    if (t.rating.ref) tile.append(el('div',{class:'t-ref', text:t.rating.ref}));
+    tiles.append(tile);
+  }
+  area.append(tiles);
+  if (empty.length) area.append(el('p',{class:'hidden-list', text:'Ohne Werte ausgeblendet: '+empty.join(', ')+'.'}));
+
+  // Monatstrend
+  const tm=st.dash.trend.map(metric).filter(Boolean);
+  area.append(el('h2',{class:'section-title', text:'Monatstrend'}));
+  if (!tm.length){ area.append(el('p',{class:'hint', text:'Wähle unter „Übersicht anpassen“ die Größen für den Monatstrend.'})); return; }
+  const r={from:dOf(tsOf(last)-29*DAY), to:last};
+  const grid=el('div',{class:'trend-grid'});
+  grid.append(chartCard({id:'dash-trend', title:'Letzte 30 Tage', metrics:tm.map(m=>m.key), type:'line', band:false, smooth:true}, r, 'day', {edit:false, stats:false}));
+  // Zusammenfassung + Monatsmittel
+  const side=el('section',{class:'chart-card'}, el('header',{}, el('h2',{text:'Monatsmittel'})));
+  const sum=el('div',{class:'trend-sum'});
+  for (const m of tm){
+    const pts=series(m.key, r.from, r.to, 'day'), s=slopePerDay(pts), u=m.unit?' '+m.unit:'';
+    if (s==null){ sum.append(el('div',{text:m.label+': zu wenig Werte für einen Trend'})); continue; }
+    sum.append(el('div',{}, document.createTextNode(m.label+': '), el('b',{class:trendClass(m,s), text:sgn(s*30,m.dec,u)+' in 30 Tagen'}), document.createTextNode(' ('+sgn(s*7,2,u)+' je Woche)')));
+  }
+  side.append(sum);
+  const mFrom=addMonths(last.slice(0,8)+'01',-5);
+  const tbl=el('table',{class:'mt'});
+  tbl.append(el('thead',{}, el('tr',{}, el('th',{text:'Monat'}), ...tm.map(m=>el('th',{text:m.label+(m.unit?' ('+m.unit+')':'')})))));
+  const per=tm.map(m=>new Map(series(m.key, mFrom, last, 'month').map(p=>[p.b,p])));
+  const months=[]; for (let i=0;i<6;i++) months.push(tsOf(addMonths(mFrom,i)));
+  const tb=el('tbody');
+  for (let i=months.length-1;i>=0;i--){
+    const b=months[i], tr=el('tr',{}, el('td',{text:bucketLabel(b,'month')+(i===5?' *':'')}));
+    tm.forEach((m,j)=>{ const p=per[j].get(b), prev=i>0?per[j].get(months[i-1]):null;
+      const td=el('td',{}); if (p){ td.append(document.createTextNode(fmt(p.y,m.dec))); if (prev){ const dd=p.y-prev.y; td.append(document.createTextNode(' '), el('small',{class:trendClass(m,dd), text:sgn(dd,m.dec)})); } }
+      tr.append(td); });
+    tb.append(tr);
+  }
+  tbl.append(tb);
+  side.append(el('div',{class:'tablewrap', style:'border:0'}, tbl), el('p',{class:'hint', text:'* laufender Monat. Kleine Zahl: Veränderung zum Vormonat.'}));
+  grid.append(side);
+  area.append(grid);
+}
+
+/* Übersicht anpassen */
+let dOrder=[], dTiles=new Set(), dTrend=new Set();
+function openDashDlg(){
+  const d=S.settings.dash; dTiles=new Set(d.tiles); dTrend=new Set(d.trend);
+  dOrder=[...d.tiles.filter(k=>metric(k)), ...allMetrics().map(m=>m.key).filter(k=>!d.tiles.includes(k))];
+  renderDList(); $('#dashDlg').showModal();
+}
+function renderDList(){
+  const box=$('#dlist'); box.replaceChildren();
+  dOrder.forEach((k,i)=>{
+    const m=metric(k); if (!m) return;
+    const ct=el('input',{type:'checkbox', 'aria-label':m.label+' als Kachel'}); ct.checked=dTiles.has(k); ct.onchange=()=>ct.checked?dTiles.add(k):dTiles.delete(k);
+    const cr=el('input',{type:'checkbox', 'aria-label':m.label+' im Monatstrend'}); cr.checked=dTrend.has(k); cr.onchange=()=>cr.checked?dTrend.add(k):dTrend.delete(k);
+    const mv=(dir)=>{ const j=i+dir; if (j<0||j>=dOrder.length) return; [dOrder[i],dOrder[j]]=[dOrder[j],dOrder[i]]; renderDList(); box.querySelectorAll('.drow')[j]?.querySelector(dir<0?'.up':'.dn')?.focus(); };
+    box.append(el('div',{class:'drow'},
+      el('label',{}, ct, document.createTextNode('Kachel')),
+      el('span',{text:m.label}),
+      el('label',{}, cr, document.createTextNode('Trend')),
+      el('span',{class:'mv'}, el('button',{type:'button', class:'up', 'aria-label':m.label+' nach oben', text:'↑', onclick:()=>mv(-1)}), el('button',{type:'button', class:'dn', 'aria-label':m.label+' nach unten', text:'↓', onclick:()=>mv(1)}))));
+  });
+}
+$('#dashForm').addEventListener('submit', e=>{ e.preventDefault(); S.settings.dash={tiles:dOrder.filter(k=>dTiles.has(k)), trend:dOrder.filter(k=>dTrend.has(k))}; $('#dashDlg').close(); markDirty([],true); renderDash(); });
+$('#dashCancel').onclick=()=>$('#dashDlg').close();
+$('#dashDefault').onclick=()=>{ dTiles=new Set(DEFAULT_DASH.tiles); dTrend=new Set(DEFAULT_DASH.trend); dOrder=[...DEFAULT_DASH.tiles, ...allMetrics().map(m=>m.key).filter(k=>!DEFAULT_DASH.tiles.includes(k))]; renderDList(); };
+
+/* ---------- Diagramme ---------- */
+const charts=new Map();
+function destroyCharts(dash){ for (const [id,c] of charts) if (id.startsWith('dash')===dash){ c.destroy(); charts.delete(id); } }
+function renderCharts(){
+  destroyCharts(false);
+  const area=$('#chartsArea'); area.replaceChildren();
+  const v=S.settings.view;
+  document.querySelectorAll('#presets button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.p===v.preset));
+  $('#customRange').hidden = v.preset!=='custom';
+  $('#gran').value=v.gran;
+  if (!sortedDates().length){ area.append(emptyState()); $('#rangeInfo').textContent=''; return; }
+  const r=rangeBounds(), g=v.gran==='auto' ? autoGran(r.from,r.to) : v.gran;
+  if (v.preset==='custom'){ $('#from').value=r.from; $('#to').value=r.to; }
+  const nIn=sortedDates().filter(d=>d>=r.from && d<=r.to).length;
+  $('#rangeInfo').textContent=deDate(r.from)+' bis '+deDate(r.to)+', '+(v.gran==='auto'?'automatisch: ':'')+GRAN_LABEL[g]+', '+nIn+' Messtage';
+  const grid=el('div',{class:'charts'});
+  for (const c of S.settings.charts) grid.append(chartCard(c, r, g));
+  grid.append(el('button',{class:'add-chart', text:'+ Diagramm hinzufügen', onclick:()=>openChartDlg(null)}));
+  area.append(grid);
+}
+function chartCard(c, r, g, opts={}){
+  const edit=opts.edit!==false;
+  const card=el('section',{class:'chart-card'});
+  card.append(el('header',{}, el('h2',{text:c.title}), edit?el('button',{class:'btn small', text:'Bearbeiten', onclick:()=>openChartDlg(c.id)}):null));
+  const ms=c.metrics.map(metric).filter(Boolean);
+  const data=ms.map(m=>({m, pts:series(m.key, r.from, r.to, g)}));
+  if (opts.stats!==false){
+    const stats=el('div',{class:'stats'});
+    for (const {m,pts} of data){
+      if (!pts.length) continue;
+      const first=pts[0].y, last=pts[pts.length-1].y, avg=pts.reduce((s,p)=>s+p.y*p.n,0)/pts.reduce((s,p)=>s+p.n,0), delta=last-first, u=m.unit?' '+m.unit:'';
+      const sw=el('span',{class:'sw'}); sw.style.background=colorFor(m.key);
+      stats.append(el('div',{class:'stat', title:'Letzter Wert im Zeitraum, Veränderung seit Zeitraumbeginn und Durchschnitt'},
+        el('span',{class:'nm'}, sw, m.label), el('span',{class:'now', text:fmt(last,m.dec)+u}),
+        el('span',{class:'meta'}, el('span',{class:trendClass(m,delta), text:sgn(delta,m.dec,u)}), document.createTextNode('  Ø '+fmt(avg,m.dec)))));
+    }
+    card.append(stats);
+  }
+  if (!data.some(d=>d.pts.length)){
+    card.append(el('div',{class:'nodata', text: ms.length ? 'Keine Werte im gewählten Zeitraum.' : 'Keine Messgrößen gewählt. Über „Bearbeiten“ hinzufügen.'}));
+    return card;
+  }
+  if (typeof Chart==='undefined'){ card.append(el('div',{class:'nodata', text:'Die Diagramm-Bibliothek konnte nicht geladen werden. Bitte Seite neu laden.'})); return card; }
+  const wrap=el('div',{class:'canvas-wrap'}), cv=el('canvas',{'aria-label':c.title, role:'img'}); wrap.append(cv); card.append(wrap);
+  const units=[...new Set(ms.map(m=>m.unit))], axisDec=units.map(u=>Math.max(...ms.filter(m=>m.unit===u).map(m=>m.dec)));
+  const gridC=cssVar('--line'), ink2=cssVar('--ink-2'), spanDays=(tsOf(r.to)-tsOf(r.from))/DAY;
+  const scales={ x:{ type:'linear', min:tsOf(r.from), max:tsOf(r.to)+(g==='day'?0:HALF[g]), grid:{color:gridC}, ticks:{ color:ink2, maxTicksLimit:innerWidth<560?5:8, maxRotation:0,
+    callback:val=>{ const d=new Date(val); return spanDays>500 ? d.toLocaleDateString('de-DE',{month:'short',year:'2-digit',timeZone:'UTC'}) : d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',timeZone:'UTC'}); } } } };
+  units.forEach((u,i)=>{ scales['y'+i]={ position:i%2?'right':'left', grid:{color:gridC, drawOnChartArea:i===0}, ticks:{color:ink2, maxTicksLimit:6, callback:v=>fmt(v, axisDec[i])}, title:{display:!!u, text:u, color:ink2}, grace:'5%' }; });
+  const datasets=[], showBand=c.band && g!=='day';
+  for (const {m,pts} of data){
+    if (!pts.length) continue;
+    const col=colorFor(m.key), yAxisID='y'+units.indexOf(m.unit), isDay=g==='day';
+    if (showBand && c.type!=='bar'){
+      datasets.push({label:'_min', data:pts.map(p=>({x:p.x,y:p.min})), yAxisID, borderWidth:0, pointRadius:0, fill:false, _aux:true});
+      datasets.push({label:'_max', data:pts.map(p=>({x:p.x,y:p.max})), yAxisID, borderWidth:0, pointRadius:0, fill:'-1', backgroundColor:col+'2E', _aux:true});
+    }
+    datasets.push({ label:m.label, data:pts, yAxisID, borderColor:col, backgroundColor:c.type==='bar'?col+'B3':col,
+      borderWidth:c.type==='scatter'?0:2, pointRadius:c.type==='scatter'?3:(isDay && pts.length>60?0:2.5), pointHoverRadius:5,
+      showLine:c.type!=='scatter', tension:.25, spanGaps:true, _m:m, type:c.type==='bar'?'bar':'line', order:1 });
+    if (isDay && c.smooth && pts.length>7 && c.type!=='bar')
+      datasets.push({ label:m.label+' (7-Tage-Mittel)', data:movingAvg(pts), yAxisID, borderColor:col, borderDash:[5,4], borderWidth:1.5, pointRadius:0, tension:.3, _m:m, _trend:true, order:0 });
+  }
+  if (c.type==='bar'){ const n=Math.max(...data.map(d=>d.pts.length),1); datasets.forEach(ds=>{ if (ds.type==='bar') ds.barThickness=Math.max(2, Math.min(28, 400/(n*data.length*1.6))); }); }
+  const chart=new Chart(cv, { type:'line', data:{datasets}, options:{
+    responsive:true, maintainAspectRatio:false, animation:false,
+    interaction:{mode:'nearest', axis:'x', intersect:false}, scales,
+    plugins:{
+      legend:{ display:datasets.filter(d=>!d._aux).length>1, labels:{color:ink2, boxWidth:12, filter:i=>!i.text.startsWith('_')} },
+      tooltip:{ filter:i=>!i.dataset._aux, callbacks:{
+        title:items=>{ const it=items.find(i=>!i.dataset._trend)||items[0], p=it.raw; return p.b!=null ? bucketLabel(p.b,g) : bucketLabel(p.x,'day'); },
+        label:i=>{ const m=i.dataset._m, p=i.raw, u=m.unit?' '+m.unit:''; if (i.dataset._trend) return ' Trend: '+fmt(p.y,m.dec)+u;
+          let s=' '+m.label+': '+fmt(p.y,m.dec)+u; if (p.n>1) s+=' (Ø aus '+p.n+', '+fmt(p.min,m.dec)+'–'+fmt(p.max,m.dec)+')'; return s; },
+        afterBody:items=>{ if (g!=='day') return []; const p=(items.find(i=>!i.dataset._trend)||items[0]).raw; const n=S.rows[dOf(p.b!=null?p.b:p.x)]?.note; return n ? ['', 'Anmerkung: '+(n.length>80?n.slice(0,78)+' …':n)] : []; }
+      } }
+    } } });
+  charts.set(opts.id || c.id, chart);
+  return card;
+}
+
+let editingChart=null;
+function openChartDlg(id){
+  const c=id ? S.settings.charts.find(x=>x.id===id) : {id:null, title:'Neues Diagramm', metrics:[], type:'line', band:true, smooth:true};
+  editingChart=id;
+  $('#chartDlgTitle').textContent=id?'Diagramm bearbeiten':'Diagramm hinzufügen';
+  $('#cTitle').value=c.title; $('#cType').value=c.type; $('#cBand').checked=!!c.band; $('#cSmooth').checked=!!c.smooth;
+  const box=$('#cMetrics'); box.replaceChildren();
+  for (const m of allMetrics()){ const cb=el('input',{type:'checkbox', value:m.key}); cb.checked=c.metrics.includes(m.key); box.append(el('label',{}, cb, document.createTextNode(m.label+(m.unit?' ('+m.unit+')':'')))); }
+  ['#cUp','#cDown','#cDelete'].forEach(s=>$(s).hidden=!id);
+  $('#chartDlg').showModal();
+}
+$('#chartForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const data={ title:$('#cTitle').value.trim()||'Diagramm', metrics:[...$('#cMetrics').querySelectorAll('input:checked')].map(i=>i.value), type:$('#cType').value, band:$('#cBand').checked, smooth:$('#cSmooth').checked };
+  if (editingChart) Object.assign(S.settings.charts.find(x=>x.id===editingChart), data); else S.settings.charts.push({id:'c'+Date.now().toString(36), ...data});
+  $('#chartDlg').close(); markDirty([],true); renderCharts();
+});
+$('#cCancel').onclick=()=>$('#chartDlg').close();
+function moveChart(dir){ const a=S.settings.charts, i=a.findIndex(x=>x.id===editingChart), j=i+dir; if (j<0||j>=a.length) return; [a[i],a[j]]=[a[j],a[i]]; markDirty([],true); $('#chartDlg').close(); renderCharts(); }
+$('#cUp').onclick=()=>moveChart(-1); $('#cDown').onclick=()=>moveChart(1);
+$('#cDelete').onclick=()=>{ S.settings.charts=S.settings.charts.filter(x=>x.id!==editingChart); markDirty([],true); $('#chartDlg').close(); renderCharts(); toast('Diagramm gelöscht'); };
+
+$('#presets').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if (!b) return;
+  const v=S.settings.view; v.preset=b.dataset.p;
+  if (v.preset==='custom' && !(v.from&&v.to)){ const d=sortedDates(); v.to=d.length?d[d.length-1]:todayStr(); v.from=addMonths(v.to,-6); }
+  markDirty([],true); renderCharts();
+});
+$('#gran').addEventListener('change', e=>{ S.settings.view.gran=e.target.value; markDirty([],true); renderCharts(); });
+['#from','#to'].forEach(s=>$(s).addEventListener('change', ()=>{ const f=$('#from').value, t=$('#to').value; if (f&&t){ S.settings.view.from=f; S.settings.view.to=t; markDirty([],true); renderCharts(); } }));
+
+/* ---------- Erfassen ---------- */
+function renderEntryGrid(){
+  const g=$('#entryGrid'); g.replaceChildren();
+  for (const m of storedMetrics()){
+    if (S.settings.hidden.includes(m.key)) continue;
+    const inp=el('input',{type:'text', id:'f-'+m.key, inputmode:m.dec===0?'numeric':'decimal', name:m.key, placeholder:m.key==='bmi'?'automatisch':''});
+    g.append(el('label',{}, el('span',{text:m.label+(m.unit?' ('+m.unit+')':'')}), inp));
+  }
+  fillEntry();
+}
+function renderEntryCalc(){
+  const d=$('#entryDate').value, box=$('#entryCalc'); box.replaceChildren();
+  if (!S.rows[d]){ box.hidden=true; return; }
+  const parts=DERIVED.map(m=>[m, val(d,m.key)]).filter(([,v])=>v!=null);
+  if (!S.rows[d].bmi && val(d,'bmi')!=null) parts.unshift([metric('bmi'), val(d,'bmi')]);
+  box.hidden=!parts.length;
+  for (const [m,v] of parts) box.append(el('span',{}, document.createTextNode(m.label+': '), el('b',{text:fmt(v,m.dec)+(m.unit?' '+m.unit:'')})));
+}
+function fillEntry(){
+  const d=$('#entryDate').value, r=S.rows[d];
+  $('#entryGrid').querySelectorAll('input').forEach(i=>{ const v=r?r[i.name]:null; i.value=v==null?'':String(v).replace('.',','); });
+  $('#entryNote').value=r?.note||'';
+  $('#entryState').textContent=r?'Für dieses Datum gibt es schon einen Eintrag – Änderungen überschreiben ihn.':'';
+  $('#entryDelete').hidden=!r;
+  renderEntryCalc();
+}
+$('#entryDate').addEventListener('change', fillEntry);
+$('#entryClear').onclick=()=>{ $('#entryGrid').querySelectorAll('input').forEach(i=>i.value=''); $('#entryNote').value=''; };
+$('#entryForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const d=$('#entryDate').value; if (!d){ toast('Bitte ein Datum wählen'); return; }
+  const row={...(S.rows[d]||{})}, bad=[];
+  $('#entryGrid').querySelectorAll('input').forEach(i=>{ const n=parseInputNum(i.value); if (n===null) delete row[i.name]; else if (isNaN(n)) bad.push(metric(i.name).label); else row[i.name]=n; });
+  if (bad.length){ toast('Keine gültige Zahl: '+bad.join(', ')); return; }
+  const note=$('#entryNote').value.trim(); if (note) row.note=note; else delete row.note;
+  if (!Object.keys(row).length){ if (S.rows[d]){ delete S.rows[d]; markDirty([d]); toast('Eintrag gelöscht'); renderAll(); toOverview(); } else toast('Bitte mindestens einen Wert eintragen'); return; }
+  S.rows[d]=row; markDirty([d]); toast('Eintrag vom '+deDate(d)+' gespeichert'); renderAll(); toOverview();
+});
+$('#entryDelete').onclick=async()=>{ const d=$('#entryDate').value; if (S.rows[d] && await ask('Der Eintrag vom '+deDate(d)+' wird gelöscht.','Eintrag löschen')){ delete S.rows[d]; markDirty([d]); toast('Eintrag gelöscht'); renderAll(); toOverview(); } };
+
+/* ---------- Datentabelle ---------- */
+let page=0; const PER=100;
+function renderTable(){
+  const dates=sortedDates().slice().reverse();
+  $('#dataCount').textContent=dates.length ? dates.length+' Messtage, '+deDate(dates[dates.length-1])+' bis '+deDate(dates[0]) : '';
+  const area=$('#tableArea'); area.replaceChildren();
+  if (!dates.length){ area.append(el('p',{class:'hint', text:'Noch keine Daten. Importiere eine CSV-Datei oder erfasse einen Eintrag.'})); return; }
+  const cols=allMetrics().filter(m=>dates.some(d=>val(d,m.key)!=null));
+  const hasNote=dates.some(d=>S.rows[d].note);
+  const pages=Math.ceil(dates.length/PER); page=Math.min(page,pages-1);
+  const tbl=el('table',{class:'data-table'});
+  tbl.append(el('thead',{}, el('tr',{}, el('th',{class:'stick', text:'Datum'}), ...cols.map(m=>el('th',{text:m.label+(m.unit?' ('+m.unit+')':''), title:m.derived?'berechnet':null})), hasNote?el('th',{class:'note', text:'Anmerkung'}):null)));
+  const tb=el('tbody');
+  for (const d of dates.slice(page*PER, page*PER+PER)){
+    const r=S.rows[d];
+    const eb=el('button',{type:'button', class:'edit-btn', title:'Eintrag vom '+deDate(d)+' bearbeiten', 'aria-label':'Eintrag vom '+deDate(d)+' bearbeiten', onclick:()=>{ $('#entryDate').value=d; showTab('entry'); fillEntry(); window.scrollTo(0,0); }});
+    eb.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 2.5l2 2L6 12l-3 1 1-3z"/><path d="M10 4l2 2"/></svg>';
+    tb.append(el('tr',{}, el('td',{class:'stick'}, el('span',{class:'datecell'}, eb, document.createTextNode(deDate(d)))),
+      ...cols.map(m=>{ const v=val(d,m.key), calc=m.derived || (m.key==='bmi' && r.bmi==null); return el('td',{class:calc?'calc-cell':null, text:v==null?'':fmt(v,m.dec), title:calc&&v!=null?'berechnet':null}); }),
+      hasNote?el('td',{class:'note', text:r.note||''}):null));
+  }
+  tbl.append(tb);
+  area.append(el('div',{class:'tablewrap data-wrap'}, tbl), el('p',{class:'hint', text:'Graue Werte sind berechnet. Mit dem Stift öffnest du einen Eintrag zum Bearbeiten.'}));
+  if (pages>1) area.append(el('div',{class:'pager'},
+    el('button',{class:'btn small', text:'Neuere', disabled:page===0, onclick:()=>{page--;renderTable();}}),
+    el('span',{text:'Seite '+(page+1)+' von '+pages}),
+    el('button',{class:'btn small', text:'Ältere', disabled:page>=pages-1, onclick:()=>{page++;renderTable();}})));
+}
+
+/* ---------- CSV ---------- */
+function parseCSV(text){
+  text=text.replace(/^﻿/,'');
+  const first=text.split(/\r?\n/)[0];
+  let delim=';', best=-1; for (const c of [';','\t',',']){ const n=first.split(c).length; if (n>best){best=n;delim=c;} }
+  const rows=[]; let row=[], f='', q=false;
+  for (let i=0;i<text.length;i++){
+    const ch=text[i];
+    if (q){ if (ch==='"'){ if (text[i+1]==='"'){ f+='"'; i++; } else q=false; } else f+=ch; }
+    else if (ch==='"') q=true;
+    else if (ch===delim){ row.push(f); f=''; }
+    else if (ch==='\n'||ch==='\r'){ if (ch==='\r'&&text[i+1]==='\n') i++; row.push(f); rows.push(row); row=[]; f=''; }
+    else f+=ch;
+  }
+  if (f!=='' || row.length){ row.push(f); rows.push(row); }
+  return {delim, rows:rows.filter(r=>r.some(c=>c.trim()!==''))};
+}
+function parseCsvNum(s, delim){
+  s=String(s).trim().replace(/\s/g,''); if (!s) return null;
+  if (delim!==',' && s.includes(',')) s=s.replace(/\./g,'').replace(',','.');
+  const n=Number(s); return isFinite(n)?n:NaN;
+}
+function parseDate(s){
+  s=String(s).trim(); let m;
+  const mk=(y,mo,d)=>{ if (+mo<1||+mo>12||+d<1||+d>31) return null; const r=dOf(Date.UTC(+y,+mo-1,+d)); return r.slice(8,10)==pad(+d)?r:null; };
+  if ((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/))) return mk(m[1],m[2],m[3]);
+  if ((m=s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})/))){ let y=m[3]; if (y.length===2) y='20'+y; return mk(y,m[2],m[1]); }
+  if ((m=s.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})/))) return mk(m[1],m[2],m[3]);
+  return null;
+}
+const stripUnit = h => String(h).replace(/\(.*?\)|\[.*?\]/g,'');
+function matchMetric(h){
+  const n=norm(h), base=norm(stripUnit(h));
+  for (const m of storedMetrics()){
+    const keys=[m.csv, m.key, m.label, m.label+'_'+m.unit, ...(m.alias||[])].map(norm);
+    if (keys.includes(n) || keys.includes(base)) return m;
+  }
+  return null;
+}
+/* Import in zwei Schritten: erst auswerten (ändert nichts), dann nach Bestätigung übernehmen */
+const pl=(n,one,many)=>n+' '+(n===1?one:many);
+function planImport(text, fileName){
+  const {delim, rows}=parseCSV(text);
+  if (rows.length<2) throw new Error('Die Datei enthält keine Datenzeilen.');
+  const head=rows[0].map(h=>h.trim()), body=rows.slice(1);
+  let dateCol=head.findIndex(h=>['datum','date','tag','day','zeitpunkt','timestamp','time'].includes(norm(stripUnit(h))));
+  if (dateCol<0) dateCol=head.findIndex((_,i)=>parseDate(body[0][i]||''));
+  if (dateCol<0) throw new Error('Keine Datumsspalte gefunden (Spalte „datum“ erwartet).');
+  const derivedNames=new Set(DERIVED.flatMap(m=>[m.csv,m.key,m.label].map(norm)));
+  const map=[], noteCols=[], created=[], used=new Set();
+  head.forEach((h,i)=>{
+    if (i===dateCol || !h) return;
+    const n=norm(h), base=norm(stripUnit(h));
+    if (NOTE_HEADS.includes(n) || NOTE_HEADS.includes(base)){ noteCols.push(i); return; }
+    if (derivedNames.has(n) || derivedNames.has(base)) return;
+    let m=matchMetric(h) || created.find(c=>norm(c.label)===norm(stripUnit(h).trim()));
+    if (!m){
+      if (!body.some(r=>{ const x=parseCsvNum(r[i]??'',delim); return x!=null && !isNaN(x); })) return;
+      const mm=h.match(/^(.*?)\s*[\(\[](.+)[\)\]]\s*$/), label=(mm?mm[1]:h).trim(), unit=mm?mm[2].trim():'';
+      let key='c_'+norm(label), k=key, c=2; while (metric(k) || created.some(x=>x.key===k)) k=key+'_'+(c++);
+      m={key:k, label, unit, dec:1, csv:h, better:0}; created.push(m);
+    }
+    map[i]=m;
+  });
+  // Werte je Datum sammeln; kommt ein Datum mehrfach vor, gilt je Spalte die spätere Zeile
+  const incoming=new Map(); let skipped=0;
+  for (const r of body){
+    const d=parseDate(r[dateCol]||''); if (!d){ skipped++; continue; }
+    const e={...(incoming.get(d)||{})}; let any=false;
+    map.forEach((m,i)=>{ if (!m) return; const n=parseCsvNum(r[i]??'',delim); if (n!=null && !isNaN(n)){ e[m.key]=n; used.add(m.key); any=true; } });
+    const note=noteCols.map(i=>String(r[i]||'').replace(/\s*[\r\n]+\s*/g,' ').trim()).filter(Boolean).join(' | ');
+    if (note){ e.note=note; any=true; }
+    if (any) incoming.set(d,e); else skipped++;
+  }
+  // Mit den vorhandenen Daten vergleichen
+  const p={fileName, incoming, created, skipped, newDays:0, extDays:0, confDays:0, sameDays:0, conflicts:[], noteConflicts:0,
+           cols:[...used].map(k=>metric(k)||created.find(c=>c.key===k)).filter(Boolean)};
+  for (const [d,e] of incoming){
+    const cur=S.rows[d];
+    if (!cur){ p.newDays++; continue; }
+    let add=false, conf=false;
+    for (const k of Object.keys(e)){
+      if (k==='note') continue;
+      if (cur[k]==null) add=true;
+      else if (Math.abs(cur[k]-e[k])>1e-9){ conf=true; p.conflicts.push({d, k, old:cur[k], neu:e[k]}); }
+    }
+    if (e.note){
+      if (!cur.note) add=true;
+      else if (cur.note!==e.note && !cur.note.includes(e.note)){ conf=true; p.noteConflicts++; p.conflicts.push({d, k:'note', old:cur.note, neu:e.note}); }
+    }
+    if (conf) p.confDays++; else if (add) p.extDays++; else p.sameDays++;
+  }
+  return p;
+}
+function applyImport(p, valueMode, noteMode){
+  for (const m of p.created) if (!metric(m.key)) S.settings.custom.push(m);
+  const touched=[]; let newD=0, changedD=0, overwritten=0;
+  for (const [d,e] of p.incoming){
+    const cur=S.rows[d], row={...(cur||{})}; let ch=false;
+    for (const k of Object.keys(e)){
+      if (k==='note') continue;
+      if (row[k]==null){ row[k]=e[k]; ch=true; }
+      else if (valueMode==='overwrite' && Math.abs(row[k]-e[k])>1e-9){ row[k]=e[k]; ch=true; overwritten++; }
+    }
+    if (e.note){
+      if (!row.note){ row.note=e.note; ch=true; }
+      else if (row.note!==e.note && !row.note.includes(e.note)){
+        if (noteMode==='replace'){ row.note=e.note; ch=true; }
+        else if (noteMode==='append'){ row.note=row.note+' | '+e.note; ch=true; }
+      }
+    }
+    if (ch){ S.rows[d]=row; touched.push(d); if (cur) changedD++; else newD++; }
+  }
+  if (touched.length || p.created.length){ markDirty(touched,true); renderAll(); }
+  const parts=[];
+  if (newD) parts.push(pl(newD,'neuer Tag','neue Tage'));
+  if (changedD) parts.push(pl(changedD,'Tag','Tage')+' ergänzt'+(overwritten?' ('+pl(overwritten,'Wert','Werte')+' überschrieben)':''));
+  if (p.created.length) parts.push('neue Messgrößen: '+p.created.map(m=>m.label).join(', '));
+  toast(parts.length ? 'Import: '+parts.join(', ') : 'Import: keine Änderungen');
+}
+let importPlan=null;
+function showImportDialog(p){
+  importPlan=p;
+  const box=$('#importBody'); box.replaceChildren();
+  const fmtVal=(k,v)=>{ if (k==='note') return v; const m=metric(k)||p.created.find(c=>c.key===k); return m ? fmt(v,m.dec)+(m.unit?' '+m.unit:'') : String(v); };
+  const label=k=>k==='note' ? 'Anmerkung' : (metric(k)||p.created.find(c=>c.key===k)||{label:k}).label;
+  const stat=(n,t,cls='')=>el('div',{class:'imp-stat '+cls}, el('b',{text:String(n)}), el('span',{text:t}));
+  box.append(el('p',{class:'hint', style:'margin:0'}, document.createTextNode(p.fileName+': '+pl(p.incoming.size,'Tag','Tage')+' gelesen'+(p.cols.length?', Spalten: '+p.cols.map(m=>m.label).join(', '):'')+'.')));
+  box.append(el('div',{class:'imp-stats'},
+    stat(p.newDays, p.newDays===1?'neuer Tag':'neue Tage'),
+    stat(p.extDays, (p.extDays===1?'Tag wird':'Tage werden')+' ergänzt (nur leere Felder)'),
+    stat(p.confDays, (p.confDays===1?'Tag':'Tage')+' mit abweichenden Werten', p.confDays?'warn':''),
+    stat(p.sameDays, (p.sameDays===1?'Tag':'Tage')+' schon identisch vorhanden')));
+  if (p.skipped) box.append(el('p',{class:'hint', style:'margin:0', text:pl(p.skipped,'Zeile','Zeilen')+' ohne gültiges Datum oder ohne Werte werden übersprungen.'}));
+  if (p.created.length) box.append(el('p',{class:'hint', style:'margin:0', text:'Neue Messgrößen werden angelegt: '+p.created.map(m=>m.label+(m.unit?' ('+m.unit+')':'')).join(', ')+'.'}));
+  const valueConf=p.conflicts.filter(c=>c.k!=='note').length;
+  const radio=(name,value,text,checked)=>{ const r=el('input',{type:'radio', name, value}); r.checked=checked; return el('label',{class:'inline'}, r, document.createTextNode(text)); };
+  if (valueConf) box.append(el('fieldset',{class:'imp-opt'}, el('legend',{text:valueConf===1?'1 vorhandener Wert weicht ab':valueConf+' vorhandene Werte weichen ab'}),
+    radio('impValues','keep','Vorhandene Werte behalten, nur leere Felder füllen',true),
+    radio('impValues','overwrite','Mit den Werten aus der Datei überschreiben',false)));
+  if (p.noteConflicts) box.append(el('fieldset',{class:'imp-opt'}, el('legend',{text:p.noteConflicts===1?'1 Anmerkung weicht ab':p.noteConflicts+' Anmerkungen weichen ab'}),
+    radio('impNotes','keep','Vorhandene Anmerkung behalten',true),
+    radio('impNotes','append','Neue Anmerkung anhängen',false),
+    radio('impNotes','replace','Durch die neue Anmerkung ersetzen',false)));
+  if (p.conflicts.length){
+    const tb=el('tbody');
+    for (const c of p.conflicts.slice(0,300)) tb.append(el('tr',{}, el('td',{text:deDate(c.d)}), el('td',{text:label(c.k)}), el('td',{class:c.k==='note'?'note':null, text:fmtVal(c.k,c.old)}), el('td',{class:c.k==='note'?'note':null, text:fmtVal(c.k,c.neu)})));
+    box.append(el('details',{class:'sub'}, el('summary',{text:'Abweichungen anzeigen ('+p.conflicts.length+')'}),
+      el('div',{class:'tablewrap imp-table'}, el('table',{class:'mt'}, el('thead',{}, el('tr',{}, ...['Datum','Messgröße','bisher','in der Datei'].map(t=>el('th',{text:t})))), tb)),
+      p.conflicts.length>300 ? el('p',{class:'hint', text:'Die ersten 300 von '+p.conflicts.length+' Abweichungen.'}) : null));
+  }
+  const nothing=!p.newDays && !p.extDays && !p.confDays && !p.created.length;
+  if (nothing) box.append(el('p',{style:'margin:0', text:'Die Datei enthält nichts Neues, alle Werte sind schon vorhanden.'}));
+  $('#importGo').disabled=nothing;
+  $('#importDlg').showModal();
+}
+$('#importForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const v=$('#importForm').querySelector('input[name=impValues]:checked')?.value || 'keep';
+  const n=$('#importForm').querySelector('input[name=impNotes]:checked')?.value || 'keep';
+  $('#importDlg').close();
+  if (importPlan){ applyImport(importPlan, v, n); importPlan=null; }
+});
+$('#importCancel').onclick=()=>{ importPlan=null; $('#importDlg').close(); };
+function exportCSV(){
+  const dates=sortedDates(); if (!dates.length){ toast('Keine Daten zum Exportieren'); return; }
+  const d=S.settings.delim||';', dec=d===','?'.':',';
+  const ms=storedMetrics().filter(m=>dates.some(x=>S.rows[x][m.key]!=null));
+  const ds=S.settings.exportDerived ? DERIVED.filter(m=>dates.some(x=>val(x,m.key)!=null)) : [];
+  const hasNote=dates.some(x=>S.rows[x].note);
+  const esc=s=>/[";,\n\r]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+  const num=(v,p)=>v==null?'':String(p==null?v:+v.toFixed(p)).replace('.',dec);
+  const lines=[['datum',...ms.map(m=>esc(m.csv)),...ds.map(m=>m.csv),...(hasNote?['notiz']:[])].join(d)];
+  for (const x of dates){ const r=S.rows[x]; lines.push([x, ...ms.map(m=>num(r[m.key])), ...ds.map(m=>num(val(x,m.key),m.dec)), ...(hasNote?[esc(r.note||'')]:[])].join(d)); }
+  download('koerperdaten_'+todayStr()+'.csv', '﻿'+lines.join('\r\n')+'\r\n');
+}
+async function download(name, text, type='text/csv'){
+  let dl=null;
+  try { if (window.claude && typeof claude.use==='function') dl=await claude.use('downloads'); } catch(e){}
+  if (dl){
+    try { await dl.save({filename:name, data:text}); toast(name+' gespeichert'); return true; }
+    catch(e){ toast(e && e.code==='declined' ? 'Speichern abgebrochen' : 'Speichern nicht möglich'+(e&&e.message?': '+e.message:'')); return false; }
+  }
+  const url=URL.createObjectURL(new Blob([text],{type:type+';charset=utf-8'})), a=el('a',{href:url, download:name}); document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 4000);
+  toast(name+' im Download-Ordner gespeichert'); return true;
+}
+$('#btnImport').onclick=()=>$('#fileInput').click();
+$('#btnExport').onclick=exportCSV;
+$('#fileInput').addEventListener('change', e=>{
+  const f=e.target.files[0]; if (!f) return;
+  const rd=new FileReader(); rd.onload=()=>{ try { showImportDialog(planImport(String(rd.result), f.name)); } catch(err){ toast('Import nicht möglich: '+err.message); } e.target.value=''; };
+  rd.readAsText(f,'utf-8');
+});
+
+/* ---------- Einstellungen ---------- */
+function renderSettings(){
+  const st=S.settings;
+  $('#height').value=st.height?String(st.height).replace('.',','):'';
+  $('#sex').value=st.sex||''; $('#birth').value=st.birth||''; $('#burnMode').value=st.burnMode||'total';
+  $('#delim').value=st.delim||';'; $('#expDerived').checked=!!st.exportDerived;
+  const list=$('#mlist'); list.replaceChildren();
+  for (const m of storedMetrics()){
+    const cb=el('input',{type:'checkbox', 'aria-label':m.label+' im Formular zeigen'}); cb.checked=!st.hidden.includes(m.key);
+    cb.onchange=()=>{ const h=new Set(st.hidden); cb.checked?h.delete(m.key):h.add(m.key); st.hidden=[...h]; markDirty([],true); renderEntryGrid(); };
+    const isCustom=st.custom.some(c=>c.key===m.key);
+    list.append(el('div',{class:'mrow'}, cb,
+      el('span',{class:'lbl'}, document.createTextNode(m.label+' '), el('small',{text:(m.unit?m.unit+', ':'')+'CSV-Spalte „'+m.csv+'“'})),
+      isCustom?el('button',{class:'btn small danger', text:'Entfernen', onclick:()=>removeMetric(m)}):null));
+  }
+}
+async function removeMetric(m){
+  const n=Object.values(S.rows).filter(r=>r[m.key]!=null).length;
+  if (!await ask('„'+m.label+'“ wird entfernt.'+(n?' Dabei werden '+n+' gespeicherte Werte gelöscht.':''),'Entfernen')) return;
+  const touched=[]; for (const [d,r] of Object.entries(S.rows)){ if (r[m.key]!=null){ delete r[m.key]; touched.push(d); if (!Object.keys(r).length) delete S.rows[d]; } }
+  S.settings.custom=S.settings.custom.filter(c=>c.key!==m.key);
+  S.settings.charts.forEach(c=>c.metrics=c.metrics.filter(k=>k!==m.key));
+  markDirty(touched,true); renderAll();
+}
+$('#height').addEventListener('change', e=>{ const n=parseInputNum(e.target.value); if (n===null) S.settings.height=null; else if (isNaN(n)||n<80||n>250){ toast('Bitte eine Körpergröße in cm eingeben'); return; } else S.settings.height=n; markDirty([],true); renderAll(); toast('Körpergröße gespeichert'); });
+$('#sex').addEventListener('change', e=>{ S.settings.sex=e.target.value; markDirty([],true); renderAll(); });
+$('#birth').addEventListener('change', e=>{ S.settings.birth=e.target.value; markDirty([],true); renderAll(); });
+$('#burnMode').addEventListener('change', e=>{ S.settings.burnMode=e.target.value; markDirty([],true); renderAll(); });
+$('#delim').addEventListener('change', e=>{ S.settings.delim=e.target.value; markDirty([],true); });
+$('#expDerived').addEventListener('change', e=>{ S.settings.exportDerived=e.target.checked; markDirty([],true); });
+$('#btnAddMetric').onclick=()=>{
+  const label=$('#newLabel').value.trim(); if (!label){ toast('Bitte einen Namen eingeben'); return; }
+  const unit=$('#newUnit').value.trim(), dec=+$('#newDec').value;
+  let key='c_'+norm(label), k=key, n=2; while (metric(k)) k=key+'_'+(n++);
+  S.settings.custom.push({key:k, label, unit, dec, csv:norm(label)+(unit?'_'+norm(unit):''), better:0});
+  $('#newLabel').value=''; $('#newUnit').value='';
+  markDirty([],true); renderAll(); toast('„'+label+'“ hinzugefügt');
+};
+$('#btnReset').onclick=async()=>{
+  if (!await ask('Alle Messwerte werden gelöscht. Das lässt sich nicht rückgängig machen.','Alles löschen')) return;
+  S.rows={}; markDirty([],true); renderAll(); toast('Alle Messwerte gelöscht');
+};
+
+/* ---------- Beispieldaten ---------- */
+function loadSample(){
+  const end=tsOf(todayStr()), days=540; let seed=7; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
+  const noise=a=>(rnd()-.5)*2*a;
+  if (!S.settings.height) S.settings.height=182;
+  const touched=[];
+  for (let i=days;i>=0;i--){
+    if (rnd()<.4) continue;
+    const t=1-i/days, ts=end-i*DAY, d=dOf(ts), season=Math.sin((new Date(ts).getUTCMonth()/12)*Math.PI*2)*0.6;
+    const r={ weight:+(89-6.5*t+season+noise(.6)).toFixed(1), bodyfat:+(25-4.8*t+noise(.5)).toFixed(1), rhr:Math.round(63-6*t+noise(2)), steps:Math.round(7000+3500*t+noise(2500)), sleep:+(6.6+0.6*t+noise(.6)).toFixed(1),
+      kcalOut:Math.round(2600+300*t+noise(250)), kcalIn:Math.round(2150+noise(350)) };
+    if (rnd()<.35){ r.waist=+(97-6.5*t+noise(.7)).toFixed(1); r.belly=+(101-7.5*t+noise(.8)).toFixed(1); r.hip=+(104-3*t+noise(.6)).toFixed(1); r.muscle=+(37.5+1.3*t+noise(.3)).toFixed(1); }
+    if (rnd()<.06) r.note='Beispiel: Refeed-Tag';
+    S.rows[d]=r; touched.push(d);
+  }
+  markDirty(touched,true); renderAll(); toast('Beispieldaten geladen – unter Einstellungen wieder löschbar');
+}
+
+/* ---------- Tabs ---------- */
+const current=()=>document.querySelector('nav.tabs button[aria-selected="true"]').dataset.tab;
+function showTab(t){
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t));
+  document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+t);
+  if (t==='charts') renderCharts();
+  if (t==='dash') renderDash();
+}
+document.querySelector('nav.tabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if (b) showTab(b.dataset.tab); });
+function renderTape(){
+  const d=lastDateOf('weight'); const t=$('#tapeRead');
+  t.textContent=d?fmt(S.rows[d].weight,1)+' kg am '+deDate(d):''; t.hidden=!d;
+}
+function renderVisible(){ const t=current(); if (t==='charts') renderCharts(); if (t==='dash') renderDash(); }
+function renderAll(){ renderTape(); renderEntryGrid(); renderTable(); renderSettings(); renderVisible(); }
+let rT; addEventListener('resize', ()=>{ clearTimeout(rT); rT=setTimeout(renderVisible, 250); });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', renderVisible);
+new MutationObserver(renderVisible).observe(document.documentElement,{attributes:true, attributeFilter:['data-theme']});
+
+/* ---------- Fixierter Kopf: Höhe für Tabellen und Sprungziele bereitstellen ---------- */
+(()=>{ const h=$('#stickyHead'); const set=()=>document.documentElement.style.setProperty('--headH', h.offsetHeight+'px');
+  set(); if (window.ResizeObserver) new ResizeObserver(set).observe(h); else addEventListener('resize', set);
+  addEventListener('scroll', ()=>h.classList.toggle('scrolled', scrollY>4), {passive:true}); })();
+
+/* ---------- Start ---------- */
+$('#entryDate').value=todayStr();
+if (typeof Chart!=='undefined') Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;
+renderAll();
+initStorage();
+})();
+</script>
+</body>
+</html>

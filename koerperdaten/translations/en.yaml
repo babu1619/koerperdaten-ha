@@ -1,0 +1,24 @@
+configuration:
+  sicherungen:
+    name: Backups per user
+    description: How many previous versions are kept per user. The server saves at most every 10 minutes.
+  zusaetzliche_namen:
+    name: Additional certificate names
+    description: Other addresses you use to open the tracker, e.g. ha.fritz.box. The IP address and homeassistant.local are already included.
+  eigenes_zertifikat:
+    name: Use own certificate
+    description: Use a certificate from the /ssl folder (e.g. from the Let's Encrypt app) instead of the self-signed one.
+  zertifikat:
+    name: Certificate file
+    description: File name in /ssl
+  schluessel:
+    name: Key file
+    description: File name in /ssl
+  protokoll:
+    name: Log requests
+    description: Show every request in the app log. Only for troubleshooting.
+  umzug_bereitstellen:
+    name: Provide migration data
+    description: Only enable to move to another installation of this app. Writes a copy of the database to /share/koerperdaten/umzug on start and stop; the new app imports it on its first start.
+network:
+  8443/tcp: Tracker in the browser (HTTPS)

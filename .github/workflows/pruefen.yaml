@@ -1,0 +1,62 @@
+# Prüft bei jedem Hochladen, ob die App gültig ist und startet.
+name: Prüfen
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Werkzeuge installieren
+        run: python -m pip install --quiet pyyaml cryptography
+
+      - name: Konfiguration prüfen
+        run: python tools/pruefen.py
+
+      - name: Server-Probelauf (HTTPS, Anmeldung, Daten)
+        run: |
+          set -e
+          D="$RUNNER_TEMP/daten"
+          python koerperdaten/koerperdaten_server.py start --daten "$D" --port 8443 --leise &
+          PID=$!
+          for i in $(seq 1 30); do curl -skf https://127.0.0.1:8443/api/status >/dev/null && break; sleep 1; done
+          curl -skf https://127.0.0.1:8443/api/status | python -c "import sys,json; d=json.load(sys.stdin); assert d['app']=='koerperdaten' and d['einrichtung_noetig'], d; print('Status:', d)"
+          curl -skf https://127.0.0.1:8443/ | grep -q "<title>Körperdaten</title>"
+          TOKEN=$(curl -skf -X POST https://127.0.0.1:8443/api/einrichtung -H 'Content-Type: application/json' -d '{"name":"test","passwort":"test-passwort"}' | python -c "import sys,json; print(json.load(sys.stdin)['token'])")
+          printf '<?xml version="1.0"?><koerperdaten version="1"><eintraege><eintrag datum="2026-01-01" weight="80"/></eintraege></koerperdaten>' > "$RUNNER_TEMP/t.xml"
+          curl -skf -X PUT https://127.0.0.1:8443/api/daten -H "Authorization: Bearer $TOKEN" -H 'If-Match: "neu"' --data-binary @"$RUNNER_TEMP/t.xml" >/dev/null
+          curl -skf https://127.0.0.1:8443/api/daten -H "Authorization: Bearer $TOKEN" | grep -q 'weight="80"'
+          kill $PID; wait $PID || true
+          python koerperdaten/koerperdaten_server.py pruefen --daten "$D"
+          echo "Server-Probelauf erfolgreich."
+
+      - name: Image bauen (wie auf Home Assistant, amd64)
+        run: |
+          docker build -t koerperdaten-test koerperdaten
+          docker run --rm --entrypoint python3 koerperdaten-test /app/koerperdaten_server.py --version
+          docker run --rm --entrypoint python3 koerperdaten-test -c "import cryptography, sqlite3; print('cryptography', cryptography.__version__, '| sqlite', sqlite3.sqlite_version)"
+
+      - name: Versionsnummer erhöht?
+        if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
+        run: |
+          if git diff --quiet "${{ github.event.before }}" "${{ github.sha }}" -- koerperdaten/; then
+            echo "App-Dateien unverändert."
+          elif git diff "${{ github.event.before }}" "${{ github.sha }}" -- koerperdaten/config.yaml | grep -q '^+version:'; then
+            echo "Version erhöht – Home Assistant zeigt das Update an."
+          else
+            echo "::warning file=koerperdaten/config.yaml::App-Dateien geändert, aber die Version in config.yaml nicht erhöht. Home Assistant zeigt dann kein Update an. Tipp: python tools/release.py patch \"Beschreibung\""
+          fi

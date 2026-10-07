@@ -1,0 +1,4 @@
+# Unter Windows würde Git sonst Zeilenenden umwandeln – run.sh startet dann auf dem Green nicht.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.png binary

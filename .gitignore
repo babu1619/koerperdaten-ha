@@ -1,0 +1,10 @@
+# Daten gehören nie ins Repository
+daten/
+*.db
+*.db-wal
+*.db-shm
+*.xml.uebernommen
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

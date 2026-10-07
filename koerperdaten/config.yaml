@@ -1,0 +1,45 @@
+name: Körperdaten-Server
+version: "2.2.0"
+slug: koerperdaten
+description: Körper- und Fitnessdaten-Tracker mit HTTPS, Benutzerkonten und SQLite
+url: "https://github.com/babu1619/koerperdaten-ha"
+arch:
+  - aarch64
+  - amd64
+# Optional: vorgebaute Images von GitHub laden statt auf dem Gerät zu bauen (siehe ANLEITUNG-GITHUB.md)
+# image: "ghcr.io/babu1619/koerperdaten-{arch}"
+startup: application
+boot: auto
+init: false
+hassio_api: true
+# Datenbank wird vor der Sicherung angehalten, damit sie konsistent gesichert wird
+backup: cold
+map:
+  - type: ssl
+    read_only: true
+  # nur für den Umzug zwischen zwei Installationen (Option „Umzugsdaten bereitstellen“)
+  - type: share
+    read_only: false
+ports:
+  8443/tcp: 8443
+ports_description:
+  8443/tcp: Tracker im Browser (HTTPS)
+webui: "https://[HOST]:[PORT:8443]/"
+watchdog: "tcp://[HOST]:[PORT:8443]"
+options:
+  sicherungen: 100
+  zusaetzliche_namen: []
+  eigenes_zertifikat: false
+  zertifikat: fullchain.pem
+  schluessel: privkey.pem
+  protokoll: false
+  umzug_bereitstellen: false
+schema:
+  sicherungen: int(1,1000)
+  zusaetzliche_namen:
+    - str
+  eigenes_zertifikat: bool
+  zertifikat: str
+  schluessel: str
+  protokoll: bool
+  umzug_bereitstellen: bool
