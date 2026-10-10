@@ -19,6 +19,16 @@ Die Verbindung ist trotzdem verschlüsselt. Dauerhaft ohne Warnung und als App a
 2. Den ersten Benutzer anlegen. Er wird Administrator.
 3. Weitere Benutzer legst du unter Einstellungen → Speicherort → **Benutzerverwaltung** an.
 
+## Fotos: Vorher/Nachher-Vergleich
+
+Im Reiter **Fotos** legst du je Termin Bilder von vorne, von der Seite und von hinten ab und vergleichst zwei Termine nebeneinander, mit Schieberegler oder überblendet. Dazu zeigt der Tracker, wie sich Gewicht, Taille und Körperfett zwischen den beiden Terminen verändert haben.
+
+- **Hinzufügen:** „Fotos hinzufügen“ → am Handy Kamera oder Galerie, am PC Dateien auswählen oder ins Fenster ziehen. Mehrere Bilder werden der Reihe nach Vorne, Seite, Hinten zugeordnet. Das Aufnahmedatum kommt, wenn vorhanden, aus dem Foto.
+- **Zuschneiden:** Alle Bilder bekommen das Format 3:4. Verschieben, zoomen (Mausrad oder zwei Finger), ausrichten, drehen, spiegeln. „Umriss letzte Aufnahme“ blendet das vorige Foto halb durchsichtig ein, damit Abstand und Haltung gleich bleiben.
+- **Später ändern:** Unter „Alle Aufnahmen“ → **Bearbeiten**. Das Original bleibt gespeichert, der Zuschnitt lässt sich jederzeit neu setzen; dort kannst du auch einzelne Fotos löschen.
+- **Datenschutz:** Fotos gibt es nur mit dem Server. Sie liegen in `fotos.db` neben der Datenbank, sind nur für das eigene Konto sichtbar und kommen nicht in CSV-Exporte. Beim Hochladen werden die Bilder auf höchstens 2400 Pixel verkleinert; Metadaten wie der Aufnahmeort fallen dabei weg.
+- **Sicherung:** `fotos.db` ist in der Datensicherung enthalten. `sichern` legt zusätzlich eine Kopie `…-fotos.db` an, und der Umzug auf eine andere Installation nimmt die Fotos mit.
+
 ## Als App installieren und Zertifikatswarnung abschalten
 
 Der Server erstellt beim ersten Start eine eigene kleine Zertifizierungsstelle (CA) und damit das HTTPS-Zertifikat. Installierst du das **Stammzertifikat** einmal auf einem Gerät, vertraut es dem Server: Die Warnung verschwindet, und Chrome bietet „App installieren“ an. Das Zertifikat erneuert der Server selbst, das Stammzertifikat gilt 10 Jahre.

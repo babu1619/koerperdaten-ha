@@ -1,5 +1,21 @@
 # Änderungen
 
+## 2.5.0
+
+- Fotos: Vorher/Nachher-Vergleich mit Zuschnitt
+
+## 2.4.0
+
+- Neuer Reiter **Fotos**: Vorher/Nachher-Vergleich von vorne, von der Seite und von hinten – nebeneinander, mit Schieberegler oder überblendet, mit Veränderung von Gewicht, Taille und Körperfett
+- Fotos per Kamera, aus der Galerie oder von der Festplatte (auch per Ziehen) hinzufügen; Aufnahmedatum aus dem Foto
+- Zuschneiden im Format 3:4 mit Zoom, Ausrichten, Drehen, Spiegeln und eingeblendetem Umriss der letzten Aufnahme; Original bleibt erhalten, Zuschnitt später änderbar
+- Fotos liegen nur auf dem Server in `fotos.db`, nur für das eigene Konto; Metadaten wie der Aufnahmeort werden entfernt
+- `sichern`, `pruefen` und der Umzug berücksichtigen die Fotos
+
+## 2.3.1
+
+- CA-Zertifikat lässt sich auf Android zuverlässig herunterladen; zusätzlich im Ordner `share`
+
 ## 2.3.0
 
 - Aktivitätskalorien erfassen; Kalorienverbrauch = Aktivitätskalorien + Grundumsatz (ein gemessener Gesamtverbrauch hat Vorrang)

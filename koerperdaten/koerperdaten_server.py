@@ -56,8 +56,9 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 APP = "koerperdaten"
-VERSION = "2.3"
+VERSION = "2.5"
 MAX_BODY = 20 * 1024 * 1024        # XML-Daten
+MAX_FOTO_BODY = 48 * 1024 * 1024   # ein Foto mit Original, Zuschnitt und Vorschau (Base64)
 MAX_JSON = 64 * 1024               # Anmeldung, Verwaltung
 BACKUP_INTERVAL = 10 * 60          # höchstens alle 10 Minuten eine Sicherung je Benutzer
 SESSION_DAYS = 90                  # Anmeldung bleibt 90 Tage ab letzter Nutzung gültig
@@ -224,6 +225,10 @@ def write_handover(dbfile: Path, folder: Path):
         print(f"Umzugsdaten NICHT geschrieben: {problem}")
         return False
     os.replace(tmp, target)
+    if copy_photo_db(dbfile.parent / "fotos.db", folder / "fotos.db"):
+        print(f"Fotos für den Umzug geschrieben: {folder / 'fotos.db'}")
+    else:
+        (folder / "fotos.db").unlink(missing_ok=True)
     cert_dir = dbfile.parent / "zertifikat"      # selbst signiertes Zertifikat mitnehmen, dann entfällt die neue Browser-Warnung
     if (cert_dir / "zertifikat.pem").exists():
         import shutil
@@ -235,6 +240,160 @@ def write_handover(dbfile: Path, folder: Path):
     except OSError:
         pass
     print(f"Umzugsdaten geschrieben: {target}")
+    return True
+
+
+FOTO_ANSICHTEN = ("vorne", "seite", "hinten")
+FOTO_ARTEN = {"bild": 4 * 1024 * 1024, "vorschau": 512 * 1024, "original": 30 * 1024 * 1024}
+FOTO_SCHEMA = """
+CREATE TABLE IF NOT EXISTS fotos(
+  id INTEGER PRIMARY KEY,
+  benutzer_id INTEGER NOT NULL,
+  datum TEXT NOT NULL,
+  ansicht TEXT NOT NULL,
+  zuschnitt TEXT NOT NULL DEFAULT '{}',
+  original BLOB NOT NULL,
+  original_typ TEXT NOT NULL,
+  bild BLOB NOT NULL,
+  vorschau BLOB NOT NULL,
+  breite INTEGER,
+  hoehe INTEGER,
+  geaendert TEXT NOT NULL,
+  UNIQUE(benutzer_id, datum, ansicht)
+);
+CREATE INDEX IF NOT EXISTS idx_fotos_benutzer ON fotos(benutzer_id, datum);
+"""
+
+
+def image_type(data: bytes):
+    """Bildformat an den ersten Bytes erkennen; nur JPEG, PNG und WebP werden angenommen."""
+    if data[:3] == b"\xff\xd8\xff":
+        return "image/jpeg"
+    if data[:8] == b"\x89PNG\r\n\x1a\n":
+        return "image/png"
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "image/webp"
+    return None
+
+
+class PhotoStore:
+    """Fotos liegen in einer eigenen Datei fotos.db neben der Hauptdatenbank.
+    So bleiben die Sicherungen vor Updates klein, und der Umzug nimmt die Fotos trotzdem mit."""
+
+    def __init__(self, path: Path):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        self.path = path
+        self.lock = threading.RLock()
+        self.con = sqlite3.connect(str(path), check_same_thread=False, isolation_level=None)
+        self.con.row_factory = sqlite3.Row
+        self.con.execute("PRAGMA journal_mode=WAL")
+        self.con.execute("PRAGMA busy_timeout=5000")
+        if self.con.execute("PRAGMA user_version").fetchone()[0] < 1:
+            self.con.executescript("BEGIN;\n" + FOTO_SCHEMA + "\nPRAGMA user_version=1;\nCOMMIT;")
+        _private(path)
+
+    def q(self, sql, args=()):
+        with self.lock:
+            return self.con.execute(sql, args).fetchall()
+
+    def list(self, uid):
+        return [{"id": r["id"], "datum": r["datum"], "ansicht": r["ansicht"], "zuschnitt": json.loads(r["zuschnitt"] or "{}"),
+                 "breite": r["breite"], "hoehe": r["hoehe"], "geaendert": r["geaendert"], "groesse": r["groesse"]}
+                for r in self.q("SELECT id, datum, ansicht, zuschnitt, breite, hoehe, geaendert, "
+                                "length(original)+length(bild)+length(vorschau) AS groesse "
+                                "FROM fotos WHERE benutzer_id=? ORDER BY datum, ansicht", (uid,))]
+
+    def get(self, uid, foto_id, kind):
+        col = {"bild": "bild", "vorschau": "vorschau", "original": "original"}[kind]
+        rows = self.q(f"SELECT {col} AS daten, original_typ, geaendert FROM fotos WHERE id=? AND benutzer_id=?", (foto_id, uid))
+        if not rows:
+            raise ApiError(404, "Dieses Foto gibt es nicht")
+        data = bytes(rows[0]["daten"])
+        return data, (rows[0]["original_typ"] if kind == "original" else image_type(data) or "image/jpeg")
+
+    def put(self, uid, datum, ansicht, zuschnitt, bild, vorschau, original=None, original_typ=None, breite=None, hoehe=None):
+        t = iso(now_utc())
+        z = json.dumps(zuschnitt, ensure_ascii=False)
+        with self.lock:
+            if original is None:
+                cur = self.con.execute("UPDATE fotos SET zuschnitt=?, bild=?, vorschau=?, geaendert=? "
+                                       "WHERE benutzer_id=? AND datum=? AND ansicht=?", (z, bild, vorschau, t, uid, datum, ansicht))
+                if cur.rowcount == 0:
+                    raise ApiError(400, "Für dieses Foto fehlt das Original")
+            else:
+                self.con.execute("""INSERT INTO fotos(benutzer_id, datum, ansicht, zuschnitt, original, original_typ, bild, vorschau, breite, hoehe, geaendert)
+                                    VALUES(?,?,?,?,?,?,?,?,?,?,?)
+                                    ON CONFLICT(benutzer_id, datum, ansicht) DO UPDATE SET zuschnitt=excluded.zuschnitt,
+                                      original=excluded.original, original_typ=excluded.original_typ, bild=excluded.bild,
+                                      vorschau=excluded.vorschau, breite=excluded.breite, hoehe=excluded.hoehe, geaendert=excluded.geaendert""",
+                                 (uid, datum, ansicht, z, original, original_typ, bild, vorschau, breite, hoehe, t))
+            row = self.con.execute("SELECT id FROM fotos WHERE benutzer_id=? AND datum=? AND ansicht=?", (uid, datum, ansicht)).fetchone()
+        return {"id": row["id"], "geaendert": t}
+
+    def delete(self, uid, datum, ansicht):
+        with self.lock:
+            return self.con.execute("DELETE FROM fotos WHERE benutzer_id=? AND datum=? AND ansicht=?", (uid, datum, ansicht)).rowcount
+
+    def delete_user(self, uid):
+        self.q("DELETE FROM fotos WHERE benutzer_id=?", (uid,))
+
+    def remove_orphans(self, user_ids):
+        """Fotos gelöschter Benutzer entfernen."""
+        ids = set(user_ids)
+        orphans = {r["benutzer_id"] for r in self.q("SELECT DISTINCT benutzer_id FROM fotos")} - ids
+        for uid in orphans:
+            self.delete_user(uid)
+        if orphans:
+            with self.lock:
+                self.con.execute("VACUUM")
+        return len(orphans)
+
+    def stats(self):
+        r = self.q("SELECT COUNT(*) AS n, COUNT(DISTINCT benutzer_id) AS b, "
+                   "COALESCE(SUM(length(original)+length(bild)+length(vorschau)),0) AS groesse FROM fotos")[0]
+        return r["n"], r["b"], r["groesse"]
+
+    def backup_to(self, target: Path):
+        target.parent.mkdir(parents=True, exist_ok=True)
+        tmp = target.with_suffix(".tmp")
+        dst = sqlite3.connect(str(tmp))
+        try:
+            with self.lock:
+                self.con.backup(dst)
+            dst.execute("PRAGMA journal_mode=DELETE")
+        finally:
+            dst.close()
+        os.replace(tmp, target)
+        return target
+
+    def close(self):
+        with self.lock:
+            try:
+                self.con.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+            except sqlite3.Error:
+                pass
+            self.con.close()
+
+
+def copy_photo_db(src: Path, target: Path):
+    """Konsistente Kopie einer fotos.db (auch während der Server läuft). False = keine Fotos vorhanden."""
+    if not src.exists():
+        return False
+    target.parent.mkdir(parents=True, exist_ok=True)
+    tmp = target.with_suffix(".tmp")
+    a = sqlite3.connect(f"file:{src}?mode=ro", uri=True)
+    b = sqlite3.connect(str(tmp))
+    try:
+        a.backup(b)
+        b.execute("PRAGMA journal_mode=DELETE")
+    finally:
+        b.close()
+        a.close()
+    os.replace(tmp, target)
+    try:
+        os.chmod(target, 0o600)
+    except OSError:
+        pass
     return True
 
 
@@ -559,6 +718,7 @@ class Handler(BaseHTTPRequestHandler):
     quiet = False
     legacy_xml: Path = None
     ca_file: Path = None
+    photos: PhotoStore = None
 
     # ---- Hilfen
     def _cors(self):
@@ -579,7 +739,8 @@ class Handler(BaseHTTPRequestHandler):
         self._cors()
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
-        self.send_header("Cache-Control", "no-store")
+        if not any(k.lower() == "cache-control" for k in (headers or {})):
+            self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "no-referrer")
         for k, v in (headers or {}).items():
@@ -688,6 +849,7 @@ class Handler(BaseHTTPRequestHandler):
         if m == "GET" and path == "/api/status":
             return self._json(200, {"app": APP, "version": VERSION, "datenbank_version": SCHEMA_VERSION, "https": self.https,
                                     "ca": bool(self.ca_file and self.ca_file.exists()),
+                                    "fotos": self.photos is not None,
                                     "einrichtung_noetig": db.user_count() == 0})
 
         if m == "POST" and path == "/api/einrichtung":
@@ -773,6 +935,8 @@ class Handler(BaseHTTPRequestHandler):
                 raise ApiError(404, "Diesen Benutzer gibt es nicht")
             if m == "DELETE":
                 db.delete_user(target["id"])
+                if self.photos:
+                    self.photos.delete_user(target["id"])
                 return self._json(200, {"ok": True})
             b = self._json_body()
             if "passwort" in b:
@@ -781,6 +945,65 @@ class Handler(BaseHTTPRequestHandler):
                 db.set_admin(target["id"], bool(b["admin"]))
             return self._json(200, {"ok": True})
 
+        if path.startswith("/api/fotos"):
+            return self._fotos(m, path)
+
+        raise ApiError(404, "Nicht gefunden")
+
+    # ---- Fotos (nur für das eigene Konto)
+    def _fotos(self, m, path):
+        u = self._user()
+        ph = self.photos
+        if ph is None:
+            raise ApiError(404, "Fotos sind auf diesem Server nicht verfügbar")
+        if path == "/api/fotos" and m == "GET":
+            return self._json(200, ph.list(u["id"]))
+        mt = re.fullmatch(r"/api/fotos/(\d+)/(bild|vorschau|original)", path)
+        if mt and m == "GET":
+            data, typ = ph.get(u["id"], int(mt.group(1)), mt.group(2))
+            # Adresse enthält ?v=<Änderungszeit>, deshalb darf der Browser das Bild privat zwischenspeichern
+            return self._send(200, data, typ, {"Cache-Control": "private, max-age=31536000, immutable"})
+        mt = re.fullmatch(r"/api/fotos/(\d{4}-\d{2}-\d{2})/(vorne|seite|hinten)", path)
+        if mt and m in ("PUT", "DELETE"):
+            datum, ansicht = mt.groups()
+            try:
+                datetime.strptime(datum, "%Y-%m-%d")
+            except ValueError:
+                raise ApiError(400, "Ungültiges Datum")
+            if m == "DELETE":
+                if not ph.delete(u["id"], datum, ansicht):
+                    raise ApiError(404, "Dieses Foto gibt es nicht")
+                return self._json(200, {"ok": True})
+            try:
+                b = json.loads(self._body(MAX_FOTO_BODY) or b"{}")
+                if not isinstance(b, dict):
+                    raise ValueError
+            except ValueError:
+                raise ApiError(400, "Ungültige Anfrage")
+            parts = {}
+            for kind, limit in FOTO_ARTEN.items():
+                v = b.get(kind)
+                if v is None:
+                    continue
+                try:
+                    raw = base64.b64decode(str(v), validate=True)
+                except ValueError:
+                    raise ApiError(400, f"{kind}: keine gültigen Bilddaten")
+                if not raw or len(raw) > limit:
+                    raise ApiError(413, f"{kind}: Bild zu groß")
+                if not image_type(raw):
+                    raise ApiError(400, f"{kind}: nur JPEG, PNG oder WebP")
+                parts[kind] = raw
+            if "bild" not in parts or "vorschau" not in parts:
+                raise ApiError(400, "Zuschnitt und Vorschau fehlen")
+            z = b.get("zuschnitt") if isinstance(b.get("zuschnitt"), dict) else {}
+            if len(json.dumps(z)) > 2000:
+                raise ApiError(400, "Ungültiger Zuschnitt")
+            dims = [b.get(k) if isinstance(b.get(k), int) and 0 < b.get(k) < 100000 else None for k in ("breite", "hoehe")]
+            orig = parts.get("original")
+            res = ph.put(u["id"], datum, ansicht, z, parts["bild"], parts["vorschau"],
+                         orig, image_type(orig) if orig else None, *dims)
+            return self._json(200, res)
         raise ApiError(404, "Nicht gefunden")
 
 
@@ -1080,6 +1303,17 @@ def main():
             print(f"  Datenbank-Version {ro.schema_version()} (Programm erwartet {SCHEMA_VERSION}), "
                   f"zuletzt genutzt von Programmversion {ro.meta('programmversion') or '2.0 oder älter'}")
             print(f"  {n_users} Benutzer, {n_data} mit Daten")
+            pf = folder / "fotos.db"
+            if pf.exists():
+                pc = sqlite3.connect(f"file:{pf}?mode=ro", uri=True)
+                try:
+                    res = pc.execute("PRAGMA integrity_check").fetchone()[0]
+                    n, size = pc.execute("SELECT COUNT(*), COALESCE(SUM(length(original)+length(bild)+length(vorschau)),0) FROM fotos").fetchone()
+                finally:
+                    pc.close()
+                if res != "ok":
+                    sys.exit(f"Fotodatenbank beschädigt: {res}")
+                print(f"  Fotos in Ordnung: {n} Bilder, {size / 1048576:.1f} MB")
             return
         ro = Database(dbfile, 1, migrate=False)
         stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -1089,6 +1323,9 @@ def main():
         if problem:
             sys.exit(f"Die Sicherung ist fehlerhaft: {problem}")
         print(f"Gesichert: {target}")
+        ftarget = target.with_name(target.stem + "-fotos.db")
+        if copy_photo_db(folder / "fotos.db", ftarget):
+            print(f"Fotos gesichert: {ftarget}")
         return
 
     if cmd == "wiederherstellen":
@@ -1105,6 +1342,7 @@ def main():
             print(f"Bisheriger Stand gesichert: {keep}")
         for suffix in ("-wal", "-shm"):
             Path(str(dbfile) + suffix).unlink(missing_ok=True) if sys.version_info >= (3, 8) else None
+        folder.mkdir(parents=True, exist_ok=True)
         tmp = dbfile.with_suffix(".tmp")
         srcdb = sqlite3.connect(f"file:{src}?mode=ro", uri=True)
         dst = sqlite3.connect(str(tmp))
@@ -1166,6 +1404,14 @@ def main():
     use_https = not a.ohne_https
     port = a.port or (8443 if use_https else 8080)
     Handler.db = db
+    try:
+        Handler.photos = PhotoStore(folder / "fotos.db")
+        removed = Handler.photos.remove_orphans(r["id"] for r in db.q("SELECT id FROM benutzer"))
+        if removed:
+            print(f"Fotos von {removed} gelöschten Benutzer(n) entfernt")
+    except sqlite3.Error as e:
+        print(f"Hinweis: Fotodatenbank nicht verfügbar ({e}) – der Tracker läuft ohne Fotos weiter")
+        Handler.photos = None
     Handler.html_file = Path(a.html).expanduser()
     Handler.quiet = a.leise
     Handler.https = use_https
@@ -1225,6 +1471,8 @@ def main():
     finally:
         httpd.server_close()
         db.close()
+        if Handler.photos:
+            Handler.photos.close()
         print("Server beendet, Datenbank sauber geschlossen.")
         if handover:
             write_handover(dbfile, handover)

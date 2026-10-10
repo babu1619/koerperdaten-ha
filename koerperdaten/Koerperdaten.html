@@ -264,6 +264,95 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
 .toast.show{ opacity:1; }
 @media (prefers-reduced-motion: reduce){ .toast{ transition:none; } }
 @media (max-width:560px){ header.top{ padding-top:10px; } h1{ font-size:2rem; } .tape{ height:20px; } .tape-read{ font-size:.8rem; line-height:1.2; } .titlebar{ padding-bottom:6px; } nav.tabs{ margin-top:8px; } nav.tabs button{ padding:8px 10px; } .canvas-wrap{ height:220px; } .tiles{ grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:10px; } .t-val{ font-size:1.75rem; } }
+/* Fotos */
+.icon-btn{ width:40px; height:40px; flex:none; display:inline-grid; place-items:center; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); cursor:pointer; padding:0; }
+.btn[aria-pressed="true"]{ background:color-mix(in srgb, var(--accent) 16%, var(--surface)); border-color:var(--accent); color:var(--ink); }
+.foto-toolbar{ margin-bottom:12px; }
+.foto-arrow{ color:var(--ink-2); }
+.foto-add{ margin-left:auto; }
+.foto-stats{ display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:10px; margin-bottom:16px; }
+.foto-stats .t-val{ font-size:1.8rem; }
+.foto-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:16px; margin-bottom:26px; }
+.foto-card{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:10px; min-width:0; }
+.foto-card header{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.foto-card h2{ font-family:var(--cond); font-weight:600; font-size:1.45rem; margin:0; }
+.foto-pair{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.foto-frame{ position:relative; aspect-ratio:3/4; border-radius:8px; overflow:hidden; background:var(--sunk); }
+.foto-frame img, .foto-clip img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; user-select:none; -webkit-user-drag:none; }
+.foto-frame .none{ position:absolute; inset:0; display:grid; place-items:center; color:var(--ink-2); font-size:.9rem; text-align:center; padding:8px; }
+.foto-clip{ position:absolute; inset:0; background:var(--sunk); }
+.foto-chip{ position:absolute; top:8px; left:8px; z-index:3; padding:2px 8px; border-radius:99px; background:rgba(20,25,24,.78); color:#fff; font-size:.8rem; font-weight:500; white-space:nowrap; }
+.foto-chip.after{ background:#1F6F78; }
+.foto-chip.r{ left:auto; right:8px; }
+.foto-cmp{ cursor:ew-resize; touch-action:pan-y; }
+.foto-line{ position:absolute; top:0; bottom:0; width:2px; margin-left:-1px; background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.25); z-index:2; pointer-events:none; }
+.foto-knob{ position:absolute; top:50%; width:40px; height:40px; margin:-20px 0 0 -20px; border-radius:50%; background:#fff; color:#1C2422; box-shadow:0 2px 8px rgba(0,0,0,.3); display:grid; place-items:center; z-index:2; pointer-events:none; }
+.foto-range{ display:flex; align-items:center; gap:10px; font-size:.85rem; color:var(--ink-2); }
+.foto-range input{ flex:1; accent-color:var(--accent); min-height:32px; }
+.foto-card:fullscreen{ background:var(--bg); padding:20px; overflow:auto; border:0; border-radius:0; }
+.foto-card:fullscreen .foto-pair{ width:min(100%, calc((100vh - 150px) * 1.5 + 8px)); margin:0 auto; }
+.foto-card:fullscreen > .foto-frame{ width:min(100%, calc((100vh - 160px) * .75)); margin:0 auto; }
+.foto-card:fullscreen .foto-range{ width:min(100%, 600px); margin:0 auto; }
+.foto-h{ margin-top:4px; }
+.foto-sessions{ display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; }
+.foto-sess{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px; display:flex; flex-direction:column; gap:7px; min-width:0; }
+.foto-sess.is-after{ border:2px solid var(--accent); padding:9px; }
+.foto-sess.is-before{ border:2px solid var(--ink-2); padding:9px; }
+.sess-head{ display:flex; justify-content:space-between; align-items:center; gap:6px; }
+.badge.b-after{ background:var(--accent); color:var(--accent-ink); }
+.badge.b-before{ background:var(--ink-2); color:var(--bg); }
+.foto-sess .thumbs{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; }
+.foto-sess .thumbs span{ aspect-ratio:3/4; border-radius:4px; background:var(--sunk); overflow:hidden; }
+.foto-sess .thumbs img{ width:100%; height:100%; object-fit:cover; display:block; }
+.sess-acts{ display:flex; gap:4px; flex-wrap:wrap; }
+img.broken{ opacity:.3; }
+dialog.foto-dlg{ width:min(1080px,calc(100vw - 24px)); max-height:calc(100dvh - 24px); }
+dialog.foto-dlg.dragging{ outline:3px dashed var(--accent); outline-offset:-6px; }
+.fe{ gap:12px; }
+.fe-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+.fe-head .fe-exist{ flex-basis:100%; margin:0; }
+.fe-body{ display:grid; grid-template-columns:270px minmax(0,1fr); gap:16px; }
+.fe-slots{ display:flex; flex-direction:column; gap:8px; min-width:0; }
+.fe-slot{ display:flex; gap:10px; align-items:center; padding:8px; border:1px solid var(--line); border-radius:10px; background:var(--surface); color:var(--ink); cursor:pointer; text-align:left; font:inherit; }
+.fe-slot[aria-pressed="true"]{ border:2px solid var(--accent); padding:7px; }
+.fe-slot-t{ display:flex; flex-direction:column; min-width:0; }
+.fe-thumb{ width:54px; height:72px; flex:none; border-radius:6px; background:var(--sunk); overflow:hidden; display:grid; place-items:center; color:var(--ink-2); }
+.fe-thumb img, .fe-thumb canvas{ width:100%; height:100%; object-fit:cover; display:block; }
+.fe-st{ font-size:.82rem; font-weight:500; }
+.st-ok{ color:var(--good); } .st-new{ color:var(--accent); } .st-miss{ color:var(--ink-2); } .st-del{ color:var(--bad); }
+.fe-drop{ border:2px dashed var(--line); border-radius:10px; padding:14px; display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; color:var(--ink-2); }
+.fe-drop .hint{ margin:0; }
+.fe-main{ display:flex; flex-direction:column; gap:10px; min-width:0; }
+.fe-stage{ position:relative; height:min(58vh,540px); border-radius:10px; overflow:hidden; background:#141918; touch-action:none; }
+.fe-stage canvas{ position:absolute; inset:0; width:100%; height:100%; cursor:grab; touch-action:none; }
+.fe-stage canvas:active{ cursor:grabbing; }
+.fe-tip{ position:absolute; left:10px; bottom:10px; padding:2px 8px; border-radius:99px; background:rgba(20,25,24,.72); color:#fff; font-size:.8rem; pointer-events:none; }
+.fe-ctrl{ display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; }
+.fe-ctrl label{ display:flex; align-items:center; gap:8px; font-size:.9rem; }
+.fe-ctrl input[type=range]{ width:150px; accent-color:var(--accent); min-height:32px; }
+.fe-ctrl .val{ width:48px; color:var(--ink-2); font-size:.85rem; font-variant-numeric:tabular-nums; }
+.fe-btns{ display:flex; gap:6px; flex-wrap:wrap; }
+.fe-empty{ height:min(58vh,540px); border:2px dashed var(--line); border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:16px; color:var(--ink-2); }
+.fe-empty.drag{ border-color:var(--accent); background:color-mix(in srgb, var(--accent) 8%, transparent); }
+.fe-empty b{ color:var(--ink); }
+.fe-empty-t{ font-family:var(--cond); font-weight:600; font-size:1.4rem; }
+.fe-foot{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; border-top:1px solid var(--line); padding-top:12px; }
+@media (max-width:760px){
+  dialog.foto-dlg{ width:100vw; max-width:100vw; height:100dvh; max-height:100dvh; border-radius:0; margin:0; border:0; }
+  .fe-body{ grid-template-columns:minmax(0,1fr); }
+  .fe-slots{ flex-direction:row; }
+  .fe-slot{ flex:1; flex-direction:column; text-align:center; padding:6px; gap:4px; min-width:0; }
+  .fe-slot[aria-pressed="true"]{ padding:5px; }
+  .fe-slot-t{ align-items:center; }
+  .fe-thumb{ width:45px; height:60px; }
+  .fe-drop{ display:none; }
+  .fe-stage, .fe-empty{ height:44vh; }
+  .fe-ctrl input[type=range]{ width:auto; flex:1; }
+  .fe-ctrl label{ flex:1 1 100%; }
+  .foto-add{ margin-left:0; }
+  .fe-foot{ position:sticky; bottom:0; background:var(--surface); padding-bottom:12px; z-index:2; }
+  .fe-tip{ right:10px; }
+}
 </style>
 </head>
 <body>
@@ -282,6 +371,7 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
     <button role="tab" data-tab="charts" aria-selected="false">Diagramme</button>
     <button role="tab" data-tab="entry" aria-selected="false">Erfassen</button>
     <button role="tab" data-tab="data" aria-selected="false">Daten</button>
+    <button role="tab" data-tab="fotos" aria-selected="false">Fotos</button>
     <button role="tab" data-tab="settings" aria-selected="false">Einstellungen</button>
   </nav>
   </div>
@@ -343,6 +433,8 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
     </div>
     <div id="tableArea"></div>
   </section>
+
+  <section class="panel" id="p-fotos" hidden><div id="fotoArea"></div></section>
 
   <section class="panel" id="p-settings" hidden>
     <div class="settings">
@@ -470,6 +562,8 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
   </form>
 </dialog>
 
+<dialog id="fotoDlg" class="foto-dlg" aria-label="Fotos hinzufügen und zuschneiden"><div class="dlg fe" id="fotoDlgBody"></div></dialog>
+
 <dialog id="askDlg">
   <form method="dialog" class="dlg">
     <h2 id="askTitle">Bist du sicher?</h2>
@@ -532,7 +626,7 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
 (() => {
 'use strict';
 const DAY = 864e5;
-const TRACKER_VERSION = '2.3';
+const TRACKER_VERSION = '2.5';
 const SETTINGS_FORMAT = 3;   // Stand der Einstellungen; ältere werden beim Laden umgestellt
 const toOverview = () => { showTab('dash'); window.scrollTo(0,0); };
 /* better: -1 = sinkend ist günstig, 1 = steigend ist günstig, 0 = neutral. dash: wie die Kachel den Wert bildet.
@@ -2320,6 +2414,480 @@ function loadSample(){
   markDirty(touched,true); renderAll(); toast('Beispieldaten geladen – unter Einstellungen wieder löschbar');
 }
 
+/* ---------- Fotos: Vorher/Nachher-Vergleich (nur mit Körperdaten-Server) ---------- */
+const POSES=[{k:'vorne',label:'Vorne'},{k:'seite',label:'Seite'},{k:'hinten',label:'Hinten'}];
+const FOTO_W=900, FOTO_H=1200, THUMB_W=240, THUMB_H=320, ORIG_MAX=2400;
+const F={owner:null, list:[], loading:false, err:'', before:null, after:null, mode:'side', split:{}, blend:{}};
+const fotoCache=new Map();
+const fotosAvailable=()=>cfg.mode==='server' && !!srvUser && !!srvInfo?.fotos;
+function resetFotos(){ for (const p of fotoCache.values()) p.then(u=>URL.revokeObjectURL(u)).catch(()=>{}); fotoCache.clear(); F.owner=null; F.list=[]; F.err=''; F.before=F.after=null; }
+async function loadFotos(force){
+  if (!fotosAvailable() || F.loading) return;
+  if (!force && F.owner===srvUser.name) return;
+  if (F.owner && F.owner!==srvUser.name) resetFotos();
+  F.loading=true;
+  try { F.list=await apiJson('/api/fotos'); F.owner=srvUser.name; F.err=''; }
+  catch(e){ F.err=e.message; F.owner=srvUser?.name||null; F.list=[]; }
+  finally { F.loading=false; }
+  if (current()==='fotos') renderFotos();
+}
+/* Bilder brauchen die Anmeldung, deshalb per fetch laden und als Blob-Adresse anzeigen */
+function fotoSrc(f, kind){
+  const key=f.id+':'+kind+':'+f.geaendert;
+  if (!fotoCache.has(key)){
+    const p=(async()=>{
+      const r=await fetch(srvBase()+'/api/fotos/'+f.id+'/'+kind+'?v='+encodeURIComponent(f.geaendert), {headers:{Authorization:'Bearer '+cfg.token}});
+      if (!r.ok) throw new Error('Foto nicht ladbar ('+r.status+')');
+      return URL.createObjectURL(await r.blob());
+    })();
+    p.catch(()=>fotoCache.delete(key));
+    fotoCache.set(key, p);
+  }
+  return fotoCache.get(key);
+}
+function fotoImg(f, kind, alt){
+  const img=el('img',{alt:alt||'', decoding:'async', draggable:'false'});
+  if (f) fotoSrc(f,kind).then(u=>{ img.src=u; }).catch(()=>{ img.alt='Foto nicht ladbar'; img.classList.add('broken'); });
+  return img;
+}
+async function loadImage(url){ const im=new Image(); im.src=url; await im.decode(); return im; }
+function fotoSessions(){
+  const by=new Map();
+  for (const f of F.list){ if (!by.has(f.datum)) by.set(f.datum,{datum:f.datum, p:{}}); by.get(f.datum).p[f.ansicht]=f; }
+  return [...by.values()].sort((a,b)=>a.datum<b.datum?-1:1);
+}
+/* Messwert am Fototag, sonst der nächstgelegene innerhalb einer Woche */
+function nearVal(d, key){
+  const v=val(d,key); if (v!=null) return {v, d};
+  const t=tsOf(d); let best=null;
+  for (const x of sortedDates()){ const dist=Math.abs(tsOf(x)-t); if (dist<=7*DAY){ const w=val(x,key); if (w!=null && (!best || dist<best.dist)) best={v:w, d:x, dist}; } }
+  return best;
+}
+function sessLabel(s){ const w=nearVal(s.datum,'weight'); return deDate(s.datum)+(w?' · '+fmt(w.v,1)+' kg':''); }
+
+function renderFotos(){
+  const box=$('#fotoArea'); if (!box) return;
+  box.replaceChildren();
+  if (!fotosAvailable()){
+    if (F.owner) resetFotos();
+    const msg = cfg.mode!=='server' ? ['Fotos brauchen den Körperdaten-Server', 'Fotos werden nur auf deinem eigenen Server gespeichert und sind nur für dein Konto sichtbar. Im Browser oder in einer XML-Datei wäre dafür kein Platz. Verbinde unter Einstellungen → Speicherort den Server und melde dich an.']
+      : !srvUser ? ['Bitte anmelden', 'Melde dich am Körperdaten-Server an, dann erscheinen hier deine Fotos.']
+      : ['Server-Update nötig', 'Dein Körperdaten-Server kennt noch keine Fotos. Bitte den Server auf Version 2.4 oder neuer aktualisieren.'];
+    box.append(el('div',{class:'empty'}, el('h2',{text:msg[0]}), el('p',{text:msg[1]}),
+      el('button',{class:'btn primary', type:'button', text:'Zum Speicherort', onclick:()=>{ showTab('settings'); }})));
+    return;
+  }
+  if (F.owner!==srvUser.name){ box.append(el('p',{class:'hint', text:'Fotos werden geladen …'})); loadFotos(); return; }
+  if (F.err) box.append(el('div',{class:'notice'}, el('span',{text:'Fotos konnten nicht geladen werden: '+F.err}), el('button',{class:'btn small', type:'button', text:'Erneut versuchen', onclick:()=>loadFotos(true)})));
+  const ss=fotoSessions();
+  if (!ss.length){
+    box.append(el('div',{class:'empty'},
+      el('h2',{text:'Noch keine Fotos'}),
+      el('p',{text:'Mach Fotos von vorne, von der Seite und von hinten und vergleiche später, wie sich dein Körper verändert. Am besten immer am gleichen Ort, bei gleichem Licht und zur gleichen Tageszeit, etwa morgens vor dem Frühstück.'}),
+      el('button',{class:'btn primary', type:'button', text:'Erste Fotos hinzufügen', onclick:()=>openFotoDlg(null)}),
+      el('p',{class:'hint', text:'Die Fotos liegen nur auf deinem Server, sind nur für dein Konto sichtbar und kommen nicht in CSV-Exporte.'})));
+    return;
+  }
+  if (!ss.some(s=>s.datum===F.before)) F.before=ss[0].datum;
+  if (!ss.some(s=>s.datum===F.after)) F.after=ss[ss.length-1].datum;
+  const B=ss.find(s=>s.datum===F.before), A=ss.find(s=>s.datum===F.after);
+
+  const sel=(id, cur, on)=>{ const s=el('select',{id}, ...ss.map(x=>el('option',{value:x.datum, text:sessLabel(x)}))); s.value=cur; s.onchange=()=>{ on(s.value); renderFotos(); }; return s; };
+  const modes=[['side','Nebeneinander'],['slider','Schieberegler'],['blend','Überblenden']];
+  box.append(el('div',{class:'toolbar foto-toolbar'},
+    el('label',{class:'inline'}, document.createTextNode('Vorher'), sel('fotoBefore', F.before, v=>F.before=v)),
+    el('span',{class:'foto-arrow', 'aria-hidden':'true', text:'→'}),
+    el('label',{class:'inline'}, document.createTextNode('Nachher'), sel('fotoAfter', F.after, v=>F.after=v)),
+    el('div',{class:'seg', role:'group', 'aria-label':'Ansicht'}, ...modes.map(([k,l])=>el('button',{type:'button', 'aria-pressed':String(F.mode===k), text:l, onclick:()=>{ F.mode=k; renderFotos(); }}))),
+    el('button',{class:'btn primary foto-add', type:'button', text:'Fotos hinzufügen', onclick:()=>openFotoDlg(null)})));
+
+  // Veränderung zwischen den beiden Terminen
+  const days=Math.round(Math.abs(tsOf(A.datum)-tsOf(B.datum))/DAY);
+  const stats=el('div',{class:'foto-stats'}, el('div',{class:'tile'}, el('span',{class:'t-name', text:'Zeitraum'}), el('span',{class:'t-val', text:days+(days===1?' Tag':' Tage')})));
+  for (const k of ['weight','waist','bodyfat']){
+    const m=metric(k); if (!m) continue;
+    const a=nearVal(A.datum,k), b=nearVal(B.datum,k);
+    const t=el('div',{class:'tile'}, el('span',{class:'t-name', text:m.label}));
+    if (a && b){ const d=a.v-b.v; t.append(el('span',{class:'t-val '+(d*m.better>0?'tr-good':d*m.better<0?'tr-bad':'tr-neutral'), text:sgn(d,m.dec)}, el('small',{text:m.unit})), el('span',{class:'t-when', text:fmt(b.v,m.dec)+' → '+fmt(a.v,m.dec)+' '+m.unit})); }
+    else t.append(el('span',{class:'t-val', text:'–'}), el('span',{class:'t-when', text:'keine Messwerte um diese Tage'}));
+    stats.append(t);
+  }
+  box.append(stats);
+
+  const grid=el('div',{class:'foto-grid'});
+  for (const P of POSES){
+    const fb=B.p[P.k], fa=A.p[P.k];
+    const card=el('article',{class:'foto-card'});
+    const head=el('header',{}, el('h2',{text:P.label}));
+    if (document.fullscreenEnabled) head.append(el('button',{class:'icon-btn', type:'button', 'aria-label':P.label+' im Vollbild', title:'Vollbild', onclick:()=>{ document.fullscreenElement ? document.exitFullscreen() : card.requestFullscreen?.().catch(()=>{}); }},
+      svgIcon('M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5')));
+    card.append(head);
+    const chip=(txt, cls)=>el('span',{class:'foto-chip '+(cls||''), text:txt});
+    const frame=(f, label, cls)=>el('div',{class:'foto-frame'}, f ? fotoImg(f,'bild', P.label+' '+label) : el('span',{class:'none', text:'Kein Foto'}), chip(label, cls));
+    if (F.mode==='side'){
+      card.append(el('div',{class:'foto-pair'}, frame(fb,'Vorher · '+deDate(B.datum)), frame(fa,'Nachher · '+deDate(A.datum),'after')));
+    } else if (F.mode==='slider'){
+      const split=F.split[P.k] ?? 50;
+      const clip=el('div',{class:'foto-clip'}, fa ? fotoImg(fa,'bild',P.label+' nachher') : el('span',{class:'none', text:'Kein Foto'}));
+      const line=el('div',{class:'foto-line'}), knob=el('div',{class:'foto-knob', 'aria-hidden':'true'}, svgIcon('M9 6l-6 6 6 6M15 6l6 6-6 6'));
+      const cmp=el('div',{class:'foto-frame foto-cmp'}, fb ? fotoImg(fb,'bild',P.label+' vorher') : el('span',{class:'none', text:'Kein Foto'}), clip, line, knob,
+        chip(deDate(B.datum)), chip(deDate(A.datum),'after r'));
+      const range=el('input',{type:'range', min:'0', max:'100', value:String(split), 'aria-label':'Teilung '+P.label});
+      const apply=v=>{ v=Math.max(0,Math.min(100,v)); F.split[P.k]=v; clip.style.clipPath='inset(0 0 0 '+v+'%)'; line.style.left=v+'%'; knob.style.left=v+'%'; range.value=String(Math.round(v)); };
+      range.oninput=()=>apply(Number(range.value));
+      let drag=false; const fromX=e=>{ const r=cmp.getBoundingClientRect(); apply((e.clientX-r.left)/r.width*100); };
+      cmp.addEventListener('pointerdown',e=>{ drag=true; cmp.setPointerCapture(e.pointerId); fromX(e); });
+      cmp.addEventListener('pointermove',e=>{ if (drag) fromX(e); });
+      cmp.addEventListener('pointerup',()=>drag=false); cmp.addEventListener('pointercancel',()=>drag=false);
+      apply(split);
+      card.append(cmp, el('label',{class:'foto-range'}, document.createTextNode('Teilung'), range));
+    } else {
+      const op=F.blend[P.k] ?? 50;
+      const top=fa ? fotoImg(fa,'bild',P.label+' nachher') : null;
+      const fr=el('div',{class:'foto-frame'}, fb ? fotoImg(fb,'bild',P.label+' vorher') : el('span',{class:'none', text:'Kein Foto'}), top, chip(deDate(B.datum)), chip(deDate(A.datum),'after r'));
+      const range=el('input',{type:'range', min:'0', max:'100', value:String(op), 'aria-label':'Überblendung '+P.label});
+      const apply=v=>{ F.blend[P.k]=v; if (top) top.style.opacity=String(v/100); };
+      range.oninput=()=>apply(Number(range.value)); apply(op);
+      card.append(fr, el('label',{class:'foto-range'}, el('span',{text:'Vorher'}), range, el('span',{text:'Nachher'})));
+    }
+    grid.append(card);
+  }
+  box.append(grid);
+
+  // Alle Aufnahmen, neueste zuerst
+  const list=el('div',{class:'foto-sessions'});
+  for (const s of [...ss].reverse()){
+    const isB=s.datum===F.before, isA=s.datum===F.after;
+    const w=nearVal(s.datum,'weight'), wa=nearVal(s.datum,'waist');
+    list.append(el('div',{class:'foto-sess'+(isA?' is-after':isB?' is-before':'')},
+      el('div',{class:'sess-head'}, el('b',{text:deDate(s.datum)}), isB||isA ? el('span',{class:'badge '+(isA?'b-after':'b-before'), text:isA?'Nachher':'Vorher'}) : null),
+      el('div',{class:'thumbs'}, ...POSES.map(P=>el('span',{title:P.label}, s.p[P.k] ? fotoImg(s.p[P.k],'vorschau',P.label+' '+deDate(s.datum)) : null))),
+      el('span',{class:'t-when', text:[w?fmt(w.v,1)+' kg':'', wa?'Taille '+fmt(wa.v,1):''].filter(Boolean).join(' · ')||' '}),
+      el('div',{class:'sess-acts'},
+        el('button',{class:'btn small', type:'button', 'aria-pressed':String(isB), text:'Vorher', onclick:()=>{ F.before=s.datum; renderFotos(); }}),
+        el('button',{class:'btn small', type:'button', 'aria-pressed':String(isA), text:'Nachher', onclick:()=>{ F.after=s.datum; renderFotos(); }}),
+        el('button',{class:'btn small', type:'button', text:'Bearbeiten', onclick:()=>openFotoDlg(s.datum)}))));
+  }
+  box.append(el('h2',{class:'section-title foto-h', text:'Alle Aufnahmen'}), list);
+}
+function svgIcon(d){
+  const ns='http://www.w3.org/2000/svg', s=document.createElementNS(ns,'svg'), p=document.createElementNS(ns,'path');
+  s.setAttribute('viewBox','0 0 24 24'); s.setAttribute('width','18'); s.setAttribute('height','18'); s.setAttribute('aria-hidden','true');
+  p.setAttribute('d',d); p.setAttribute('fill','none'); p.setAttribute('stroke','currentColor'); p.setAttribute('stroke-width','2'); p.setAttribute('stroke-linecap','round'); p.setAttribute('stroke-linejoin','round');
+  s.append(p); return s;
+}
+
+/* ---------- Fotos hinzufügen, bearbeiten und zuschneiden ---------- */
+const defaultCrop=()=>({rot:0, angle:0, mirror:false, zoom:1, px:0, py:0});
+function normCrop(z){
+  const c=defaultCrop(); if (!z || typeof z!=='object') return c;
+  const n=(v,lo,hi,d)=>{ v=Number(v); return isFinite(v) ? Math.max(lo,Math.min(hi,v)) : d; };
+  c.rot=[0,90,180,270].includes(Number(z.rot)) ? Number(z.rot) : 0;
+  c.angle=n(z.angle,-15,15,0); c.zoom=n(z.zoom,1,5,1); c.px=n(z.px,-3,3,0); c.py=n(z.py,-3,3,0); c.mirror=!!z.mirror;
+  return c;
+}
+/* Bild so skalieren, dass es den Rahmen auch bei leichter Drehung ganz füllt; Verschiebung in Rahmenbreiten */
+function drawCrop(ctx, img, c, fx, fy, fw, fh){
+  const iw=img.width, ih=img.height, a=Math.abs(c.angle)*Math.PI/180;
+  const W=fw*Math.cos(a)+fh*Math.sin(a), H=fw*Math.sin(a)+fh*Math.cos(a);
+  const turned=c.rot%180===90;
+  const base=turned ? Math.max(W/ih, H/iw) : Math.max(W/iw, H/ih), s=base*c.zoom;
+  ctx.save();
+  ctx.translate(fx+fw/2+c.px*fw, fy+fh/2+c.py*fh);
+  ctx.rotate((c.rot+c.angle)*Math.PI/180);
+  ctx.scale(c.mirror?-s:s, s);
+  ctx.imageSmoothingQuality='high';
+  ctx.drawImage(img, -iw/2, -ih/2);
+  ctx.restore();
+}
+function renderCropCanvas(img, c, W, H){
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const ctx=cv.getContext('2d'); ctx.fillStyle='#D9DCD6'; ctx.fillRect(0,0,W,H); drawCrop(ctx,img,c,0,0,W,H); return cv;
+}
+const canvasBlob=(cv, q)=>new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error('Bild konnte nicht erzeugt werden')),'image/jpeg',q));
+const blobB64=b=>new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(',')[1]); r.onerror=()=>rej(r.error); r.readAsDataURL(b); });
+async function exifDate(file){
+  try {
+    const t=new TextDecoder('latin1').decode(await file.slice(0,262144).arrayBuffer());
+    const m=/(\d{4}):(\d{2}):(\d{2}) \d{2}:\d{2}:\d{2}/.exec(t);
+    if (m && +m[1]>1990 && +m[2]>=1 && +m[2]<=12 && +m[3]>=1 && +m[3]<=31) return m[1]+'-'+m[2]+'-'+m[3];
+  } catch(e){}
+  return null;
+}
+/* Datei einlesen, richtig drehen, auf höchstens 2400 px verkleinern und als JPEG neu speichern.
+   Dabei fallen Metadaten wie der Aufnahmeort weg. */
+async function loadFotoFile(file){
+  let src;
+  try { src=await createImageBitmap(file, {imageOrientation:'from-image'}); }
+  catch(e){
+    try { const u=URL.createObjectURL(file); try { src=await loadImage(u); } finally { setTimeout(()=>URL.revokeObjectURL(u),1000); } }
+    catch(e2){ throw new Error(file.name+': Dieses Bildformat kann der Browser nicht lesen'+(/hei[cf]/i.test(file.type+file.name)?' (HEIC – bitte als JPG speichern)':'')); }
+  }
+  const iw=src.width||src.naturalWidth, ih=src.height||src.naturalHeight, k=Math.min(1, ORIG_MAX/Math.max(iw,ih));
+  const cv=document.createElement('canvas'); cv.width=Math.round(iw*k); cv.height=Math.round(ih*k);
+  const ctx=cv.getContext('2d'); ctx.imageSmoothingQuality='high'; ctx.drawImage(src,0,0,cv.width,cv.height);
+  src.close?.();
+  return {img:cv, blob:await canvasBlob(cv,0.9), w:cv.width, h:cv.height, date:await exifDate(file)};
+}
+
+let E=null;   // Zustand des Foto-Dialogs
+function feSlotPending(s){ return s.del || s.isNew || s.cropChanged; }
+const fePending=()=>E ? POSES.filter(P=>feSlotPending(E.slots[P.k])).length : 0;
+function feRefreshExisting(){
+  for (const P of POSES){
+    const s=E.slots[P.k];
+    s.existing=F.list.find(f=>f.datum===E.date && f.ansicht===P.k)||null;
+    s.ghost=null; s.ghostKey=null;
+    if (!s.isNew){ s.img=null; s.loading=false; s.crop=s.existing?normCrop(s.existing.zuschnitt):defaultCrop(); s.cropChanged=false; s.del=false; }
+  }
+}
+function openFotoDlg(date){
+  E={date:date||todayStr(), edit:!!date, dateTouched:!!date, sel:'vorne', busy:false, msg:'', ghostOn:true, slots:{}};
+  for (const P of POSES) E.slots[P.k]={pose:P.k, existing:null, img:null, isNew:false, del:false, crop:defaultCrop(), cropChanged:false};
+  feRefreshExisting();
+  if (!date){ const free=POSES.find(P=>!E.slots[P.k].existing); if (free) E.sel=free.k; }
+  renderFotoDlg();
+  $('#fotoDlg').showModal();
+}
+async function closeFotoDlg(){
+  if (!E || E.busy) return;
+  if (fePending() && !await ask('Die Änderungen an den Fotos sind noch nicht gespeichert.','Verwerfen','Änderungen verwerfen?')) return;
+  E=null; $('#fotoDlg').close();
+}
+$('#fotoDlg').addEventListener('cancel', e=>{ e.preventDefault(); closeFotoDlg(); });
+
+function feStatus(s){
+  if (s.del) return ['wird gelöscht','st-del'];
+  if (s.isNew) return [s.existing?'neu – ersetzt das bisherige':'neu','st-new'];
+  if (s.cropChanged) return ['Zuschnitt geändert','st-new'];
+  if (s.existing) return ['gespeichert','st-ok'];
+  return ['fehlt','st-miss'];
+}
+function feThumb(s){
+  const box=el('span',{class:'fe-thumb', 'data-thumb':s.pose});
+  if (s.del) box.append(svgIcon('M6 6l12 12M18 6L6 18'));
+  else if (s.img){ const cv=renderCropCanvas(s.img, s.crop, 108, 144); box.append(cv); }
+  else if (s.existing) box.append(fotoImg(s.existing,'vorschau',''));
+  else box.append(svgIcon('M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z'));
+  return box;
+}
+function feUpdateThumb(pose){
+  const old=document.querySelector('#fotoDlg [data-thumb="'+pose+'"]'); if (old) old.replaceWith(feThumb(E.slots[pose]));
+  const st=document.querySelector('#fotoDlg [data-status="'+pose+'"]'); if (st){ const [t,c]=feStatus(E.slots[pose]); st.textContent=t; st.className='fe-st '+c; }
+  feUpdateFoot();
+}
+function feUpdateFoot(){
+  const n=fePending(), b=$('#feSave'); if (!b) return;
+  b.disabled=!n || E.busy; b.textContent=n ? (n===1?'1 Foto speichern':n+' Fotos speichern') : 'Speichern';
+  $('#feMsg').textContent=E.msg || (n ? 'Noch nicht gespeichert.' : 'Das Original bleibt gespeichert; den Zuschnitt kannst du später ändern.');
+}
+function filePicker(multiple, capture, onFiles){
+  const inp=el('input',{type:'file', accept:'image/*', hidden:true, multiple:multiple||false, capture:capture||false});
+  inp.onchange=()=>{ const f=[...inp.files]; inp.remove(); if (f.length) onFiles(f); };
+  document.body.append(inp); inp.click();
+}
+const coarse=matchMedia('(pointer: coarse)').matches;
+async function feAddFiles(files, pose){
+  files=[...files].filter(f=>/^image\//.test(f.type) || /\.(jpe?g|png|webp|hei[cf])$/i.test(f.name));
+  if (!files.length){ toast('Bitte Bilddateien wählen'); return; }
+  let targets;
+  if (files.length===1) targets=[pose||E.sel];
+  else {
+    const free=POSES.filter(P=>!E.slots[P.k].existing && !E.slots[P.k].isNew).map(P=>P.k);
+    targets=[...free, ...POSES.map(P=>P.k).filter(k=>!free.includes(k))].slice(0, files.length);
+    if (files.length>3) toast('Es werden nur die ersten drei Bilder übernommen');
+  }
+  E.msg='Bilder werden vorbereitet …'; feUpdateFoot();
+  for (let i=0;i<targets.length;i++){
+    try {
+      const r=await loadFotoFile(files[i]);
+      const s=E.slots[targets[i]];
+      Object.assign(s,{img:r.img, blob:r.blob, w:r.w, h:r.h, isNew:true, del:false, crop:defaultCrop(), cropChanged:false, loading:false});
+      if (!E.dateTouched && r.date && !E.edit){ E.date=r.date; E.dateTouched=true; feRefreshExisting(); toast('Aufnahmedatum aus dem Foto übernommen: '+deDate(r.date)); }
+    } catch(e){ toast(e.message); }
+  }
+  E.msg=''; E.sel=targets[0]; renderFotoDlg();
+}
+async function feEnsureImage(s){
+  if (s.img || s.loading || !s.existing) return;
+  s.loading=true;
+  try { s.img=await loadImage(await fotoSrc(s.existing,'original')); }
+  catch(e){ toast('Original konnte nicht geladen werden: '+e.message); }
+  finally { s.loading=false; }
+  if (E && E.slots[s.pose]===s && E.sel===s.pose) renderFotoDlg();
+}
+async function feEnsureGhost(s){
+  // letzte Aufnahme derselben Ansicht vor diesem Tag (sonst die nächste danach) als Umriss-Hilfe
+  const others=F.list.filter(f=>f.ansicht===s.pose && f.datum!==E.date).sort((a,b)=>a.datum<b.datum?1:-1);
+  const g=others.find(f=>f.datum<E.date) || others[others.length-1];
+  if (!g){ s.ghost=null; return null; }
+  const key=g.id+':'+g.geaendert;
+  if (s.ghostKey!==key){ s.ghostKey=key; s.ghostInfo=g; try { s.ghost=await loadImage(await fotoSrc(g,'bild')); } catch(e){ s.ghost=null; } }
+  return s.ghost;
+}
+
+function renderFotoDlg(){
+  const root=$('#fotoDlgBody'); if (!E){ root.replaceChildren(); return; }
+  const date=el('input',{type:'date', value:E.date, max:todayStr(), 'aria-label':'Aufnahmedatum'});
+  date.onchange=()=>{ if (!date.value) return; E.date=date.value; E.dateTouched=true; feRefreshExisting(); renderFotoDlg(); };
+  const head=el('div',{class:'fe-head'},
+    el('h2',{text:E.edit?'Fotos bearbeiten':'Fotos hinzufügen'}),
+    el('div',{class:'row'}, el('label',{class:'inline'}, document.createTextNode('Aufnahmedatum'), date),
+      el('button',{class:'icon-btn', type:'button', 'aria-label':'Schließen', onclick:closeFotoDlg}, svgIcon('M6 6l12 12M18 6L6 18'))));
+  if (POSES.some(P=>E.slots[P.k].existing) && !E.edit) head.append(el('p',{class:'hint fe-exist', text:'Für den '+deDate(E.date)+' gibt es schon Fotos. Neue Bilder ersetzen die bisherigen derselben Ansicht.'}));
+
+  const slots=el('div',{class:'fe-slots', role:'group', 'aria-label':'Ansichten'});
+  for (const P of POSES){
+    const s=E.slots[P.k], [st,cls]=feStatus(s);
+    const b=el('button',{type:'button', class:'fe-slot', 'aria-pressed':String(E.sel===P.k), onclick:()=>{ E.sel=P.k; renderFotoDlg(); }},
+      feThumb(s), el('span',{class:'fe-slot-t'}, el('b',{text:P.label}), el('span',{class:'fe-st '+cls, 'data-status':P.k, text:st})));
+    b.addEventListener('dragover',e=>{ e.preventDefault(); });
+    b.addEventListener('drop',e=>{ e.preventDefault(); e.stopPropagation(); feAddFiles(e.dataTransfer.files, P.k); });
+    slots.append(b);
+  }
+  const drop=el('div',{class:'fe-drop'},
+    svgIcon('M12 15V4M7 9l5-5 5 5M4 15v5h16v-5'),
+    el('span',{text:'Bilder hierher ziehen'}),
+    el('button',{class:'btn', type:'button', text:'Dateien auswählen', onclick:()=>filePicker(true,false,f=>feAddFiles(f,null))}),
+    el('span',{class:'hint', text:'JPG, PNG oder WebP. Mehrere Bilder werden der Reihe nach Vorne, Seite, Hinten zugeordnet.'}));
+  slots.append(drop);
+
+  const s=E.slots[E.sel], P=POSES.find(p=>p.k===E.sel);
+  const main=el('div',{class:'fe-main'});
+  if (s.del){
+    main.append(el('div',{class:'fe-empty'}, el('b',{text:'Das Foto „'+P.label+'“ vom '+deDate(E.date)+' wird beim Speichern gelöscht.'}),
+      el('button',{class:'btn', type:'button', text:'Doch behalten', onclick:()=>{ s.del=false; renderFotoDlg(); }})));
+  } else if (s.img || s.existing){
+    if (!s.img){ main.append(el('div',{class:'fe-empty'}, el('span',{text:'Original wird geladen …'}))); feEnsureImage(s); }
+    else main.append(...feEditor(s));
+  } else {
+    const empty=el('div',{class:'fe-empty'},
+      svgIcon('M12 15V4M7 9l5-5 5 5M4 15v5h16v-5'),
+      el('b',{class:'fe-empty-t', text:'Bild für „'+P.label+'“'}),
+      el('span',{class:'hint', text:coarse?'Foto aufnehmen oder aus der Galerie wählen':'Hierher ziehen oder auswählen'}),
+      el('div',{class:'row'},
+        coarse ? el('button',{class:'btn primary', type:'button', text:'Kamera', onclick:()=>filePicker(false,'environment',f=>feAddFiles(f,P.k))}) : null,
+        el('button',{class:'btn'+(coarse?'':' primary'), type:'button', text:coarse?'Galerie oder Datei':'Datei auswählen', onclick:()=>filePicker(false,false,f=>feAddFiles(f,P.k))})));
+    empty.addEventListener('dragover',e=>{ e.preventDefault(); empty.classList.add('drag'); });
+    empty.addEventListener('dragleave',()=>empty.classList.remove('drag'));
+    empty.addEventListener('drop',e=>{ e.preventDefault(); e.stopPropagation(); feAddFiles(e.dataTransfer.files, P.k); });
+    main.append(empty);
+  }
+
+  const canRemove=!s.del && (s.isNew || s.existing);
+  const foot=el('div',{class:'fe-foot'},
+    el('span',{class:'hint', id:'feMsg', style:'margin:0'}),
+    el('div',{class:'row'},
+      canRemove ? el('button',{class:'btn danger', type:'button', text:s.isNew && !s.existing ? 'Bild verwerfen' : s.isNew ? 'Neues Bild verwerfen' : 'Foto löschen', onclick:()=>{
+        if (s.isNew){ Object.assign(s,{isNew:false, img:null, blob:null}); feRefreshExisting(); }
+        else s.del=true;
+        renderFotoDlg(); }}) : null,
+      el('button',{class:'btn', type:'button', text:'Abbrechen', onclick:closeFotoDlg}),
+      el('button',{class:'btn primary', type:'button', id:'feSave', onclick:saveFotoDlg})));
+  const body=el('div',{class:'fe-body'}, slots, main);
+  root.replaceChildren(head, body, foot);
+  feUpdateFoot();
+}
+function feEditor(s){
+  const stage=el('div',{class:'fe-stage'}), cv=el('canvas',{'aria-label':'Zuschnitt: Bild verschieben, zoomen und ausrichten', role:'img'});
+  stage.append(cv, el('span',{class:'fe-tip', text:(coarse?'Mit dem Finger verschieben, mit zwei Fingern zoomen':'Mit der Maus verschieben, Mausrad zoomt')+' · Format 3:4'}));
+  const c=s.crop;
+  let frame={x:0,y:0,w:1,h:1};
+  const draw=()=>{
+    const r=stage.getBoundingClientRect(), dpr=devicePixelRatio||1;
+    if (!r.width) return;
+    if (cv.width!==Math.round(r.width*dpr) || cv.height!==Math.round(r.height*dpr)){ cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr); }
+    const ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+    const W=r.width, H=r.height, m=16, fh=Math.min(H-2*m, (W-2*m)*4/3), fw=fh*3/4;
+    frame={x:(W-fw)/2, y:(H-fh)/2, w:fw, h:fh};
+    ctx.fillStyle='#141918'; ctx.fillRect(0,0,W,H);
+    drawCrop(ctx, s.img, c, frame.x, frame.y, frame.w, frame.h);
+    ctx.fillStyle='rgba(20,25,24,0.62)'; ctx.beginPath(); ctx.rect(0,0,W,H); ctx.rect(frame.x,frame.y,frame.w,frame.h); ctx.fill('evenodd');
+    if (E.ghostOn && s.ghost){ ctx.save(); ctx.globalAlpha=0.35; ctx.drawImage(s.ghost, frame.x, frame.y, frame.w, frame.h); ctx.restore(); }
+    ctx.strokeStyle='rgba(255,255,255,0.45)'; ctx.lineWidth=1; ctx.beginPath();
+    for (const t of [1/3,2/3]){ ctx.moveTo(frame.x+frame.w*t, frame.y); ctx.lineTo(frame.x+frame.w*t, frame.y+frame.h); ctx.moveTo(frame.x, frame.y+frame.h*t); ctx.lineTo(frame.x+frame.w, frame.y+frame.h*t); }
+    ctx.stroke();
+    ctx.strokeStyle='#FFFFFF'; ctx.lineWidth=2; ctx.strokeRect(frame.x, frame.y, frame.w, frame.h);
+    ctx.lineWidth=5; const L=22;
+    for (const [x,y,dx,dy] of [[frame.x,frame.y,1,1],[frame.x+frame.w,frame.y,-1,1],[frame.x,frame.y+frame.h,1,-1],[frame.x+frame.w,frame.y+frame.h,-1,-1]]){
+      ctx.beginPath(); ctx.moveTo(x, y+dy*L); ctx.lineTo(x, y); ctx.lineTo(x+dx*L, y); ctx.stroke(); }
+  };
+  let thumbT;
+  const changed=()=>{ if (!s.isNew) s.cropChanged=true; draw(); syncCtrl(); clearTimeout(thumbT); thumbT=setTimeout(()=>feUpdateThumb(s.pose),150); };
+  // Verschieben und Zoomen mit Maus, Finger und Mausrad
+  const pts=new Map(); let last=null;
+  cv.addEventListener('pointerdown',e=>{ cv.setPointerCapture(e.pointerId); pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); last=null; });
+  cv.addEventListener('pointermove',e=>{
+    if (!pts.has(e.pointerId)) return;
+    const prev=pts.get(e.pointerId); pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if (pts.size===1){ c.px+= (e.clientX-prev.x)/frame.w; c.py+= (e.clientY-prev.y)/frame.h; changed(); }
+    else if (pts.size===2){ const [a,b]=[...pts.values()], d=Math.hypot(a.x-b.x,a.y-b.y); if (last) { c.zoom=Math.max(1,Math.min(5,c.zoom*d/last)); changed(); } last=d; }
+  });
+  const up=e=>{ pts.delete(e.pointerId); last=null; };
+  cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up);
+  cv.addEventListener('wheel',e=>{ e.preventDefault(); c.zoom=Math.max(1,Math.min(5,c.zoom*Math.exp(-e.deltaY*0.0015))); changed(); },{passive:false});
+
+  const zoom=el('input',{type:'range', min:'100', max:'500', step:'1'}), zv=el('span',{class:'val'});
+  const ang=el('input',{type:'range', min:'-15', max:'15', step:'0.5'}), av=el('span',{class:'val'});
+  zoom.oninput=()=>{ c.zoom=Number(zoom.value)/100; changed(); };
+  ang.oninput=()=>{ c.angle=Number(ang.value); changed(); };
+  const mir=el('button',{class:'btn', type:'button', text:'Spiegeln', onclick:()=>{ c.mirror=!c.mirror; changed(); }});
+  const gh=el('button',{class:'btn', type:'button', text:'Umriss letzte Aufnahme', disabled:true, onclick:()=>{ E.ghostOn=!E.ghostOn; changed(); }});
+  const syncCtrl=()=>{ zoom.value=String(Math.round(c.zoom*100)); zv.textContent=Math.round(c.zoom*100)+' %'; ang.value=String(c.angle); av.textContent=(c.angle>0?'+':'')+fmt(c.angle,1)+'°';
+    mir.setAttribute('aria-pressed',String(c.mirror)); gh.setAttribute('aria-pressed',String(E.ghostOn && !!s.ghost)); gh.disabled=!s.ghost;
+    gh.title=s.ghost&&s.ghostInfo ? 'Zuschnitt vom '+deDate(s.ghostInfo.datum)+' halb durchsichtig einblenden' : 'Es gibt noch keine frühere Aufnahme dieser Ansicht'; };
+  const ctrl=el('div',{class:'fe-ctrl'},
+    el('label',{}, document.createTextNode('Zoom'), zoom, zv),
+    el('label',{}, document.createTextNode('Ausrichten'), ang, av),
+    el('div',{class:'fe-btns'},
+      el('button',{class:'btn', type:'button', text:'Drehen 90°', onclick:()=>{ c.rot=(c.rot+90)%360; changed(); }}),
+      mir, gh,
+      el('button',{class:'btn', type:'button', text:'Zurücksetzen', onclick:()=>{ Object.assign(c, defaultCrop()); changed(); }}),
+      el('button',{class:'btn', type:'button', text:coarse?'Anderes Bild':'Anderes Bild …', onclick:()=>filePicker(false,false,f=>feAddFiles(f,s.pose))})));
+  syncCtrl();
+  if (window.ResizeObserver) new ResizeObserver(draw).observe(stage); else setTimeout(draw,50);
+  requestAnimationFrame(draw);
+  feEnsureGhost(s).then(g=>{ if (g){ syncCtrl(); draw(); } });
+  return [stage, ctrl];
+}
+async function saveFotoDlg(){
+  if (!E || E.busy) return;
+  const todo=POSES.filter(P=>feSlotPending(E.slots[P.k]));
+  if (!todo.length) return;
+  E.busy=true; let done=0;
+  try {
+    for (const P of todo){
+      const s=E.slots[P.k];
+      E.msg='Speichere „'+P.label+'“ ('+(done+1)+' von '+todo.length+') …'; feUpdateFoot();
+      const path='/api/fotos/'+E.date+'/'+P.k;
+      if (s.del){ if (s.existing) await apiJson(path,{method:'DELETE'}); }
+      else {
+        if (!s.img) await feEnsureImage(s);
+        if (!s.img) throw new Error('Bild für „'+P.label+'“ fehlt');
+        const body={zuschnitt:s.crop,
+          bild:await blobB64(await canvasBlob(renderCropCanvas(s.img,s.crop,FOTO_W,FOTO_H),0.88)),
+          vorschau:await blobB64(await canvasBlob(renderCropCanvas(s.img,s.crop,THUMB_W,THUMB_H),0.8))};
+        if (s.isNew){ body.original=await blobB64(s.blob); body.breite=s.w; body.hoehe=s.h; }
+        await apiJson(path,{method:'PUT', json:body});
+      }
+      done++;
+    }
+    const d=E.date; E.busy=false; E=null; $('#fotoDlg').close();
+    await loadFotos(true);
+    if (F.list.some(f=>f.datum===d)) F.after=d;
+    renderFotos(); toast(done===1?'Foto gespeichert':done+' Fotos gespeichert');
+  } catch(e){
+    if (E){ E.busy=false; E.msg='Fehler: '+e.message+(done?' ('+done+' gespeichert)':''); feUpdateFoot(); }
+    if (done) loadFotos(true);
+  }
+}
+(()=>{ const d=$('#fotoDlg');
+  d.addEventListener('dragover',e=>{ if (E){ e.preventDefault(); d.classList.add('dragging'); } });
+  d.addEventListener('dragleave',e=>{ if (e.target===d) d.classList.remove('dragging'); });
+  d.addEventListener('drop',e=>{ d.classList.remove('dragging'); if (E){ e.preventDefault(); feAddFiles(e.dataTransfer.files, e.dataTransfer.files.length>1?null:E.sel); } });
+})();
+
+window.__fotos={get E(){ return E; }, F};   // für Tests und Fehlersuche
 /* ---------- Tabs ---------- */
 const current=()=>document.querySelector('nav.tabs button[aria-selected="true"]').dataset.tab;
 function showTab(t){
@@ -2327,15 +2895,16 @@ function showTab(t){
   document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+t);
   if (t==='charts') renderCharts();
   if (t==='dash') renderDash();
+  if (t==='fotos') renderFotos();
 }
 document.querySelector('nav.tabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if (b) showTab(b.dataset.tab); });
 function renderTape(){
   const d=lastDateOf('weight'); const t=$('#tapeRead');
   t.textContent=d?fmt(S.rows[d].weight,1)+' kg am '+deDate(d):''; t.hidden=!d;
 }
-function renderVisible(){ const t=current(); if (t==='charts') renderCharts(); if (t==='dash') renderDash(); }
+function renderVisible(){ const t=current(); if (t==='charts') renderCharts(); if (t==='dash') renderDash(); if (t==='fotos') renderFotos(); }
 function renderAll(){ renderTape(); renderEntryGrid(); renderTable(); renderSettings(); renderVisible(); }
-let rT; addEventListener('resize', ()=>{ clearTimeout(rT); rT=setTimeout(renderVisible, 250); });
+let rT; addEventListener('resize', ()=>{ clearTimeout(rT); rT=setTimeout(()=>{ const t=current(); if (t==='charts') renderCharts(); if (t==='dash') renderDash(); }, 250); });   // Fotos nicht neu aufbauen (Vollbild bliebe sonst nicht erhalten)
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', renderVisible);
 new MutationObserver(renderVisible).observe(document.documentElement,{attributes:true, attributeFilter:['data-theme']});
 

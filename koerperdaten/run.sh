@@ -21,9 +21,14 @@ if [ -f "${UMZUG}/koerperdaten.db" ]; then
         # bisheriges Zertifikat weiterverwenden – Browser und Handys kennen es schon
         rm -rf /data/zertifikat && cp -a "${UMZUG}/zertifikat" /data/zertifikat
       fi
+      if [ -f "${UMZUG}/fotos.db" ]; then
+        rm -f /data/fotos.db /data/fotos.db-wal /data/fotos.db-shm
+        mv "${UMZUG}/fotos.db" /data/fotos.db
+        bashio::log.info "Fotos übernommen."
+      fi
       mkdir -p /data/vor-update
       mv "${UMZUG}/koerperdaten.db" "/data/vor-update/koerperdaten-umzug-$(date +%Y%m%d-%H%M%S).db"
-      rm -rf "${UMZUG}/zertifikat" "${UMZUG}/info.txt"
+      rm -rf "${UMZUG}/zertifikat" "${UMZUG}/info.txt" "${UMZUG}/fotos.db"
       rmdir "${UMZUG}" /share/koerperdaten 2>/dev/null || true
       bashio::log.info "Umzug abgeschlossen: Benutzer und Messwerte wurden übernommen."
     else
