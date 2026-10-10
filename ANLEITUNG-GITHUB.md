@@ -48,7 +48,7 @@ Mit dieser Anleitung kommt der Körperdaten-Server als App aus deinem GitHub-Rep
 Für Home Assistant ist die App aus GitHub eine **andere App** als die lokale, mit eigenem Datenordner. Benutzer und Messwerte ziehen daher nicht von selbst um. So geht es ohne Verlust:
 
 1. **Sicherung anlegen:** Einstellungen → System → Sicherungen → Sicherung erstellen. Die lokale App „Körperdaten-Server“ muss enthalten sein.
-2. **Lokale App auf 2.2.0 bringen**, letztmalig per Samba: den Ordner `koerperdaten` aus diesem Repository nach `addons/koerperdaten` kopieren und die vorhandenen Dateien überschreiben. Dann im App Store „Nach Updates suchen“ → lokale App **aktualisieren**.
+2. **Lokale App auf 2.2.0 oder neuer bringen**, letztmalig per Samba: den Ordner `koerperdaten` aus diesem Repository nach `addons/koerperdaten` kopieren und die vorhandenen Dateien überschreiben. Dann im App Store „Nach Updates suchen“ → lokale App **aktualisieren**.
 3. In der **lokalen** App unter **Konfiguration** die Option **Umzugsdaten bereitstellen** einschalten → **Speichern**. Die App startet neu.
 4. Die lokale App **stoppen** und unter **Info** „Beim Start ausführen“ ausschalten. Beim Stoppen legt sie den aktuellen Stand in `/share/koerperdaten/umzug` ab.
 5. Die **GitHub-App** installieren, „Beim Start ausführen“ und „Watchdog“ einschalten, **starten**. Im Protokoll muss stehen: **„Umzug abgeschlossen: Benutzer und Messwerte wurden übernommen.“**
@@ -60,6 +60,18 @@ Die Kopie für den Umzug enthält Passwort-Hashes und Gesundheitsdaten. Die neue
 **Falls etwas schiefgeht:** Die lokale App läuft unverändert weiter, solange sie nicht deinstalliert ist. Einfach wieder starten. Die neue App lässt sich bedenkenlos deinstallieren und neu versuchen, solange sie noch keine Daten hat.
 
 ## 4. Updates veröffentlichen
+
+**Hinweis zu 2.3.0:** Wenn Claude dir ein fertiges Repository mit bereits erhöhter Version liefert (wie bei 2.3.0), nicht `release.py` verwenden, sondern die Dateien über deinen Ordner kopieren und:
+```
+python tools\pruefen.py
+git add -A
+git commit -m "Version 2.3.0"
+git push
+```
+Danach in Home Assistant: App Store → ⋮ → Nach Updates suchen → **Aktualisieren**. Die Datenbank wird vorher automatisch gesichert.
+
+**Eigene Änderungen:**
+
 
 1. Dateien im Ordner `koerperdaten` ändern, z. B. eine neue `Koerperdaten.html` oder `koerperdaten_server.py` von Claude hineinkopieren.
 2. Im Repository-Ordner:

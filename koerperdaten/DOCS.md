@@ -11,13 +11,37 @@ Beim ersten Öffnen warnt der Browser vor dem Zertifikat, weil es selbst erstell
 - Chrome/Edge: „Erweitert“ → „Weiter zu …“
 - Firefox: „Erweitert“ → „Risiko akzeptieren“
 
-Die Verbindung ist trotzdem verschlüsselt.
+Die Verbindung ist trotzdem verschlüsselt. Dauerhaft ohne Warnung und als App auf dem Handy: siehe „Als App installieren“.
 
 ## Erste Schritte
 
 1. Im Tracker auf **Anmelden** tippen.
 2. Den ersten Benutzer anlegen. Er wird Administrator.
 3. Weitere Benutzer legst du unter Einstellungen → Speicherort → **Benutzerverwaltung** an.
+
+## Als App installieren und Zertifikatswarnung abschalten
+
+Der Server erstellt beim ersten Start eine eigene kleine Zertifizierungsstelle (CA) und damit das HTTPS-Zertifikat. Installierst du das **Stammzertifikat** einmal auf einem Gerät, vertraut es dem Server: Die Warnung verschwindet, und Chrome bietet „App installieren“ an. Das Zertifikat erneuert der Server selbst, das Stammzertifikat gilt 10 Jahre.
+
+**Stammzertifikat laden:** Im Tracker unter Einstellungen → **Als App installieren** auf „Stammzertifikat laden“ tippen oder `https://<IP>:8443/ca.crt` aufrufen.
+
+**Android (Chrome):**
+1. Die Datei `koerperdaten-ca.crt` herunterladen.
+2. Einstellungen → Sicherheit und Datenschutz → Weitere Sicherheitseinstellungen → Verschlüsselung und Anmeldedaten → **Zertifikat installieren** → **CA-Zertifikat** → „Trotzdem installieren“ → Datei wählen. (Der Weg heißt je nach Hersteller etwas anders; in den Einstellungen nach „Zertifikat“ suchen.)
+3. Chrome ganz schließen und neu öffnen, `https://<IP>:8443/` aufrufen.
+4. Chrome-Menü ⋮ → **App installieren** (oder „Zum Startbildschirm hinzufügen“ → Installieren).
+
+**Windows (Chrome/Edge):**
+1. `koerperdaten-ca.crt` herunterladen und doppelklicken → **Zertifikat installieren** → „Aktueller Benutzer“ → „Alle Zertifikate in folgendem Speicher speichern“ → **Vertrauenswürdige Stammzertifizierungsstellen** → Fertig stellen, Sicherheitswarnung mit Ja bestätigen.
+2. Browser neu starten. In der Adressleiste erscheint das Symbol „App installieren“.
+
+Firefox nutzt eigene Zertifikate: Einstellungen → Datenschutz & Sicherheit → Zertifikate anzeigen → Zertifizierungsstellen → Importieren.
+
+Das Stammzertifikat erlaubt nur deinem Server, sich auszuweisen. Den privaten Schlüssel der CA (`/data/zertifikat/ca-schluessel.pem`) gibst du nicht weiter.
+
+**Update von 2.2 oder älter:** Der Server stellt beim ersten Start ein neues Zertifikat aus. Ohne installiertes Stammzertifikat erscheint die Browser-Warnung deshalb noch einmal; einmal bestätigen oder gleich das Stammzertifikat installieren.
+
+**Neue Adresse:** Ändert sich die IP-Adresse oder kommt unter „Zusätzliche Namen fürs Zertifikat“ ein Name hinzu, stellt der Server automatisch ein passendes Zertifikat aus. Das Stammzertifikat bleibt gleich.
 
 ## Optionen
 

@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Körperdaten</title>
+<meta name="theme-color" content="#1F6F78" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141918" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Körper- und Fitnessdaten erfassen, auswerten und mit Zielen vergleichen">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
@@ -173,6 +179,57 @@ table.data-table{ border-collapse:separate; border-spacing:0; }
 .imp-table th{ position:sticky; top:0; }
 .imp-table th, .imp-table td{ text-align:left; white-space:normal; overflow-wrap:anywhere; }
 .imp-table td:first-child{ white-space:nowrap; }
+/* Ziele */
+.goals{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin-bottom:24px; }
+.goal{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:grid; gap:5px; min-width:0; }
+.g-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:6px; flex-wrap:wrap; }
+.g-vals{ display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; }
+.g-now{ font-family:var(--cond); font-weight:600; font-size:2rem; line-height:1.05; font-variant-numeric:tabular-nums; }
+.g-vals small{ color:var(--ink-2); font-size:.9rem; }
+.g-bar{ height:10px; border-radius:99px; background:var(--sunk); overflow:hidden; }
+.g-bar span{ display:block; height:100%; border-radius:99px; }
+.g-scale{ display:flex; justify-content:space-between; gap:8px; font-size:.78rem; color:var(--ink-2); }
+.g-line{ font-size:.88rem; font-variant-numeric:tabular-nums; }
+.g-fc{ color:var(--ink); }
+.goal.lvl-good .badge{ color:var(--good); background:color-mix(in srgb, var(--good) 15%, transparent); }
+.goal.lvl-warn .badge{ color:var(--warn); background:color-mix(in srgb, var(--warn) 16%, transparent); }
+.goal.lvl-bad .badge{ color:var(--bad); background:color-mix(in srgb, var(--bad) 16%, transparent); }
+.goal.lvl-info .badge, .goal .badge{ color:var(--info); background:var(--sunk); }
+.t-goal{ font-size:.82rem; font-variant-numeric:tabular-nums; }
+.goal-list{ display:grid; gap:8px; margin-bottom:6px; }
+.goal-row{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; padding:8px 0; border-bottom:1px solid var(--line); }
+.goal-row b{ min-width:110px; }
+/* Kalorien-Diagramm */
+.canvas-wrap.small{ height:130px; margin-top:4px; }
+.energy-legend{ display:flex; flex-wrap:wrap; gap:4px 16px; font-size:.8rem; color:var(--ink-2); margin-top:6px; }
+.energy-legend .leg{ display:inline-flex; align-items:center; gap:6px; }
+.energy-legend .sw, .stat .sw{ width:10px; height:10px; border-radius:2px; display:inline-block; flex:none; }
+.chart-note{ font-size:.82rem; color:var(--ink-2); margin:6px 0 0; }
+.dash-energy{ margin-bottom:24px; }
+/* Diagramm-Dialog: Messgröße mit Farbe */
+.checks .mc{ display:flex; align-items:center; justify-content:space-between; gap:6px; }
+.checks .mc label{ display:flex; gap:7px; align-items:center; font-size:.95rem; min-width:0; }
+input[type=color]{ width:34px; height:28px; padding:0 2px; border:1px solid var(--line); border-radius:6px; background:var(--surface); cursor:pointer; flex:none; }
+/* Erfassen: weitere Werte */
+details.more{ border:1px solid var(--line); border-radius:8px; padding:8px 12px; margin:0 0 14px; }
+details.more summary{ cursor:pointer; font-weight:500; }
+details.more summary span{ color:var(--ink-2); font-weight:400; font-size:.9rem; }
+details.more .grid{ margin:12px 0; }
+.linkbtn{ background:none; border:0; padding:0; color:var(--accent); text-decoration:underline; cursor:pointer; font-size:inherit; }
+/* Formeln */
+.fx-list{ display:grid; gap:12px; }
+.fx-row{ display:grid; gap:4px; padding-bottom:12px; border-bottom:1px solid var(--line); min-width:0; }
+.fx-row:last-child{ border-bottom:0; }
+.fx-row.changed{ border-left:3px solid var(--tape); padding-left:10px; }
+.fx-head{ display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; }
+.fx-head small{ color:var(--ink-2); flex:1; }
+.fx-in{ width:100%; font-family:ui-monospace, "Cascadia Mono", Consolas, monospace; font-size:.92rem; }
+.fx-out{ font-size:.85rem; color:var(--ink-2); font-variant-numeric:tabular-nums; }
+.fx-out.err{ color:var(--bad); }
+.fx-out.ok{ color:var(--good); }
+.fx-vars{ grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); font-size:.85rem; color:var(--ink-2); }
+.fx-vars code{ color:var(--ink); background:var(--sunk); padding:0 4px; border-radius:4px; }
+.steps{ margin:0; padding-left:20px; display:grid; gap:6px; font-size:.92rem; }
 .pager{ display:flex; gap:10px; align-items:center; margin-top:10px; font-size:.9rem; color:var(--ink-2); }
 .mt{ margin-top:6px; }
 .mt th, .mt td{ padding:6px 8px; }
@@ -234,7 +291,7 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
   <section class="panel" id="p-charts" hidden>
     <div class="toolbar">
       <div class="seg" id="presets" role="group" aria-label="Zeitraum">
-        <button data-p="1m">1 Monat</button><button data-p="3m">3 Monate</button><button data-p="6m">6 Monate</button>
+        <button data-p="1w">1 Woche</button><button data-p="1m">1 Monat</button><button data-p="3m">3 Monate</button><button data-p="6m">6 Monate</button>
         <button data-p="1y">1 Jahr</button><button data-p="3y">3 Jahre</button><button data-p="all">Alles</button><button data-p="custom">Frei</button>
       </div>
       <label class="inline">Mittelwert
@@ -257,7 +314,12 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
         <label class="field">Datum <input type="date" id="entryDate" required></label>
         <span class="hint" id="entryState"></span>
       </div>
-      <div class="grid" id="entryGrid"></div>
+      <div class="grid egrid" id="entryGrid"></div>
+      <details class="more" id="entryMore">
+        <summary>Weitere Werte <span id="moreCount"></span></summary>
+        <div class="grid egrid" id="entryGridMore"></div>
+        <p class="hint" style="margin:0 0 6px">Welche Werte oben stehen, legst du mit den Häkchen unter Einstellungen → Messgrößen fest. <button type="button" class="linkbtn" id="toFields">Felder auswählen</button></p>
+      </details>
       <div class="calc" id="entryCalc"></div>
       <label class="field" style="margin-bottom:14px">Anmerkung
         <textarea id="entryNote" placeholder="z. B. Diät, Refeed, nach Training gewogen"></textarea>
@@ -267,7 +329,7 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
         <button class="btn" type="button" id="entryClear">Felder leeren</button>
         <button class="btn danger" type="button" id="entryDelete" hidden>Eintrag löschen</button>
       </div>
-      <p class="hint">Dezimalzahlen mit Komma oder Punkt. Leere Felder werden nicht gespeichert. BMI, Grundumsatz, Kalorienbilanz und Fettverlust berechnet die App selbst.</p>
+      <p class="hint">Dezimalzahlen mit Komma oder Punkt. Leere Felder werden nicht gespeichert. BMI, Grundumsatz, Kalorienverbrauch (Aktivität + Grundumsatz), Bilanz und Fettverlust berechnet die App selbst; die Formeln stehen unter Einstellungen → Berechnete Werte.</p>
     </form>
   </section>
 
@@ -297,15 +359,38 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
         </div>
         <p class="hint">Wird für BMI, Taille/Größe, Grundumsatz nach Mifflin-St Jeor und die alters- und geschlechtsabhängigen Bewertungen gebraucht.</p>
       </div>
-      <div class="box">
-        <h2>Kalorien</h2>
-        <label class="field" style="max-width:460px">Was trägst du als Kalorienverbrauch ein?
-          <select id="burnMode">
-            <option value="total">Gesamtverbrauch des Tages (inkl. Grundumsatz)</option>
-            <option value="active">Nur Aktivitätsverbrauch – Grundumsatz wird addiert</option>
-          </select>
-        </label>
-        <p class="hint">Kalorienbilanz = Verbrauch − Aufnahme, positiv heißt Defizit. Theoretischer Fettverlust = Defizit ÷ 7.700 kcal je kg Körperfett.</p>
+      <div class="box" id="goalsBox">
+        <h2>Ziele</h2>
+        <div class="goal-list" id="goalList"></div>
+        <h3 class="sub-h">Ziel festlegen</h3>
+        <div class="row" style="align-items:flex-end">
+          <label class="field">Messgröße<select id="goalMetric"></select></label>
+          <label class="field">Zielwert<input type="text" inputmode="decimal" id="goalTarget" placeholder="z. B. 85" style="width:110px"></label>
+          <label class="field">bis (optional)<input type="date" id="goalDate"></label>
+          <button class="btn" type="button" id="btnAddGoal">Ziel speichern</button>
+        </div>
+        <p class="hint">Startwert ist der zuletzt gemessene Wert. Die Prognose verlängert den Trend der letzten 30 Tage (bei zu wenig Werten: 90 Tage).</p>
+      </div>
+      <div class="box" id="fxBox">
+        <h2>Berechnete Werte</h2>
+        <p class="hint" style="margin:0 0 10px">Kalorienverbrauch = Aktivitätskalorien + Grundumsatz; Kalorienbilanz = Aufnahme − Verbrauch, negativ heißt Defizit. Jede Formel lässt sich ändern. Rechenzeichen: + − * / ^ und Klammern, Dezimalpunkt. Funktionen: wenn(Bedingung; dann; sonst), oder(a; b) – erster vorhandener Wert –, vorhanden(x), min, max, abs, runden(x; Stellen), wurzel.</p>
+        <div class="fx-list" id="fxList"></div>
+        <details class="sub"><summary>Verfügbare Namen</summary><div class="sub-body fx-vars" id="fxVars"></div></details>
+        <details class="sub"><summary>Eigene berechnete Größe hinzufügen</summary>
+          <div class="sub-body">
+            <div class="row">
+              <input type="text" id="fxLabel" placeholder="Name, z. B. Fettfreie Masse" style="flex:2;min-width:160px">
+              <input type="text" id="fxUnit" placeholder="Einheit, z. B. kg" style="flex:1;min-width:80px">
+              <select id="fxDec"><option value="0">0 Nachkommast.</option><option value="1" selected>1 Nachkommast.</option><option value="2">2 Nachkommast.</option></select>
+            </div>
+            <input type="text" id="fxSrc" class="fx-in" placeholder="Formel, z. B. gewicht * (1 - koerperfett/100)" spellcheck="false" autocomplete="off" autocapitalize="none">
+            <div class="row"><button class="btn" type="button" id="btnAddFx">Hinzufügen</button><span class="fx-out err" id="fxAddMsg"></span></div>
+          </div>
+        </details>
+      </div>
+      <div class="box" id="pwaBox">
+        <h2>Als App installieren</h2>
+        <div id="pwaInfo"></div>
       </div>
       <div class="box">
         <h2>CSV-Format</h2>
@@ -315,9 +400,9 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
         <label class="inline" style="margin-top:10px"><input type="checkbox" id="expDerived"> Berechnete Spalten mit exportieren</label>
         <p class="hint">Beim Import werden Trennzeichen, Dezimalformat und Datumsformat automatisch erkannt, auch der WeightFit-Export. Spalten wie Note, Tags oder Notiz landen in der Anmerkung. Unbekannte Zahlenspalten werden als neue Messgrößen angelegt.</p>
       </div>
-      <div class="box">
+      <div class="box" id="fieldsBox">
         <h2>Messgrößen</h2>
-        <p class="hint" style="margin:0 0 10px">Ausgeblendete Größen erscheinen nicht im Erfassungsformular. Daten bleiben erhalten.</p>
+        <p class="hint" style="margin:0 0 10px">Mit Haken: oben im Erfassungsformular. Ohne Haken: im einklappbaren Bereich „Weitere Werte“. Die Daten bleiben immer erhalten.</p>
         <div class="mlist" id="mlist"></div>
         <h3 style="font-size:1rem;margin:16px 0 8px">Eigene Messgröße hinzufügen</h3>
         <div class="row">
@@ -341,15 +426,21 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
   <form method="dialog" class="dlg" id="chartForm">
     <h2 id="chartDlgTitle">Diagramm bearbeiten</h2>
     <label class="field">Titel <input type="text" id="cTitle" required></label>
-    <div>
-      <div class="field" style="margin-bottom:6px">Messgrößen (Einheiten bekommen eigene Achsen)</div>
+    <label class="field" style="max-width:320px">Darstellung
+      <select id="cType"><option value="line">Linie</option><option value="bar">Balken</option><option value="scatter">Punkte</option><option value="energy">Kalorien: Verbrauch, Aufnahme und Bilanz</option></select>
+    </label>
+    <div id="cMetricsWrap">
+      <div class="field" style="margin-bottom:6px">Messgrößen und Farben (Einheiten bekommen eigene Achsen)</div>
       <div class="checks" id="cMetrics"></div>
     </div>
-    <label class="field" style="max-width:200px">Darstellung
-      <select id="cType"><option value="line">Linie</option><option value="bar">Balken</option><option value="scatter">Punkte</option></select>
-    </label>
-    <label class="inline"><input type="checkbox" id="cBand"> Spannweite (Min–Max) bei Mittelwerten zeigen</label>
-    <label class="inline"><input type="checkbox" id="cSmooth"> Bei Tageswerten 7-Tage-Mittel als Trendlinie zeigen</label>
+    <div id="cEnergyWrap" hidden>
+      <div class="field" style="margin-bottom:6px">Verbrauch und Aufnahme stehen als Balken hintereinander, darunter die Bilanz (negativ = Defizit). Farben:</div>
+      <div class="row" id="cEnergyColors"></div>
+    </div>
+    <label class="inline" id="cBandWrap"><input type="checkbox" id="cBand"> Spannweite (Min–Max) bei Mittelwerten zeigen</label>
+    <label class="inline" id="cSmoothWrap"><input type="checkbox" id="cSmooth"> Bei Tageswerten 7-Tage-Mittel als Trendlinie zeigen</label>
+    <label class="inline" id="cGoalsWrap"><input type="checkbox" id="cGoals"> Ziel und Prognose zeigen (wenn ein Ziel gesetzt ist)</label>
+    <div><button class="btn small" type="button" id="cColorsReset">Standardfarben</button></div>
     <footer>
       <div class="row">
         <button class="btn small" type="button" id="cUp">Nach oben</button>
@@ -441,50 +532,66 @@ dialog::backdrop{ background:rgba(10,14,13,.5); }
 (() => {
 'use strict';
 const DAY = 864e5;
-const TRACKER_VERSION = '2.2';
+const TRACKER_VERSION = '2.3';
+const SETTINGS_FORMAT = 3;   // Stand der Einstellungen; ältere werden beim Laden umgestellt
 const toOverview = () => { showTab('dash'); window.scrollTo(0,0); };
-/* better: -1 = sinkend ist günstig, 1 = steigend ist günstig, 0 = neutral. dash: wie die Kachel den Wert bildet */
+/* better: -1 = sinkend ist günstig, 1 = steigend ist günstig, 0 = neutral. dash: wie die Kachel den Wert bildet.
+   v: Name in Formeln. fx: Formel (bei gespeicherten Größen nur, wenn kein Wert eingetragen ist) */
 const DEFAULT_METRICS = [
-  {key:'weight',  label:'Gewicht',          unit:'kg',      dec:1, csv:'gewicht_kg',           better:-1, alias:['gewicht','weight','kg','body_weight']},
-  {key:'waist',   label:'Taillenumfang',    unit:'cm',      dec:1, csv:'taille_cm',            better:-1, alias:['taille','taillenumfang','waist']},
-  {key:'belly',   label:'Bauchumfang',      unit:'cm',      dec:1, csv:'bauch_cm',             better:-1, alias:['bauch','bauchumfang','belly','abdomen']},
-  {key:'hip',     label:'Hüftumfang',       unit:'cm',      dec:1, csv:'huefte_cm',            better:0,  alias:['huefte','hueftumfang','hip','hips']},
-  {key:'bodyfat', label:'Körperfett',       unit:'%',       dec:1, csv:'koerperfett_prozent',  better:-1, alias:['koerperfett','kfa','fett','bodyfat','body_fat','koerperfettanteil','fat']},
-  {key:'bmi',     label:'BMI',              unit:'kg/m²',   dec:1, csv:'bmi',                  better:-1, alias:['bmi']},
-  {key:'muscle',  label:'Muskelmasse',      unit:'kg',      dec:1, csv:'muskelmasse_kg',       better:1,  alias:['muskelmasse','muskeln','muscle','muscle_mass']},
-  {key:'water',   label:'Körperwasser',     unit:'%',       dec:1, csv:'koerperwasser_prozent',better:0,  alias:['koerperwasser','wasser','water','body_water']},
-  {key:'visceral',label:'Viszeralfett',     unit:'Stufe',   dec:0, csv:'viszeralfett',         better:-1, alias:['viszeralfett','visceral','visceral_fat']},
-  {key:'chest',   label:'Brustumfang',      unit:'cm',      dec:1, csv:'brust_cm',             better:0,  alias:['brust','brustumfang','chest']},
-  {key:'arm',     label:'Oberarm',          unit:'cm',      dec:1, csv:'oberarm_cm',           better:0,  alias:['oberarm','arm','bizeps']},
-  {key:'thigh',   label:'Oberschenkel',     unit:'cm',      dec:1, csv:'oberschenkel_cm',      better:0,  alias:['oberschenkel','thigh']},
-  {key:'rhr',     label:'Ruhepuls',         unit:'bpm',     dec:0, csv:'ruhepuls_bpm',         better:-1, alias:['ruhepuls','puls','rhr','resting_hr','resting_heart_rate']},
-  {key:'steps',   label:'Schritte',         unit:'Schritte',dec:0, csv:'schritte',             better:1,  dash:'avg7', alias:['schritte','steps']},
-  {key:'sleep',   label:'Schlaf',           unit:'h',       dec:1, csv:'schlaf_h',             better:0,  dash:'avg7', alias:['schlaf','sleep']},
-  {key:'kcalOut', label:'Kalorienverbrauch',unit:'kcal',    dec:0, csv:'kalorien_verbrauch_kcal', better:0, dash:'avg7', alias:['verbrauch','kalorienverbrauch','kcal_out','burned','calories_burned','energy_burned','active_energy']},
-  {key:'kcalIn',  label:'Kalorienaufnahme', unit:'kcal',    dec:0, csv:'kalorien_aufnahme_kcal',  better:0, dash:'avg7', alias:['aufnahme','kalorienaufnahme','kcal_in','intake','calories_in','calories_consumed','energy_intake']},
+  {key:'weight',  v:'gewicht',      label:'Gewicht',          unit:'kg',      dec:1, csv:'gewicht_kg',           better:-1, alias:['gewicht','weight','kg','body_weight']},
+  {key:'waist',   v:'taille',       label:'Taillenumfang',    unit:'cm',      dec:1, csv:'taille_cm',            better:-1, alias:['taille','taillenumfang','waist']},
+  {key:'belly',   v:'bauch',        label:'Bauchumfang',      unit:'cm',      dec:1, csv:'bauch_cm',             better:-1, alias:['bauch','bauchumfang','belly','abdomen']},
+  {key:'hip',     v:'huefte',       label:'Hüftumfang',       unit:'cm',      dec:1, csv:'huefte_cm',            better:0,  alias:['huefte','hueftumfang','hip','hips']},
+  {key:'bodyfat', v:'koerperfett',  label:'Körperfett',       unit:'%',       dec:1, csv:'koerperfett_prozent',  better:-1, alias:['koerperfett','kfa','fett','bodyfat','body_fat','koerperfettanteil','fat']},
+  {key:'bmi',     v:'bmi',          label:'BMI',              unit:'kg/m²',   dec:1, csv:'bmi',                  better:-1, alias:['bmi'], fx:'gewicht / (groesse/100)^2'},
+  {key:'muscle',  v:'muskelmasse',  label:'Muskelmasse',      unit:'kg',      dec:1, csv:'muskelmasse_kg',       better:1,  alias:['muskelmasse','muskeln','muscle','muscle_mass']},
+  {key:'water',   v:'wasser',       label:'Körperwasser',     unit:'%',       dec:1, csv:'koerperwasser_prozent',better:0,  alias:['koerperwasser','wasser','water','body_water']},
+  {key:'visceral',v:'viszeralfett', label:'Viszeralfett',     unit:'Stufe',   dec:0, csv:'viszeralfett',         better:-1, alias:['viszeralfett','visceral','visceral_fat']},
+  {key:'chest',   v:'brust',        label:'Brustumfang',      unit:'cm',      dec:1, csv:'brust_cm',             better:0,  alias:['brust','brustumfang','chest']},
+  {key:'arm',     v:'oberarm',      label:'Oberarm',          unit:'cm',      dec:1, csv:'oberarm_cm',           better:0,  alias:['oberarm','arm','bizeps']},
+  {key:'thigh',   v:'oberschenkel', label:'Oberschenkel',     unit:'cm',      dec:1, csv:'oberschenkel_cm',      better:0,  alias:['oberschenkel','thigh']},
+  {key:'rhr',     v:'ruhepuls',     label:'Ruhepuls',         unit:'bpm',     dec:0, csv:'ruhepuls_bpm',         better:-1, alias:['ruhepuls','puls','rhr','resting_hr','resting_heart_rate']},
+  {key:'steps',   v:'schritte',     label:'Schritte',         unit:'Schritte',dec:0, csv:'schritte',             better:1,  dash:'avg7', alias:['schritte','steps']},
+  {key:'sleep',   v:'schlaf',       label:'Schlaf',           unit:'h',       dec:1, csv:'schlaf_h',             better:0,  dash:'avg7', alias:['schlaf','sleep']},
+  {key:'kcalIn',  v:'aufnahme',     label:'Kalorienaufnahme', unit:'kcal',    dec:0, csv:'kalorien_aufnahme_kcal',  better:0, dash:'avg7', alias:['aufnahme','kalorienaufnahme','kcal_in','intake','calories_in','calories_consumed','energy_intake']},
+  {key:'kcalActive', v:'aktivitaet', label:'Aktivitätskalorien', unit:'kcal', dec:0, csv:'aktivitaetskalorien_kcal', better:1, dash:'avg7', alias:['aktivitaet','aktivitaetskalorien','aktivkalorien','aktive_kalorien','active_calories','active_energy','activity_calories','active_kcal']},
+  {key:'kcalOut', v:'verbrauch_gemessen', label:'Gesamtverbrauch (gemessen)', unit:'kcal', dec:0, csv:'kalorien_verbrauch_kcal', better:0, dash:'avg7', alias:['verbrauch','kalorienverbrauch','gesamtverbrauch','kcal_out','burned','calories_burned','energy_burned','total_calories']},
 ];
 const DERIVED = [
-  {key:'whr',     label:'Taille/Hüfte (WHR)',  unit:'',     dec:2, csv:'whr',                   better:-1, derived:true},
-  {key:'whtr',    label:'Taille/Größe (WHtR)', unit:'',     dec:2, csv:'whtr',                  better:-1, derived:true},
-  {key:'bmr',     label:'Grundumsatz (BMR)',   unit:'kcal', dec:0, csv:'grundumsatz_kcal',      better:0,  derived:true},
-  {key:'balance', label:'Kalorienbilanz',      unit:'kcal', dec:0, csv:'kalorienbilanz_kcal',   better:0,  derived:true, dash:'avg7'},
-  {key:'fatloss', label:'Theor. Fettverlust',  unit:'g',    dec:0, csv:'fettverlust_theor_g',   better:0,  derived:true, dash:'sum30'},
+  {key:'whr',      v:'whr',         label:'Taille/Hüfte (WHR)',  unit:'',     dec:2, csv:'whr',                         better:-1, derived:true, fx:'taille / huefte'},
+  {key:'whtr',     v:'whtr',        label:'Taille/Größe (WHtR)', unit:'',     dec:2, csv:'whtr',                        better:-1, derived:true, fx:'taille / groesse'},
+  {key:'bmr',      v:'grundumsatz', label:'Grundumsatz (BMR)',   unit:'kcal', dec:0, csv:'grundumsatz_kcal',            better:0,  derived:true, fx:'10*gewicht_letzt + 6.25*groesse - 5*alter + wenn(mann, 5, -161)'},
+  {key:'kcalBurn', v:'verbrauch',   label:'Kalorienverbrauch',   unit:'kcal', dec:0, csv:'kalorienverbrauch_gesamt_kcal', better:0, derived:true, dash:'avg7', fx:'oder(verbrauch_gemessen, aktivitaet + grundumsatz)'},
+  {key:'balance',  v:'bilanz',      label:'Kalorienbilanz',      unit:'kcal', dec:0, csv:'kalorienbilanz_kcal',         better:0,  derived:true, dash:'avg7', fx:'aufnahme - verbrauch'},
+  {key:'fatloss',  v:'fettverlust', label:'Theor. Fettverlust',  unit:'g',    dec:0, csv:'fettverlust_theor_g',         better:0,  derived:true, dash:'sum30', fx:'-bilanz / 7.7'},
+];
+const FX_NOTE = {
+  bmi:'Nur an Tagen ohne eingetragenen BMI.',
+  bmr:'Mifflin-St Jeor. gewicht_letzt ist das zuletzt gemessene Gewicht, damit der Grundumsatz auch an Tagen ohne Wiegen bekannt ist.',
+  kcalBurn:'Gemessener Gesamtverbrauch, sonst Aktivitätskalorien + Grundumsatz.',
+  balance:'Negativ = Defizit (mehr verbraucht als aufgenommen).',
+  fatloss:'7.700 kcal ≈ 1 kg Körperfett, also 7,7 kcal je Gramm. Positiv = abgebaut.',
+};
+const CTX_VARS = [
+  ['groesse','Körpergröße in cm (Einstellungen)'],
+  ['alter','Alter in Jahren am jeweiligen Tag'],
+  ['mann','1 bei männlich, 0 bei weiblich'],
+  ['frau','1 bei weiblich, 0 bei männlich'],
+  ['gewicht_letzt','zuletzt gemessenes Gewicht, auch an Tagen ohne Wiegen'],
 ];
 const NOTE_HEADS = ['note','notes','notiz','notizen','anmerkung','anmerkungen','kommentar','kommentare','comment','comments','tags','tag','bemerkung','bemerkungen'];
 const DEFAULT_CHARTS = [
-  {id:'c1', title:'Gewicht und Körperfett', metrics:['weight','bodyfat'], type:'line', band:true, smooth:true},
-  {id:'c2', title:'Umfänge', metrics:['waist','belly','hip'], type:'line', band:false, smooth:true},
-  {id:'c3', title:'Kalorien', metrics:['kcalIn','kcalOut','balance'], type:'line', band:false, smooth:true},
-  {id:'c4', title:'BMI', metrics:['bmi'], type:'line', band:false, smooth:false},
+  {id:'c1', title:'Gewicht und Körperfett', metrics:['weight','bodyfat'], type:'line', band:true, smooth:true, goals:true},
+  {id:'c2', title:'Umfänge', metrics:['waist','belly','hip'], type:'line', band:false, smooth:true, goals:true},
+  {id:'c3', title:'Kalorien', metrics:['kcalIn','kcalBurn','balance'], type:'energy', band:false, smooth:false, goals:false},
+  {id:'c4', title:'BMI', metrics:['bmi'], type:'line', band:false, smooth:false, goals:true},
 ];
-const DEFAULT_DASH = { tiles:['weight','bmi','bodyfat','waist','belly','whr','whtr','muscle','visceral','water','rhr','sleep','steps','kcalIn','kcalOut','balance','fatloss','bmr'], trend:['weight'] };
+const DEFAULT_DASH = { tiles:['weight','bmi','bodyfat','waist','belly','whr','whtr','muscle','visceral','water','rhr','sleep','steps','kcalIn','kcalActive','kcalBurn','balance','fatloss','bmr'], trend:['weight'] };
 const DEFAULT_VIEW = { preset:'6m', from:null, to:null, gran:'auto' };
+/* Stehen im Erfassen-Formular unter „Weitere Werte“ (änderbar unter Einstellungen → Messgrößen) */
+const DEFAULT_HIDDEN = ['bmi','muscle','water','visceral','chest','arm','thigh','rhr','steps','sleep','kcalOut'];
 
-const S = {
-  rows: {},
-  settings: { height:null, sex:'', birth:'', burnMode:'total', delim:';', exportDerived:false, custom:[], hidden:[],
-              charts:JSON.parse(JSON.stringify(DEFAULT_CHARTS)), dash:JSON.parse(JSON.stringify(DEFAULT_DASH)), view:{...DEFAULT_VIEW} }
-};
+const S = { rows: {}, settings: null };
 
 /* ---------- Hilfsfunktionen ---------- */
 const $ = s => document.querySelector(s);
@@ -505,47 +612,162 @@ function ask(msg, ok='Löschen', title='Bist du sicher?'){
   return new Promise(res=>{ const d=$('#askDlg'); $('#askTitle').textContent=title; $('#askMsg').textContent=msg; $('#askOk').textContent=ok; d.returnValue=''; d.onclose=()=>res(d.returnValue==='yes'); d.showModal(); });
 }
 
-const storedMetrics = () => DEFAULT_METRICS.concat(S.settings.custom||[]);
-const allMetrics = () => storedMetrics().concat(DERIVED);
-const metric = k => allMetrics().find(m=>m.key===k);
+/* ---------- Formeln für berechnete Werte ----------
+   Erlaubt: Zahlen (Dezimalpunkt), + - * / ^, Klammern, Vergleiche (< > <= >= = !=),
+   Funktionen wenn(b;dann;sonst), oder(a;b;…), vorhanden(x), min, max, abs, runden(x;n), wurzel.
+   Fehlt ein Wert, ist das Ergebnis leer – außer bei oder() und vorhanden(). */
+const FX = (() => {
+  const cache = new Map();
+  const N = v => (v==null || !isFinite(v)) ? null : v;
+  const all = (a, f) => { const v=a.map(g=>g()); return v.some(x=>x==null) ? null : f(v); };
+  const FN = {
+    min:a=>all(a,v=>Math.min(...v)), max:a=>all(a,v=>Math.max(...v)), abs:a=>all(a,v=>Math.abs(v[0])),
+    runden:a=>{ const x=a[0]?.(), n=a[1]?a[1]():0; return x==null||n==null ? null : Math.round(x*10**n)/10**n; },
+    wurzel:a=>all(a,v=>v[0]<0?null:Math.sqrt(v[0])),
+    wenn:a=>{ const c=a[0]?.(); if (c==null) return null; return c ? (a[1]?a[1]():null) : (a[2]?a[2]():null); },
+    oder:a=>{ for (const g of a){ const v=g(); if (v!=null) return v; } return null; },
+    vorhanden:a=>(a[0]?.()==null ? 0 : 1),
+  };
+  FN.round=FN.runden; FN.sqrt=FN.wurzel; FN.if=FN.wenn; FN.coalesce=FN.oder;
+  function tokenize(s){
+    const t=[]; let i=0;
+    while (i<s.length){
+      const c=s[i];
+      if (/\s/.test(c)){ i++; continue; }
+      if (/[0-9.]/.test(c)){ let j=i; while (j<s.length && /[0-9.]/.test(s[j])) j++; const v=Number(s.slice(i,j)); if (!isFinite(v)) throw new Error('Ungültige Zahl „'+s.slice(i,j)+'“ (Dezimalpunkt verwenden)'); t.push({t:'n',v}); i=j; continue; }
+      if (/[A-Za-z_äöüÄÖÜß]/.test(c)){ let j=i; while (j<s.length && /[A-Za-z0-9_äöüÄÖÜß]/.test(s[j])) j++; t.push({t:'id',v:norm(s.slice(i,j))}); i=j; continue; }
+      const two=s.slice(i,i+2);
+      if (['<=','>=','==','!=','<>'].includes(two)){ t.push({t:'op',v:two==='<>'?'!=':two}); i+=2; continue; }
+      if ('+-*/^()<>,;='.includes(c)){ t.push({t:'op',v:c==='='?'==':c===';'?',':c}); i++; continue; }
+      throw new Error('Unerwartetes Zeichen „'+c+'“');
+    }
+    return t;
+  }
+  function parse(src){
+    const tk=tokenize(String(src||'')); let p=0;
+    if (!tk.length) throw new Error('Die Formel ist leer');
+    const isOp=v=>tk[p] && tk[p].t==='op' && tk[p].v===v;
+    const expect=v=>{ if (!isOp(v)) throw new Error('„'+v+'“ fehlt'); p++; };
+    const expr=()=>{ let a=add(); while (tk[p] && tk[p].t==='op' && ['<','>','<=','>=','==','!='].includes(tk[p].v)){ const op=tk[p++].v; a={t:'b',op,a,b:add()}; } return a; };
+    const add=()=>{ let a=mul(); while (isOp('+')||isOp('-')){ const op=tk[p++].v; a={t:'b',op,a,b:mul()}; } return a; };
+    const mul=()=>{ let a=unary(); while (isOp('*')||isOp('/')){ const op=tk[p++].v; a={t:'b',op,a,b:unary()}; } return a; };
+    const unary=()=>{ if (isOp('-')){ p++; return {t:'neg',a:unary()}; } if (isOp('+')){ p++; return unary(); } return pow(); };
+    const pow=()=>{ const a=prim(); if (isOp('^')){ p++; return {t:'b',op:'^',a,b:unary()}; } return a; };
+    const prim=()=>{
+      const x=tk[p]; if (!x) throw new Error('Die Formel endet unerwartet');
+      if (x.t==='n'){ p++; return {t:'n',v:x.v}; }
+      if (x.t==='id'){
+        p++;
+        if (isOp('(')){ p++; const args=[]; if (!isOp(')')){ args.push(expr()); while (isOp(',')){ p++; args.push(expr()); } } expect(')');
+          if (!FN[x.v]) throw new Error('Unbekannte Funktion „'+x.v+'“'); return {t:'f',f:x.v,args}; }
+        return {t:'v',n:x.v};
+      }
+      if (isOp('(')){ p++; const e=expr(); expect(')'); return e; }
+      throw new Error('Unerwartet: „'+x.v+'“');
+    };
+    const ast=expr(); if (p<tk.length) throw new Error('Unerwartet: „'+tk[p].v+'“'); return ast;
+  }
+  function ev(n, get){
+    switch (n.t){
+      case 'n': return n.v;
+      case 'v': return get(n.n);
+      case 'neg': { const v=ev(n.a,get); return v==null ? null : -v; }
+      case 'f': return N(FN[n.f](n.args.map(a=>()=>ev(a,get))));
+      case 'b': {
+        const a=ev(n.a,get); if (a==null) return null; const b=ev(n.b,get); if (b==null) return null;
+        switch (n.op){
+          case '+': return a+b; case '-': return a-b; case '*': return a*b; case '/': return b===0 ? null : a/b; case '^': return N(a**b);
+          case '<': return +(a<b); case '>': return +(a>b); case '<=': return +(a<=b); case '>=': return +(a>=b);
+          case '==': return +(Math.abs(a-b)<1e-9); case '!=': return +(Math.abs(a-b)>=1e-9);
+        }
+      }
+    }
+    return null;
+  }
+  const vars=(n, out=new Set())=>{ if (n.t==='v') out.add(n.n); if (n.a) vars(n.a,out); if (n.b) vars(n.b,out); if (n.args) n.args.forEach(x=>vars(x,out)); return out; };
+  function compile(src){ let c=cache.get(src); if (!c){ try { const ast=parse(src); c={ast, vars:vars(ast)}; } catch(e){ c={err:e.message}; } cache.set(src,c); } return c; }
+  return { compile, run:(c,get)=>c.ast ? N(ev(c.ast,get)) : null, functions:['wenn','oder','vorhanden','min','max','abs','runden','wurzel'] };
+})();
 
-let sdc=null, wc=null;
-function invalidate(){ sdc=null; wc=null; }
+/* ---------- Messgrößen und Werte ---------- */
+const storedMetrics = () => DEFAULT_METRICS.concat(S.settings.custom||[]);
+const allDerived = () => DERIVED.concat(S.settings.derivedCustom||[]);
+const allMetrics = () => storedMetrics().concat(allDerived());
+let sdc=null, wc=null, mc=null, vmc=null, vcache=new Map();
+const evalStack=new Set();
+function invalidate(){ sdc=null; wc=null; mc=null; vmc=null; vcache=new Map(); }
+const metric = k => (mc ||= new Map(allMetrics().map(m=>[m.key,m]))).get(k);
 const sortedDates = () => sdc || (sdc = Object.keys(S.rows).sort());
+const formulaOf = m => (S.settings.formulas||{})[m.key] ?? m.fx;
 function weightOn(d){
-  if (!wc){ wc=new Map(); let last=null; for (const x of sortedDates()){ const w=S.rows[x].weight; if (w!=null) last=w; wc.set(x,last); } }
+  if (!wc){ wc=new Map(); let last=null; for (const x of sortedDates()){ const w=S.rows[x].weight; if (typeof w==='number') last=w; wc.set(x,last); } }
   return wc.get(d) ?? null;
 }
 function ageAt(d){
   const b=S.settings.birth; if (!b) return null;
   let a = +d.slice(0,4) - +b.slice(0,4); if (d.slice(5) < b.slice(5)) a--; return a;
 }
-function bmrOn(d){
-  const h=S.settings.height, sx=S.settings.sex, a=ageAt(d), w=weightOn(d);
-  if (!h || !sx || a==null || w==null) return null;
-  return 10*w + 6.25*h - 5*a + (sx==='m' ? 5 : -161);
+/* Name einer Messgröße in Formeln: feste Namen für eingebaute, sonst aus der Bezeichnung */
+function varMap(){
+  if (vmc) return vmc;
+  const mp=new Map(), ctx=new Set(CTX_VARS.map(c=>c[0]));
+  for (const m of allMetrics()){
+    let base=m.v || norm(m.label) || m.key; if (/^[0-9]/.test(base)) base='x_'+base;
+    let n=base, i=2; while (mp.has(n) || ctx.has(n) || FX.functions.includes(n)) n=base+'_'+(i++);
+    mp.set(n,{key:m.key, label:m.label, unit:m.unit});
+  }
+  return vmc=mp;
 }
-/* Wert einer Messgröße an einem Tag – gespeichert oder berechnet */
+const varOf = k => { for (const [n,x] of varMap()) if (x.key===k) return n; return null; };
+function varValue(d, n){
+  const sx=S.settings.sex;
+  switch (n){
+    case 'groesse': return S.settings.height || null;
+    case 'alter': return ageAt(d);
+    case 'mann': return sx==='m' ? 1 : sx==='f' ? 0 : null;
+    case 'frau': return sx==='f' ? 1 : sx==='m' ? 0 : null;
+    case 'gewicht_letzt': return weightOn(d);
+  }
+  const x=varMap().get(n); return x ? val(d, x.key) : null;
+}
+function evalFx(d, m){
+  const ck=d+'|'+m.key; if (evalStack.has(ck)) return null;   // Kreisbezug: kein Ergebnis
+  const c=FX.compile(formulaOf(m)); if (!c.ast) return null;
+  evalStack.add(ck);
+  try { return FX.run(c, n=>varValue(d,n)); } finally { evalStack.delete(ck); }
+}
+/* Wert einer Messgröße an einem Tag – eingetragen oder berechnet */
 function val(d, k){
   const r=S.rows[d]; if (!r) return null;
-  const h=S.settings.height;
-  switch(k){
-    case 'bmi': if (r.bmi!=null) return r.bmi; return (h && r.weight!=null) ? r.weight/((h/100)**2) : null;
-    case 'whtr': return (h && r.waist!=null) ? r.waist/h : null;
-    case 'whr': return (r.waist!=null && r.hip) ? r.waist/r.hip : null;
-    case 'bmr': return (r.weight!=null || r.kcalIn!=null || r.kcalOut!=null) ? bmrOn(d) : null;
-    case 'balance': {
-      if (r.kcalIn==null || r.kcalOut==null) return null;
-      let out=r.kcalOut;
-      if (S.settings.burnMode==='active'){ const b=bmrOn(d); if (b==null) return null; out+=b; }
-      return out - r.kcalIn;
-    }
-    case 'fatloss': { const b=val(d,'balance'); return b==null ? null : b/7.7; }
-  }
-  const v=r[k]; return (typeof v!=='number' || !isFinite(v)) ? null : v;
+  const ck=d+'|'+k; if (vcache.has(ck)) return vcache.get(ck);
+  const m=metric(k); let v=null;
+  if (m && m.derived) v=evalFx(d,m);
+  else { const x=r[k]; v=(typeof x==='number' && isFinite(x)) ? x : null; if (v==null && m && m.fx) v=evalFx(d,m); }
+  if (v!=null && !isFinite(v)) v=null;
+  vcache.set(ck,v); return v;
 }
-function colorFor(k){ const i=allMetrics().findIndex(m=>m.key===k); return cssVar('--s'+((i%8)+1)) || '#1F6F78'; }
+const isCalc = (d, m) => m.derived || (m.fx && typeof S.rows[d]?.[m.key]!=='number');
+/* Prüft eine Formel: Syntax, bekannte Namen, kein Kreisbezug. Liefert Fehlertext oder null. */
+function checkFormula(key, src){
+  const c=FX.compile(src); if (c.err) return c.err;
+  const vm=varMap(), ctx=new Set(CTX_VARS.map(x=>x[0]));
+  const unknown=[...c.vars].filter(n=>!vm.has(n) && !ctx.has(n));
+  if (unknown.length) return 'Unbekannt: '+unknown.join(', ')+'. Mögliche Namen stehen unter „Verfügbare Namen“.';
+  const depsOf=k=>{ const m=metric(k); if (!m) return []; const s=k===key ? src : (m.derived||m.fx) ? formulaOf(m) : null; if (!s) return [];
+    const cc=FX.compile(s); return cc.ast ? [...cc.vars].map(n=>vm.get(n)?.key).filter(Boolean) : []; };
+  const seen=new Set(), visit=k=>{ for (const dk of depsOf(k)){ if (dk===key) return true; if (!seen.has(dk)){ seen.add(dk); if (visit(dk)) return true; } } return false; };
+  if (visit(key)) return 'Kreisbezug: Die Formel verweist über andere Formeln auf sich selbst.';
+  return null;
+}
+const DEFAULT_COLORS = ['--s1','--s2','--s3','--s4','--s5','--s6','--s7','--s8'];
+function defaultColor(k){
+  const fixed={kcalIn:'--s2', kcalBurn:'--s1', deficit:'--good', surplus:'--bad'};
+  if (fixed[k]) return cssVar(fixed[k]);
+  const i=allMetrics().findIndex(m=>m.key===k); return cssVar(DEFAULT_COLORS[(Math.max(i,0))%8]) || '#1F6F78';
+}
+const colorFor = (k, c) => (c && c.colors && c.colors[k]) || defaultColor(k);
 function trendClass(m, delta){ if (!m.better || Math.abs(delta)<1e-9) return 'tr-neutral'; return (Math.sign(delta)===m.better) ? 'tr-good' : 'tr-bad'; }
+
 
 /* ---------- Datenhaltung: Browser (Standard), eigener Server oder XML-Datei ---------- */
 const CFG_KEY='koerperdaten-config', LS='koerperdaten-v1';
@@ -564,17 +786,40 @@ const hasData=()=>Object.keys(S.rows).length>0;
 const setSync=t=>{ $('#sync').textContent=t; };
 
 function defaultSettings(){
-  return { height:null, sex:'', birth:'', burnMode:'total', delim:';', exportDerived:false, custom:[], hidden:[],
+  return { fv:SETTINGS_FORMAT, height:null, sex:'', birth:'', delim:';', exportDerived:false, custom:[], hidden:[...DEFAULT_HIDDEN],
+    derivedCustom:[], formulas:{}, goals:[],
     charts:JSON.parse(JSON.stringify(DEFAULT_CHARTS)), dash:JSON.parse(JSON.stringify(DEFAULT_DASH)), view:{...DEFAULT_VIEW} };
 }
 function mergeSettings(s){
   S.settings={...S.settings, ...(s||{})};
   S.settings.view={...DEFAULT_VIEW, ...(S.settings.view||{})};
   S.settings.dash={...JSON.parse(JSON.stringify(DEFAULT_DASH)), ...(S.settings.dash||{})};
-  S.settings.custom ||= []; S.settings.hidden ||= [];
+  S.settings.custom ||= []; S.settings.hidden ||= []; S.settings.derivedCustom ||= []; S.settings.goals ||= [];
+  if (!S.settings.formulas || typeof S.settings.formulas!=='object') S.settings.formulas={};
 }
-function setData(rows, settings){ S.rows=rows||{}; S.settings=defaultSettings(); mergeSettings(settings); invalidate(); }
-function loaded(msg){ dirty=false; lastSaved=null; page=0; renderAll(); updateStorageUI(); if (msg) toast(msg); }
+/* Ältere Daten und Einstellungen auf den aktuellen Stand bringen. true = es wurde etwas geändert */
+function migrate(){
+  const st=S.settings; let changed=false;
+  if ((st.fv||0) < 3){
+    // Bis 2.2: „Kalorienverbrauch“ konnte nur Aktivitätskalorien sein (Einstellung burnMode=active)
+    if (st.burnMode==='active'){
+      for (const r of Object.values(S.rows)) if (typeof r.kcalOut==='number' && r.kcalActive==null){ r.kcalActive=r.kcalOut; delete r.kcalOut; }
+    }
+    for (const c of st.charts||[]){
+      if (Array.isArray(c.metrics) && c.metrics.includes('kcalIn') && c.metrics.includes('balance') && c.type!=='energy'){ c.type='energy'; c.metrics=['kcalIn','kcalBurn','balance']; }
+      if (c.goals==null) c.goals=c.type!=='energy';
+    }
+    const t=st.dash?.tiles;
+    if (Array.isArray(t) && !t.includes('kcalBurn')){ const i=t.indexOf('kcalOut'); if (i>=0) t.splice(i,1,'kcalActive','kcalBurn'); else t.push('kcalActive','kcalBurn'); }
+    if (!st.hidden.length) st.hidden=[...DEFAULT_HIDDEN];
+    st.fv=SETTINGS_FORMAT; changed=true;
+  }
+  if ('burnMode' in st){ delete st.burnMode; changed=true; }
+  return changed;
+}
+let migrated=false;
+function setData(rows, settings){ S.rows=rows||{}; S.settings=defaultSettings(); if (settings) S.settings.fv=0; mergeSettings(settings); if (migrate()) migrated=true; invalidate(); }
+function loaded(msg){ dirty=false; lastSaved=null; page=0; renderAll(); updateStorageUI(); if (msg) toast(msg); if (migrated){ migrated=false; markDirty(); } }
 function choose(msg, a, b, title='Welche Daten verwenden?'){
   return new Promise(res=>{ const d=$('#chooseDlg'); $('#chooseTitle').textContent=title; $('#chooseMsg').textContent=msg; $('#chooseA').textContent=a; $('#chooseB').textContent=b; d.returnValue=''; d.onclose=()=>res(d.returnValue||null); d.showModal(); });
 }
@@ -710,7 +955,6 @@ function toXml(){
   L.push('    <koerpergroesse_cm>'+(st.height??'')+'</koerpergroesse_cm>');
   L.push('    <geschlecht>'+xt(st.sex||'')+'</geschlecht>');
   L.push('    <geburtsdatum>'+xt(st.birth||'')+'</geburtsdatum>');
-  L.push('    <kalorienverbrauch>'+(st.burnMode==='active'?'aktiv':'gesamt')+'</kalorienverbrauch>');
   L.push('    <csv_trennzeichen>'+xt(st.delim||';')+'</csv_trennzeichen>');
   L.push('    <csv_berechnete_spalten>'+(st.exportDerived?'ja':'nein')+'</csv_berechnete_spalten>');
   L.push('    <ausgeblendet>'+st.hidden.map(k=>'<messgroesse>'+xt(k)+'</messgroesse>').join('')+'</ausgeblendet>');
@@ -718,7 +962,7 @@ function toXml(){
   L.push('  <messgroessen>');
   for (const m of storedMetrics()) L.push('    <messgroesse schluessel="'+xa(m.key)+'" name="'+xa(m.label)+'" einheit="'+xa(m.unit||'')+'" nachkommastellen="'+m.dec+'" csv="'+xa(m.csv||m.key)+'"'+(custom.has(m.key)?' eigene="ja"':'')+'/>');
   L.push('  </messgroessen>');
-  L.push('  <ansicht><![CDATA['+JSON.stringify({charts:st.charts, dash:st.dash, view:st.view}).replace(/]]>/g,']]]]><![CDATA[>')+']]></ansicht>');
+  L.push('  <ansicht><![CDATA['+JSON.stringify({fv:st.fv, charts:st.charts, dash:st.dash, view:st.view, goals:st.goals, formulas:st.formulas, derivedCustom:st.derivedCustom}).replace(/]]>/g,']]]]><![CDATA[>')+']]></ansicht>');
   L.push('  <eintraege anzahl="'+dates.length+'">');
   for (const d of dates){
     const r=S.rows[d];
@@ -748,7 +992,7 @@ function fromXml(text){
   if (E){
     const h=parseFloat(g('koerpergroesse_cm')); st.height=isFinite(h)?h:null;
     st.sex=['m','f'].includes(g('geschlecht'))?g('geschlecht'):''; st.birth=/^\d{4}-\d{2}-\d{2}$/.test(g('geburtsdatum'))?g('geburtsdatum'):'';
-    st.burnMode=g('kalorienverbrauch')==='aktiv'?'active':'total'; st.delim=g('csv_trennzeichen')===','?',':';';
+    if (g('kalorienverbrauch')==='aktiv') st.burnMode='active'; st.delim=g('csv_trennzeichen')===','?',':';';
     st.exportDerived=g('csv_berechnete_spalten')==='ja';
     st.hidden=kid(one(E,'ausgeblendet'),'messgroesse').map(x=>x.textContent);
   }
@@ -756,7 +1000,11 @@ function fromXml(text){
     const key=x.getAttribute('schluessel'); return {key, label:x.getAttribute('name')||key, unit:x.getAttribute('einheit')||'', dec:Math.min(3,Math.max(0,+(x.getAttribute('nachkommastellen')??1)||0)), csv:x.getAttribute('csv')||key, better:0};
   }).filter(m=>m.key && XML_NAME.test(m.key));
   const A=one(root,'ansicht');
-  if (A){ try { const j=JSON.parse(A.textContent); if (Array.isArray(j.charts)) st.charts=j.charts; if (j.dash) st.dash=j.dash; if (j.view) st.view=j.view; } catch(e){} }
+  if (A){ try { const j=JSON.parse(A.textContent); if (Array.isArray(j.charts)) st.charts=j.charts; if (j.dash) st.dash=j.dash; if (j.view) st.view=j.view;
+    if (Array.isArray(j.goals)) st.goals=j.goals.filter(x=>x && typeof x.key==='string' && typeof x.target==='number');
+    if (j.formulas && typeof j.formulas==='object') st.formulas=Object.fromEntries(Object.entries(j.formulas).filter(([k,v])=>typeof v==='string'));
+    if (Array.isArray(j.derivedCustom)) st.derivedCustom=j.derivedCustom.filter(x=>x && /^d_[a-z0-9_]+$/.test(x.key||'') && typeof x.fx==='string').map(x=>({key:x.key, label:String(x.label||x.key), unit:String(x.unit||''), dec:Math.min(3,Math.max(0,+x.dec||0)), csv:String(x.csv||x.key), better:0, derived:true, fx:x.fx}));
+    if (j.fv) st.fv=j.fv; } catch(e){} }
   setData(rows, st);
   return Object.keys(rows).length;
 }
@@ -1076,6 +1324,7 @@ function rangeBounds(){
   if (v.preset==='custom' && v.from && v.to) return v.from<=v.to ? {from:v.from,to:v.to} : {from:v.to,to:v.from};
   if (!dates.length) return null;
   const end=dates[dates.length-1], months={'1m':1,'3m':3,'6m':6,'1y':12,'3y':36}[v.preset];
+  if (v.preset==='1w') return {from:dOf(tsOf(end)-6*DAY), to:end};
   return {from: months ? addMonths(end,-months) : dates[0], to:end};
 }
 function autoGran(from,to){ const days=(tsOf(to)-tsOf(from))/DAY; if (days<=62) return 'day'; if (days<=280) return 'week'; if (days<=1100) return 'month'; return 'quarter'; }
@@ -1185,13 +1434,66 @@ function rate(key, v, ctx){
       if (v<5000) return R('warn','wenig aktiv',ref); if (v<7000) return R('ok','mäßig aktiv',ref); if (v<10000) return R('good','aktiv',ref); return R('good','sehr aktiv',ref);
     }
     case 'balance': {
-      const ref='Zum Abnehmen 500–600 kcal Defizit am Tag empfohlen (DAG-Leitlinie)';
-      if (v<0) return R('info','Überschuss',ref); if (v<300) return R('ok','geringes Defizit',ref);
-      if (v<=800) return R('good','moderates Defizit',ref); if (v<=1000) return R('ok','hohes Defizit',ref); return R('warn','sehr hohes Defizit',ref);
+      const ref='Negativ = Defizit. Zum Abnehmen 500–600 kcal Defizit am Tag empfohlen (DAG-Leitlinie)', def=-v;
+      if (def<0) return R('info','Überschuss',ref); if (def<300) return R('ok','geringes Defizit',ref);
+      if (def<=800) return R('good','moderates Defizit',ref); if (def<=1000) return R('ok','hohes Defizit',ref); return R('warn','sehr hohes Defizit',ref);
     }
-    case 'bmr': return R('info','berechnet','Mifflin-St Jeor aus Gewicht, Größe, Alter, Geschlecht');
+    case 'bmr': return R('info','berechnet','Mifflin-St Jeor; Formel unter Einstellungen → Berechnete Werte');
+    case 'kcalBurn': return R('info','berechnet','Aktivitätskalorien + Grundumsatz, oder der gemessene Gesamtverbrauch');
   }
   return R('info','ohne Bewertung','');
+}
+
+/* ---------- Ziele und Prognose ---------- */
+/* Ausgleichsgerade über Tagespunkte: Steigung je ms und Wert an beliebiger Stelle */
+function fitLine(pts){
+  if (pts.length<4 || pts[pts.length-1].x-pts[0].x < 10*DAY) return null;
+  const n=pts.length, mx=pts.reduce((s,p)=>s+p.x,0)/n, my=pts.reduce((s,p)=>s+p.y,0)/n;
+  let num=0, den=0; for (const p of pts){ num+=(p.x-mx)*(p.y-my); den+=(p.x-mx)**2; }
+  if (!den) return null;
+  const slope=num/den; return {slope, at:x=>my+slope*(x-mx), days:Math.round((pts[pts.length-1].x-pts[0].x)/DAY)+1};
+}
+const goalOf = k => (S.settings.goals||[]).find(g=>g.key===k);
+function goalInfo(g){
+  const m=metric(g.key); if (!m) return null;
+  const ld=lastDateOf(g.key); if (!ld) return {m, g, noData:true};
+  const tLd=tsOf(ld), cur=val(ld,g.key);
+  let fit=fitLine(series(g.key, dOf(tLd-29*DAY), ld, 'day'));
+  if (!fit) fit=fitLine(series(g.key, dOf(tLd-89*DAY), ld, 'day'));
+  const start=g.start?.v ?? cur, target=g.target;
+  const dir=Math.sign(target-start) || Math.sign(target-cur);
+  const reached = dir===0 || (dir<0 ? cur<=target : cur>=target);
+  const progress = start===target ? 1 : Math.max(0, Math.min(1, (start-cur)/(start-target)));
+  const slopeDay = fit ? fit.slope*DAY : null;
+  let eta=null, status;
+  if (reached) status='reached';
+  else if (slopeDay==null) status='nodata';
+  else if (Math.sign(slopeDay)!==dir || Math.abs(slopeDay)<1e-9) status='away';
+  else { const days=(target-fit.at(tLd))/slopeDay; eta=tLd+Math.max(0,days)*DAY; status = days>3650 ? 'far' : 'onway'; }
+  let needDay=null, late=false;
+  if (g.date && !reached){ const dd=(tsOf(g.date)-tLd)/DAY; if (dd>0) needDay=(target-cur)/dd; late = status!=='onway' || eta>tsOf(g.date); }
+  return {m, g, ld, tLd, cur, start, target, remaining:target-cur, reached, progress, fit, slopeDay, eta, status, needDay, late};
+}
+function weeksText(ms){ const d=Math.round(ms/DAY); if (d<14) return 'in '+d+(d===1?' Tag':' Tagen'); const w=Math.round(d/7); if (w<9) return 'in '+w+' Wochen'; const mo=Math.round(d/30.4); return 'in '+mo+' Monaten'; }
+function goalCard(gi){
+  const {m}=gi, u=m.unit?' '+m.unit:'';
+  if (gi.noData) return el('article',{class:'goal'}, el('div',{class:'g-head'}, el('b',{text:m.label}), el('span',{class:'badge', text:'keine Werte'})),
+    el('div',{class:'g-line', text:'Ziel '+fmt(gi.g.target,m.dec)+u+' – noch keine Messwerte.'}));
+  const badge = gi.reached ? ['good','erreicht'] : gi.status==='onway' ? (gi.late ? ['warn','später als geplant'] : ['good', gi.g.date?'im Plan':'auf Kurs'])
+    : gi.status==='away' ? ['bad','Trend entfernt sich'] : gi.status==='far' ? ['warn','sehr langsam'] : ['info','Trend offen'];
+  const card=el('article',{class:'goal lvl-'+badge[0]},
+    el('div',{class:'g-head'}, el('b',{text:m.label}), el('span',{class:'badge', text:badge[1]})),
+    el('div',{class:'g-vals'}, el('span',{class:'g-now', text:fmt(gi.cur,m.dec)}), el('small',{text:u+' → Ziel '+fmt(gi.target,m.dec)+u+(gi.g.date?' bis '+deDate(gi.g.date):'')})));
+  const bar=el('div',{class:'g-bar', role:'progressbar', 'aria-valuemin':'0', 'aria-valuemax':'100', 'aria-valuenow':String(Math.round(gi.progress*100)), 'aria-label':'Fortschritt zum Ziel'}, el('span'));
+  bar.firstChild.style.width=(gi.progress*100).toFixed(1)+'%'; bar.firstChild.style.background=colorFor(m.key);
+  card.append(bar, el('div',{class:'g-scale'}, el('span',{text:'Start '+fmt(gi.start,m.dec)+(gi.g.start?.d?' ('+deDate(gi.g.start.d)+')':'')}), el('span',{text:Math.round(gi.progress*100)+' % geschafft'})));
+  if (!gi.reached) card.append(el('div',{class:'g-line'}, document.createTextNode('Noch '), el('b',{text:sgn(gi.remaining,m.dec,u)}), document.createTextNode(' bis zum Ziel')));
+  if (gi.slopeDay!=null) card.append(el('div',{class:'g-line', text:'Trend: '+sgn(gi.slopeDay*7, Math.max(m.dec,1)+(Math.abs(gi.slopeDay*7)<1?1:0), u)+' je Woche (letzte '+gi.fit.days+' Tage)'}));
+  if (gi.status==='onway') card.append(el('div',{class:'g-line g-fc'}, document.createTextNode('Prognose: '), el('b',{text:'ca. '+deDate(dOf(gi.eta))}), document.createTextNode(' ('+weeksText(gi.eta-tsOf(todayStr()))+')')));
+  else if (gi.status==='away') card.append(el('div',{class:'g-line g-fc', text:'Prognose: Bei diesem Trend wird das Ziel nicht erreicht.'}));
+  else if (gi.status==='nodata') card.append(el('div',{class:'g-line g-fc', text:'Prognose ab etwa 10 Tagen mit Messwerten.'}));
+  if (gi.needDay!=null) card.append(el('div',{class:'g-line', text:'Für '+deDate(gi.g.date)+' nötig: '+sgn(gi.needDay*7, Math.max(m.dec,1)+(Math.abs(gi.needDay*7)<1?1:0), u)+' je Woche'}));
+  return card;
 }
 
 /* ---------- Übersicht ---------- */
@@ -1252,6 +1554,8 @@ function renderDash(){
     el('span',{text:'Für BMI, Grundumsatz und eine genaue Bewertung fehlen noch: '+miss.join(', ')+'.'}),
     el('button',{class:'btn small', text:'Angaben ergänzen', onclick:()=>showTab('settings')})));
 
+  const goalInfos=(st.goals||[]).map(goalInfo).filter(Boolean);
+  if (goalInfos.length) area.append(el('h2',{class:'section-title', text:'Ziele'}), el('div',{class:'goals'}, ...goalInfos.map(goalCard)), el('h2',{class:'section-title', text:'Aktuelle Werte'}));
   const tiles=el('div',{class:'tiles'}), empty=[];
   for (const k of st.dash.tiles){
     const m=metric(k); if (!m) continue;
@@ -1259,16 +1563,25 @@ function renderDash(){
     const u=t.unit?' '+t.unit:'';
     const tile=el('article',{class:'tile lvl-'+t.rating.lvl},
       el('div',{class:'t-head'}, el('span',{class:'t-name', text:m.label}), el('span',{class:'badge', text:t.rating.txt})),
-      el('div',{class:'t-val'}, document.createTextNode(fmt(t.v,t.dec)), t.unit?el('small',{text:t.unit}):null),
+      el('div',{class:'t-val'}, document.createTextNode(m.key==='balance'?sgn(t.v,t.dec):fmt(t.v,t.dec)), t.unit?el('small',{text:t.unit}):null),
       el('div',{class:'t-when', text:t.when}),
       sparkline(t.win));
     if (t.change!=null && m.key!=='fatloss' && m.key!=='bmr') tile.append(el('div',{class:'t-trend'}, document.createTextNode('30 Tage: '), el('b',{class:trendClass(m,t.change), text:sgn(t.change, m.dec, m.unit?' '+m.unit:'')})));
+    const gl=goalOf(m.key); if (gl && t.m.dash!=='sum30'){ const gi=goalInfo(gl); if (gi && !gi.noData) tile.append(el('div',{class:'t-goal'}, document.createTextNode('Ziel '+fmt(gi.target,m.dec)+u+': '), el('b',{text:gi.reached?'erreicht':'noch '+sgn(gi.remaining,m.dec,u)}), gi.status==='onway'?document.createTextNode(' · ca. '+deDate(dOf(gi.eta))):null)); }
     if (t.rating.ref) tile.append(el('div',{class:'t-ref', text:t.rating.ref}));
     tiles.append(tile);
   }
   area.append(tiles);
   if (empty.length) area.append(el('p',{class:'hidden-list', text:'Ohne Werte ausgeblendet: '+empty.join(', ')+'.'}));
 
+  // Kalorien der letzten 30 Tage
+  const r30={from:dOf(tsOf(last)-29*DAY), to:last};
+  if (series('kcalIn', r30.from, r30.to, 'day').length || series('kcalBurn', r30.from, r30.to, 'day').length){
+    const ec=st.charts.find(c=>c.type==='energy');
+    area.append(el('h2',{class:'section-title', text:'Kalorien'}));
+    const card=chartCard({id:'dash-energy', title:'Letzte 30 Tage', type:'energy', metrics:[], colors:ec?.colors||{}}, r30, 'day', {edit:false, id:'dash-energy'});
+    card.classList.add('dash-energy'); area.append(card);
+  }
   // Monatstrend
   const tm=st.dash.trend.map(metric).filter(Boolean);
   area.append(el('h2',{class:'section-title', text:'Monatstrend'}));
@@ -1349,10 +1662,16 @@ function renderCharts(){
   grid.append(el('button',{class:'add-chart', text:'+ Diagramm hinzufügen', onclick:()=>openChartDlg(null)}));
   area.append(grid);
 }
+const tickDate = spanDays => val => { const d=new Date(val); return spanDays>500 ? d.toLocaleDateString('de-DE',{month:'short',year:'2-digit',timeZone:'UTC'}) : d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',timeZone:'UTC'}); };
+const alpha = (hex, a) => { const h=String(hex).trim(); return /^#[0-9a-f]{6}$/i.test(h) ? h+Math.round(a*255).toString(16).padStart(2,'0') : h; };
+function cardHead(c, edit){
+  return el('header',{}, el('h2',{text:c.title}), edit?el('button',{class:'btn small', text:'Bearbeiten', onclick:()=>openChartDlg(c.id)}):null);
+}
 function chartCard(c, r, g, opts={}){
+  if (c.type==='energy') return energyCard(c, r, g, opts);
   const edit=opts.edit!==false;
   const card=el('section',{class:'chart-card'});
-  card.append(el('header',{}, el('h2',{text:c.title}), edit?el('button',{class:'btn small', text:'Bearbeiten', onclick:()=>openChartDlg(c.id)}):null));
+  card.append(cardHead(c, edit));
   const ms=c.metrics.map(metric).filter(Boolean);
   const data=ms.map(m=>({m, pts:series(m.key, r.from, r.to, g)}));
   if (opts.stats!==false){
@@ -1360,7 +1679,7 @@ function chartCard(c, r, g, opts={}){
     for (const {m,pts} of data){
       if (!pts.length) continue;
       const first=pts[0].y, last=pts[pts.length-1].y, avg=pts.reduce((s,p)=>s+p.y*p.n,0)/pts.reduce((s,p)=>s+p.n,0), delta=last-first, u=m.unit?' '+m.unit:'';
-      const sw=el('span',{class:'sw'}); sw.style.background=colorFor(m.key);
+      const sw=el('span',{class:'sw'}); sw.style.background=colorFor(m.key,c);
       stats.append(el('div',{class:'stat', title:'Letzter Wert im Zeitraum, Veränderung seit Zeitraumbeginn und Durchschnitt'},
         el('span',{class:'nm'}, sw, m.label), el('span',{class:'now', text:fmt(last,m.dec)+u}),
         el('span',{class:'meta'}, el('span',{class:trendClass(m,delta), text:sgn(delta,m.dec,u)}), document.createTextNode('  Ø '+fmt(avg,m.dec)))));
@@ -1375,54 +1694,151 @@ function chartCard(c, r, g, opts={}){
   const wrap=el('div',{class:'canvas-wrap'}), cv=el('canvas',{'aria-label':c.title, role:'img'}); wrap.append(cv); card.append(wrap);
   const units=[...new Set(ms.map(m=>m.unit))], axisDec=units.map(u=>Math.max(...ms.filter(m=>m.unit===u).map(m=>m.dec)));
   const gridC=cssVar('--line'), ink2=cssVar('--ink-2'), spanDays=(tsOf(r.to)-tsOf(r.from))/DAY;
-  const scales={ x:{ type:'linear', min:tsOf(r.from), max:tsOf(r.to)+(g==='day'?0:HALF[g]), grid:{color:gridC}, ticks:{ color:ink2, maxTicksLimit:innerWidth<560?5:8, maxRotation:0,
-    callback:val=>{ const d=new Date(val); return spanDays>500 ? d.toLocaleDateString('de-DE',{month:'short',year:'2-digit',timeZone:'UTC'}) : d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',timeZone:'UTC'}); } } } };
-  units.forEach((u,i)=>{ scales['y'+i]={ position:i%2?'right':'left', grid:{color:gridC, drawOnChartArea:i===0}, ticks:{color:ink2, maxTicksLimit:6, callback:v=>fmt(v, axisDec[i])}, title:{display:!!u, text:u, color:ink2}, grace:'5%' }; });
-  const datasets=[], showBand=c.band && g!=='day';
+  let xMax=tsOf(r.to)+(g==='day'?0:HALF[g]);
+  const datasets=[], showBand=c.band && g!=='day', notes=[];
   for (const {m,pts} of data){
     if (!pts.length) continue;
-    const col=colorFor(m.key), yAxisID='y'+units.indexOf(m.unit), isDay=g==='day';
+    const col=colorFor(m.key,c), yAxisID='y'+units.indexOf(m.unit), isDay=g==='day';
     if (showBand && c.type!=='bar'){
       datasets.push({label:'_min', data:pts.map(p=>({x:p.x,y:p.min})), yAxisID, borderWidth:0, pointRadius:0, fill:false, _aux:true});
-      datasets.push({label:'_max', data:pts.map(p=>({x:p.x,y:p.max})), yAxisID, borderWidth:0, pointRadius:0, fill:'-1', backgroundColor:col+'2E', _aux:true});
+      datasets.push({label:'_max', data:pts.map(p=>({x:p.x,y:p.max})), yAxisID, borderWidth:0, pointRadius:0, fill:'-1', backgroundColor:alpha(col,.18), _aux:true});
     }
-    datasets.push({ label:m.label, data:pts, yAxisID, borderColor:col, backgroundColor:c.type==='bar'?col+'B3':col,
+    datasets.push({ label:m.label, data:pts, yAxisID, borderColor:col, backgroundColor:c.type==='bar'?alpha(col,.7):col,
       borderWidth:c.type==='scatter'?0:2, pointRadius:c.type==='scatter'?3:(isDay && pts.length>60?0:2.5), pointHoverRadius:5,
       showLine:c.type!=='scatter', tension:.25, spanGaps:true, _m:m, type:c.type==='bar'?'bar':'line', order:1 });
     if (isDay && c.smooth && pts.length>7 && c.type!=='bar')
       datasets.push({ label:m.label+' (7-Tage-Mittel)', data:movingAvg(pts), yAxisID, borderColor:col, borderDash:[5,4], borderWidth:1.5, pointRadius:0, tension:.3, _m:m, _trend:true, order:0 });
+    // Ziel und Prognose
+    const goal=goalOf(m.key);
+    if (goal && c.goals!==false && opts.goals!==false){
+      const gi=goalInfo(goal);
+      if (gi && !gi.noData && r.to>=gi.ld){
+        let fc=null;
+        if (gi.fit && !gi.reached){
+          const horizon=Math.max(spanDays*0.5, 7)*DAY, x0=gi.tLd;
+          let x1=x0+horizon, y1=gi.fit.at(x1);
+          if (gi.status==='onway' && gi.eta<=x1){ x1=gi.eta; y1=gi.target; }
+          fc=[{x:x0,y:gi.fit.at(x0)},{x:x1,y:y1}]; xMax=Math.max(xMax, x1);
+          datasets.push({ label:'Prognose '+m.label, data:fc, yAxisID, borderColor:col, borderDash:[2,3], borderWidth:2, pointRadius:[0,3], pointBackgroundColor:col, tension:0, _m:m, _fc:true, order:0 });
+        }
+        datasets.push({ label:'Ziel '+m.label, data:[{x:tsOf(r.from),y:gi.target},{x:Number.MAX_SAFE_INTEGER,y:gi.target}], yAxisID, borderColor:alpha(col,.8), borderDash:[8,5], borderWidth:1.5, pointRadius:0, _m:m, _goal:true, order:0 });
+        if (gi.status==='onway') notes.push(m.label+': Ziel '+fmt(gi.target,m.dec)+(m.unit?' '+m.unit:'')+' voraussichtlich am '+deDate(dOf(gi.eta)));
+      }
+    }
   }
+  // Ziellinie bis zum rechten Rand ziehen
+  for (const ds of datasets) if (ds._goal) ds.data[1].x=xMax;
+  const scales={ x:{ type:'linear', min:tsOf(r.from), max:xMax, grid:{color:gridC}, ticks:{ color:ink2, maxTicksLimit:innerWidth<560?5:8, maxRotation:0, callback:tickDate(spanDays) } } };
+  units.forEach((u,i)=>{ scales['y'+i]={ position:i%2?'right':'left', grid:{color:gridC, drawOnChartArea:i===0}, ticks:{color:ink2, maxTicksLimit:6, callback:v=>fmt(v, axisDec[i])}, title:{display:!!u, text:u, color:ink2}, grace:'5%' }; });
   if (c.type==='bar'){ const n=Math.max(...data.map(d=>d.pts.length),1); datasets.forEach(ds=>{ if (ds.type==='bar') ds.barThickness=Math.max(2, Math.min(28, 400/(n*data.length*1.6))); }); }
   const chart=new Chart(cv, { type:'line', data:{datasets}, options:{
     responsive:true, maintainAspectRatio:false, animation:false,
     interaction:{mode:'nearest', axis:'x', intersect:false}, scales,
     plugins:{
       legend:{ display:datasets.filter(d=>!d._aux).length>1, labels:{color:ink2, boxWidth:12, filter:i=>!i.text.startsWith('_')} },
-      tooltip:{ filter:i=>!i.dataset._aux, callbacks:{
-        title:items=>{ const it=items.find(i=>!i.dataset._trend)||items[0], p=it.raw; return p.b!=null ? bucketLabel(p.b,g) : bucketLabel(p.x,'day'); },
-        label:i=>{ const m=i.dataset._m, p=i.raw, u=m.unit?' '+m.unit:''; if (i.dataset._trend) return ' Trend: '+fmt(p.y,m.dec)+u;
+      tooltip:{ filter:i=>!i.dataset._aux && !(i.dataset._goal && i.dataIndex>0), callbacks:{
+        title:items=>{ const it=items.find(i=>!i.dataset._trend && !i.dataset._goal)||items[0], p=it.raw; return p.b!=null ? bucketLabel(p.b,g) : bucketLabel(bucketStart(p.x,'day'),'day'); },
+        label:i=>{ const m=i.dataset._m, p=i.raw, u=m.unit?' '+m.unit:'';
+          if (i.dataset._trend) return ' Trend: '+fmt(p.y,m.dec)+u;
+          if (i.dataset._goal) return ' Ziel '+m.label+': '+fmt(p.y,m.dec)+u;
+          if (i.dataset._fc) return ' Prognose '+m.label+': '+fmt(p.y,m.dec)+u;
           let s=' '+m.label+': '+fmt(p.y,m.dec)+u; if (p.n>1) s+=' (Ø aus '+p.n+', '+fmt(p.min,m.dec)+'–'+fmt(p.max,m.dec)+')'; return s; },
-        afterBody:items=>{ if (g!=='day') return []; const p=(items.find(i=>!i.dataset._trend)||items[0]).raw; const n=S.rows[dOf(p.b!=null?p.b:p.x)]?.note; return n ? ['', 'Anmerkung: '+(n.length>80?n.slice(0,78)+' …':n)] : []; }
+        afterBody:items=>{ if (g!=='day') return []; const it=items.find(i=>!i.dataset._trend && !i.dataset._goal && !i.dataset._fc); if (!it) return []; const p=it.raw; const n=S.rows[dOf(p.b!=null?p.b:p.x)]?.note; return n ? ['', 'Anmerkung: '+(n.length>80?n.slice(0,78)+' …':n)] : []; }
       } }
     } } });
   charts.set(opts.id || c.id, chart);
+  if (notes.length) card.append(el('p',{class:'chart-note', text:notes.join(' · ')}));
+  return card;
+}
+
+/* Kalorien: Verbrauch und Aufnahme als hintereinanderliegende Balken, darunter die Bilanz (negativ = Defizit) */
+function energyCard(c, r, g, opts={}){
+  const edit=opts.edit!==false;
+  const card=el('section',{class:'chart-card energy'});
+  card.append(cardHead(c, edit));
+  const burn=series('kcalBurn', r.from, r.to, g), inn=series('kcalIn', r.from, r.to, g), bal=series('balance', r.from, r.to, g);
+  const cBurn=colorFor('kcalBurn',c), cIn=colorFor('kcalIn',c), cDef=colorFor('deficit',c), cSur=colorFor('surplus',c);
+  const wavg=pts=>{ const n=pts.reduce((s,p)=>s+p.n,0); return n ? pts.reduce((s,p)=>s+p.sum,0)/n : null; };
+  const balSum=bal.reduce((s,p)=>s+p.sum,0), balDays=bal.reduce((s,p)=>s+p.n,0), balAvg=balDays?balSum/balDays:null;
+  const st=(lbl,col,valTxt,meta,cls='')=>{ const sw=el('span',{class:'sw'}); sw.style.background=col; return el('div',{class:'stat'}, el('span',{class:'nm'}, sw, lbl), el('span',{class:'now '+cls, text:valTxt}), meta?el('span',{class:'meta', text:meta}):null); };
+  const stats=el('div',{class:'stats'},
+    st('Verbrauch', cBurn, fmt(wavg(burn),0)+' kcal', 'Ø je Tag'),
+    st('Aufnahme', cIn, fmt(wavg(inn),0)+' kcal', 'Ø je Tag'));
+  if (balAvg!=null) stats.append(st('Bilanz', balAvg<0?cDef:cSur, sgn(balAvg,0,' kcal'), (balAvg<0?'Defizit':'Überschuss')+' Ø je Tag', balAvg<0?'tr-good':'tr-bad'),
+    st('Summe Zeitraum', balSum<0?cDef:cSur, sgn(balSum,0,' kcal'), balDays+' Tage · theoretisch '+fmt(Math.abs(balSum)/7700,2)+' kg Fett '+(balSum<0?'abgebaut':'zugelegt')));
+  if (opts.stats!==false) card.append(stats);
+  if (!burn.length && !inn.length){
+    card.append(el('div',{class:'nodata', text:'Keine Kalorienwerte im Zeitraum. Trage Aktivitätskalorien und Kalorienaufnahme ein; der Verbrauch ergibt sich aus Aktivität + Grundumsatz.'}));
+    return card;
+  }
+  if (typeof Chart==='undefined'){ card.append(el('div',{class:'nodata', text:'Die Diagramm-Bibliothek konnte nicht geladen werden. Bitte Seite neu laden.'})); return card; }
+  const gridC=cssVar('--line'), ink2=cssVar('--ink-2'), ink=cssVar('--ink'), spanDays=(tsOf(r.to)-tsOf(r.from))/DAY;
+  const xMin=tsOf(r.from)-(g==='day'?DAY/2:0), xMax=tsOf(r.to)+(g==='day'?DAY/2:HALF[g]*2);
+  const xs={ type:'linear', min:xMin, max:xMax, grid:{color:gridC}, ticks:{color:ink2, maxTicksLimit:innerWidth<560?5:8, maxRotation:0, callback:tickDate(spanDays)} };
+  const fitY=s=>{ s.width=58; };
+  const title=items=>{ const p=items[0].raw; return p.b!=null ? bucketLabel(p.b,g) : ''; };
+  const per = g==='day' ? '' : ' (Ø je Tag)';
+  // oberes Diagramm: Verbrauch breit und hell im Hintergrund, Aufnahme schmal davor
+  const w1=el('div',{class:'canvas-wrap'}), cv1=el('canvas',{'aria-label':'Kalorienverbrauch und -aufnahme', role:'img'}); w1.append(cv1); card.append(w1);
+  const ch1=new Chart(cv1, { type:'bar', data:{datasets:[
+      {label:'Verbrauch', data:burn, backgroundColor:alpha(cBurn,.28), borderColor:cBurn, borderWidth:1.5, grouped:false, barPercentage:.94, categoryPercentage:1, order:2},
+      {label:'Aufnahme', data:inn, backgroundColor:alpha(cIn,.88), borderColor:cIn, borderWidth:0, grouped:false, barPercentage:.5, categoryPercentage:1, order:1},
+    ]}, options:{ responsive:true, maintainAspectRatio:false, animation:false, parsing:{xAxisKey:'x', yAxisKey:'y'},
+      interaction:{mode:'index', axis:'x', intersect:false},
+      scales:{ x:xs, y:{ beginAtZero:true, grid:{color:gridC}, ticks:{color:ink2, maxTicksLimit:6, callback:v=>fmt(v,0)}, title:{display:true, text:'kcal', color:ink2}, afterFit:fitY } },
+      plugins:{ legend:{ labels:{color:ink2, boxWidth:12} },
+        tooltip:{ callbacks:{ title, label:i=>' '+i.dataset.label+': '+fmt(i.raw.y,0)+' kcal'+per,
+          afterBody:items=>{ const b=items[0]?.raw?.b; const p=bal.find(x=>x.b===b); return p ? ['Bilanz: '+sgn(p.y,0,' kcal')+(p.y<0?' (Defizit)':' (Überschuss)')] : []; } } } } } });
+  // unteres Diagramm: Bilanz, unter null = Defizit
+  const w2=el('div',{class:'canvas-wrap small'}), cv2=el('canvas',{'aria-label':'Kalorienbilanz', role:'img'}); w2.append(cv2); card.append(w2);
+  const ch2=new Chart(cv2, { type:'bar', data:{datasets:[
+      {label:'Bilanz', data:bal, backgroundColor:bal.map(p=>p.y<0?alpha(cDef,.85):alpha(cSur,.85)), borderWidth:0, grouped:false, barPercentage:.7, categoryPercentage:1},
+    ]}, options:{ responsive:true, maintainAspectRatio:false, animation:false,
+      interaction:{mode:'index', axis:'x', intersect:false},
+      scales:{ x:{...xs, ticks:{...xs.ticks, display:false}}, y:{ grid:{ color:ctx=>ctx.tick && ctx.tick.value===0 ? ink : gridC, lineWidth:ctx=>ctx.tick && ctx.tick.value===0 ? 1.5 : 1 }, ticks:{color:ink2, maxTicksLimit:4, callback:v=>sgn(v,0)}, title:{display:true, text:'Bilanz', color:ink2}, afterFit:fitY } },
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ title, label:i=>' Bilanz: '+sgn(i.raw.y,0,' kcal')+(i.raw.y<0?' (Defizit)':' (Überschuss)')+per } } } } });
+  const sw=(col,txt)=>{ const s=el('span',{class:'sw'}); s.style.background=col; return el('span',{class:'leg'}, s, document.createTextNode(txt)); };
+  card.append(el('div',{class:'energy-legend'}, sw(cDef,'Defizit: mehr verbraucht als aufgenommen (unter null)'), sw(cSur,'Überschuss (über null)')));
+  const id=opts.id || c.id; charts.set(id, ch1); charts.set(id+'-bilanz', ch2);
   return card;
 }
 
 let editingChart=null;
+const ENERGY_COLORS=[['kcalBurn','Verbrauch'],['kcalIn','Aufnahme'],['deficit','Defizit'],['surplus','Überschuss']];
+const toHex = c => { const s=String(c||'').trim(); return /^#[0-9a-f]{6}$/i.test(s) ? s.toLowerCase() : '#1f6f78'; };
 function openChartDlg(id){
-  const c=id ? S.settings.charts.find(x=>x.id===id) : {id:null, title:'Neues Diagramm', metrics:[], type:'line', band:true, smooth:true};
+  const c=id ? S.settings.charts.find(x=>x.id===id) : {id:null, title:'Neues Diagramm', metrics:[], type:'line', band:true, smooth:true, goals:true, colors:{}};
   editingChart=id;
   $('#chartDlgTitle').textContent=id?'Diagramm bearbeiten':'Diagramm hinzufügen';
-  $('#cTitle').value=c.title; $('#cType').value=c.type; $('#cBand').checked=!!c.band; $('#cSmooth').checked=!!c.smooth;
+  $('#cTitle').value=c.title; $('#cType').value=c.type; $('#cBand').checked=!!c.band; $('#cSmooth').checked=!!c.smooth; $('#cGoals').checked=c.goals!==false;
   const box=$('#cMetrics'); box.replaceChildren();
-  for (const m of allMetrics()){ const cb=el('input',{type:'checkbox', value:m.key}); cb.checked=c.metrics.includes(m.key); box.append(el('label',{}, cb, document.createTextNode(m.label+(m.unit?' ('+m.unit+')':'')))); }
+  for (const m of allMetrics()){
+    const cb=el('input',{type:'checkbox', value:m.key}); cb.checked=c.metrics.includes(m.key);
+    const col=el('input',{type:'color', 'data-key':m.key, 'aria-label':'Farbe für '+m.label, title:'Farbe'}); col.value=toHex(colorFor(m.key,c)); col.dataset.def=toHex(defaultColor(m.key));
+    box.append(el('div',{class:'mc'}, el('label',{}, cb, document.createTextNode(m.label+(m.unit?' ('+m.unit+')':''))), col));
+  }
+  const eb=$('#cEnergyColors'); eb.replaceChildren();
+  for (const [k,lbl] of ENERGY_COLORS){
+    const col=el('input',{type:'color', 'data-key':k, 'aria-label':'Farbe für '+lbl}); col.value=toHex(colorFor(k,c)); col.dataset.def=toHex(defaultColor(k));
+    eb.append(el('label',{class:'inline'}, col, document.createTextNode(lbl)));
+  }
   ['#cUp','#cDown','#cDelete'].forEach(s=>$(s).hidden=!id);
+  syncChartDlg();
   $('#chartDlg').showModal();
 }
+function syncChartDlg(){
+  const energy=$('#cType').value==='energy';
+  $('#cMetricsWrap').hidden=energy; $('#cEnergyWrap').hidden=!energy;
+  $('#cBandWrap').hidden=energy; $('#cSmoothWrap').hidden=energy; $('#cGoalsWrap').hidden=energy;
+}
+$('#cType').addEventListener('change', syncChartDlg);
+$('#cColorsReset').onclick=()=>document.querySelectorAll('#chartDlg input[type=color]').forEach(i=>i.value=i.dataset.def);
 $('#chartForm').addEventListener('submit', e=>{
   e.preventDefault();
-  const data={ title:$('#cTitle').value.trim()||'Diagramm', metrics:[...$('#cMetrics').querySelectorAll('input:checked')].map(i=>i.value), type:$('#cType').value, band:$('#cBand').checked, smooth:$('#cSmooth').checked };
+  const type=$('#cType').value, colors={};
+  document.querySelectorAll('#chartDlg input[type=color]').forEach(i=>{ if (i.value.toLowerCase()!==i.dataset.def) colors[i.dataset.key]=i.value; });
+  const data={ title:$('#cTitle').value.trim()||'Diagramm', type, band:$('#cBand').checked, smooth:$('#cSmooth').checked, goals:$('#cGoals').checked, colors,
+    metrics: type==='energy' ? ['kcalIn','kcalBurn','balance'] : [...$('#cMetrics').querySelectorAll('input[type=checkbox]:checked')].map(i=>i.value) };
   if (editingChart) Object.assign(S.settings.charts.find(x=>x.id===editingChart), data); else S.settings.charts.push({id:'c'+Date.now().toString(36), ...data});
   $('#chartDlg').close(); markDirty([],true); renderCharts();
 });
@@ -1442,37 +1858,45 @@ $('#gran').addEventListener('change', e=>{ S.settings.view.gran=e.target.value; 
 
 /* ---------- Erfassen ---------- */
 function renderEntryGrid(){
-  const g=$('#entryGrid'); g.replaceChildren();
+  const main=$('#entryGrid'), more=$('#entryGridMore'); main.replaceChildren(); more.replaceChildren();
+  let nMore=0;
   for (const m of storedMetrics()){
-    if (S.settings.hidden.includes(m.key)) continue;
-    const inp=el('input',{type:'text', id:'f-'+m.key, inputmode:m.dec===0?'numeric':'decimal', name:m.key, placeholder:m.key==='bmi'?'automatisch':''});
-    g.append(el('label',{}, el('span',{text:m.label+(m.unit?' ('+m.unit+')':'')}), inp));
+    const inp=el('input',{type:'text', id:'f-'+m.key, inputmode:m.dec===0?'numeric':'decimal', name:m.key, 'data-m':m.key, placeholder:m.fx?'automatisch':''});
+    const lab=el('label',{}, el('span',{text:m.label+(m.unit?' ('+m.unit+')':'')}), inp);
+    if (S.settings.hidden.includes(m.key)){ more.append(lab); nMore++; } else main.append(lab);
   }
+  $('#entryMore').hidden=!nMore;
   fillEntry();
 }
+const entryInputs = () => [...document.querySelectorAll('#entryForm input[data-m]')];
 function renderEntryCalc(){
   const d=$('#entryDate').value, box=$('#entryCalc'); box.replaceChildren();
   if (!S.rows[d]){ box.hidden=true; return; }
-  const parts=DERIVED.map(m=>[m, val(d,m.key)]).filter(([,v])=>v!=null);
-  if (!S.rows[d].bmi && val(d,'bmi')!=null) parts.unshift([metric('bmi'), val(d,'bmi')]);
+  const parts=allDerived().map(m=>[m, val(d,m.key)]).filter(([,v])=>v!=null);
+  for (const m of storedMetrics()) if (m.fx && isCalc(d,m) && val(d,m.key)!=null) parts.unshift([m, val(d,m.key)]);
   box.hidden=!parts.length;
-  for (const [m,v] of parts) box.append(el('span',{}, document.createTextNode(m.label+': '), el('b',{text:fmt(v,m.dec)+(m.unit?' '+m.unit:'')})));
+  for (const [m,v] of parts) box.append(el('span',{}, document.createTextNode(m.label+': '), el('b',{text:(m.key==='balance'?sgn(v,m.dec):fmt(v,m.dec))+(m.unit?' '+m.unit:'')})));
 }
 function fillEntry(){
   const d=$('#entryDate').value, r=S.rows[d];
-  $('#entryGrid').querySelectorAll('input').forEach(i=>{ const v=r?r[i.name]:null; i.value=v==null?'':String(v).replace('.',','); });
+  let filledMore=0;
+  for (const i of entryInputs()){ const v=r?r[i.name]:null; i.value=v==null?'':String(v).replace('.',','); if (v!=null && i.closest('#entryGridMore')) filledMore++; }
+  const n=$('#entryGridMore').children.length;
+  $('#moreCount').textContent='('+n+(filledMore?', davon '+filledMore+' ausgefüllt':'')+')';
+  if (filledMore) $('#entryMore').open=true;
   $('#entryNote').value=r?.note||'';
   $('#entryState').textContent=r?'Für dieses Datum gibt es schon einen Eintrag – Änderungen überschreiben ihn.':'';
   $('#entryDelete').hidden=!r;
   renderEntryCalc();
 }
 $('#entryDate').addEventListener('change', fillEntry);
-$('#entryClear').onclick=()=>{ $('#entryGrid').querySelectorAll('input').forEach(i=>i.value=''); $('#entryNote').value=''; };
+$('#entryClear').onclick=()=>{ entryInputs().forEach(i=>i.value=''); $('#entryNote').value=''; };
+$('#toFields').onclick=()=>{ showTab('settings'); $('#fieldsBox').scrollIntoView({behavior:'smooth', block:'start'}); };
 $('#entryForm').addEventListener('submit', e=>{
   e.preventDefault();
   const d=$('#entryDate').value; if (!d){ toast('Bitte ein Datum wählen'); return; }
   const row={...(S.rows[d]||{})}, bad=[];
-  $('#entryGrid').querySelectorAll('input').forEach(i=>{ const n=parseInputNum(i.value); if (n===null) delete row[i.name]; else if (isNaN(n)) bad.push(metric(i.name).label); else row[i.name]=n; });
+  for (const i of entryInputs()){ const n=parseInputNum(i.value); if (n===null) delete row[i.name]; else if (isNaN(n)) bad.push(metric(i.name).label); else row[i.name]=n; }
   if (bad.length){ toast('Keine gültige Zahl: '+bad.join(', ')); return; }
   const note=$('#entryNote').value.trim(); if (note) row.note=note; else delete row.note;
   if (!Object.keys(row).length){ if (S.rows[d]){ delete S.rows[d]; markDirty([d]); toast('Eintrag gelöscht'); renderAll(); toOverview(); } else toast('Bitte mindestens einen Wert eintragen'); return; }
@@ -1498,7 +1922,7 @@ function renderTable(){
     const eb=el('button',{type:'button', class:'edit-btn', title:'Eintrag vom '+deDate(d)+' bearbeiten', 'aria-label':'Eintrag vom '+deDate(d)+' bearbeiten', onclick:()=>{ $('#entryDate').value=d; showTab('entry'); fillEntry(); window.scrollTo(0,0); }});
     eb.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 2.5l2 2L6 12l-3 1 1-3z"/><path d="M10 4l2 2"/></svg>';
     tb.append(el('tr',{}, el('td',{class:'stick'}, el('span',{class:'datecell'}, eb, document.createTextNode(deDate(d)))),
-      ...cols.map(m=>{ const v=val(d,m.key), calc=m.derived || (m.key==='bmi' && r.bmi==null); return el('td',{class:calc?'calc-cell':null, text:v==null?'':fmt(v,m.dec), title:calc&&v!=null?'berechnet':null}); }),
+      ...cols.map(m=>{ const v=val(d,m.key), calc=isCalc(d,m); return el('td',{class:calc?'calc-cell':null, text:v==null?'':fmt(v,m.dec), title:calc&&v!=null?'berechnet':null}); }),
       hasNote?el('td',{class:'note', text:r.note||''}):null));
   }
   tbl.append(tb);
@@ -1557,7 +1981,7 @@ function planImport(text, fileName){
   let dateCol=head.findIndex(h=>['datum','date','tag','day','zeitpunkt','timestamp','time'].includes(norm(stripUnit(h))));
   if (dateCol<0) dateCol=head.findIndex((_,i)=>parseDate(body[0][i]||''));
   if (dateCol<0) throw new Error('Keine Datumsspalte gefunden (Spalte „datum“ erwartet).');
-  const derivedNames=new Set(DERIVED.flatMap(m=>[m.csv,m.key,m.label].map(norm)));
+  const derivedNames=new Set(allDerived().flatMap(m=>[m.csv,m.key,m.label].map(norm)));
   const map=[], noteCols=[], created=[], used=new Set();
   head.forEach((h,i)=>{
     if (i===dateCol || !h) return;
@@ -1677,7 +2101,7 @@ function exportCSV(){
   const dates=sortedDates(); if (!dates.length){ toast('Keine Daten zum Exportieren'); return; }
   const d=S.settings.delim||';', dec=d===','?'.':',';
   const ms=storedMetrics().filter(m=>dates.some(x=>S.rows[x][m.key]!=null));
-  const ds=S.settings.exportDerived ? DERIVED.filter(m=>dates.some(x=>val(x,m.key)!=null)) : [];
+  const ds=S.settings.exportDerived ? allDerived().filter(m=>dates.some(x=>val(x,m.key)!=null)) : [];
   const hasNote=dates.some(x=>S.rows[x].note);
   const esc=s=>/[";,\n\r]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
   const num=(v,p)=>v==null?'':String(p==null?v:+v.toFixed(p)).replace('.',dec);
@@ -1707,17 +2131,18 @@ $('#fileInput').addEventListener('change', e=>{
 function renderSettings(){
   const st=S.settings;
   $('#height').value=st.height?String(st.height).replace('.',','):'';
-  $('#sex').value=st.sex||''; $('#birth').value=st.birth||''; $('#burnMode').value=st.burnMode||'total';
+  $('#sex').value=st.sex||''; $('#birth').value=st.birth||'';
   $('#delim').value=st.delim||';'; $('#expDerived').checked=!!st.exportDerived;
   const list=$('#mlist'); list.replaceChildren();
   for (const m of storedMetrics()){
-    const cb=el('input',{type:'checkbox', 'aria-label':m.label+' im Formular zeigen'}); cb.checked=!st.hidden.includes(m.key);
+    const cb=el('input',{type:'checkbox', 'aria-label':m.label+' oben im Erfassungsformular zeigen'}); cb.checked=!st.hidden.includes(m.key);
     cb.onchange=()=>{ const h=new Set(st.hidden); cb.checked?h.delete(m.key):h.add(m.key); st.hidden=[...h]; markDirty([],true); renderEntryGrid(); };
     const isCustom=st.custom.some(c=>c.key===m.key);
     list.append(el('div',{class:'mrow'}, cb,
-      el('span',{class:'lbl'}, document.createTextNode(m.label+' '), el('small',{text:(m.unit?m.unit+', ':'')+'CSV-Spalte „'+m.csv+'“'})),
+      el('span',{class:'lbl'}, document.createTextNode(m.label+' '), el('small',{text:(m.unit?m.unit+', ':'')+'CSV-Spalte „'+m.csv+'“, in Formeln „'+varOf(m.key)+'“'})),
       isCustom?el('button',{class:'btn small danger', text:'Entfernen', onclick:()=>removeMetric(m)}):null));
   }
+  renderFormulas(); renderGoals(); renderPwaBox();
 }
 async function removeMetric(m){
   const n=Object.values(S.rows).filter(r=>r[m.key]!=null).length;
@@ -1725,12 +2150,12 @@ async function removeMetric(m){
   const touched=[]; for (const [d,r] of Object.entries(S.rows)){ if (r[m.key]!=null){ delete r[m.key]; touched.push(d); if (!Object.keys(r).length) delete S.rows[d]; } }
   S.settings.custom=S.settings.custom.filter(c=>c.key!==m.key);
   S.settings.charts.forEach(c=>c.metrics=c.metrics.filter(k=>k!==m.key));
+  S.settings.goals=S.settings.goals.filter(g=>g.key!==m.key);
   markDirty(touched,true); renderAll();
 }
 $('#height').addEventListener('change', e=>{ const n=parseInputNum(e.target.value); if (n===null) S.settings.height=null; else if (isNaN(n)||n<80||n>250){ toast('Bitte eine Körpergröße in cm eingeben'); return; } else S.settings.height=n; markDirty([],true); renderAll(); toast('Körpergröße gespeichert'); });
 $('#sex').addEventListener('change', e=>{ S.settings.sex=e.target.value; markDirty([],true); renderAll(); });
 $('#birth').addEventListener('change', e=>{ S.settings.birth=e.target.value; markDirty([],true); renderAll(); });
-$('#burnMode').addEventListener('change', e=>{ S.settings.burnMode=e.target.value; markDirty([],true); renderAll(); });
 $('#delim').addEventListener('change', e=>{ S.settings.delim=e.target.value; markDirty([],true); });
 $('#expDerived').addEventListener('change', e=>{ S.settings.exportDerived=e.target.checked; markDirty([],true); });
 $('#btnAddMetric').onclick=()=>{
@@ -1746,6 +2171,125 @@ $('#btnReset').onclick=async()=>{
   S.rows={}; markDirty([],true); renderAll(); toast('Alle Messwerte gelöscht');
 };
 
+/* Berechnete Werte: Formeln ansehen und ändern */
+function renderFormulas(){
+  const box=$('#fxList'); if (!box) return;
+  const keepFocus=document.activeElement?.dataset?.fx;
+  box.replaceChildren();
+  const last=sortedDates()[sortedDates().length-1];
+  const items=[metric('bmi'), ...allDerived()];
+  for (const m of items){
+    const isCustom=(S.settings.derivedCustom||[]).some(x=>x.key===m.key);
+    const overridden=!isCustom && S.settings.formulas[m.key]!=null && S.settings.formulas[m.key]!==m.fx;
+    const inp=el('input',{type:'text', class:'fx-in', 'data-fx':m.key, spellcheck:'false', autocomplete:'off', autocapitalize:'none', 'aria-label':'Formel für '+m.label});
+    inp.value=formulaOf(m);
+    const out=el('div',{class:'fx-out'});
+    const show=()=>{ const v=last?val(last,m.key):null; out.className='fx-out'; out.replaceChildren(document.createTextNode(last ? 'Am '+deDate(last)+': ' : 'Noch keine Messwerte.'), last?el('b',{text:v==null?'kein Ergebnis (Wert fehlt)':(m.key==='balance'?sgn(v,m.dec):fmt(v,m.dec))+(m.unit?' '+m.unit:'')}):null); };
+    show();
+    inp.addEventListener('input', ()=>{ const e=checkFormula(m.key, inp.value); if (e){ out.className='fx-out err'; out.textContent=e; } else { out.className='fx-out ok'; out.textContent='Formel in Ordnung – mit Enter oder beim Verlassen des Felds übernehmen.'; } });
+    inp.addEventListener('change', ()=>{
+      const src=inp.value.trim(), e=checkFormula(m.key, src);
+      if (e){ out.className='fx-out err'; out.textContent=e; return; }
+      if (src===formulaOf(m)) return;
+      if (isCustom){ (S.settings.derivedCustom.find(x=>x.key===m.key)).fx=src; }
+      else if (src===m.fx) delete S.settings.formulas[m.key]; else S.settings.formulas[m.key]=src;
+      markDirty([],true); setTimeout(renderAll, 0); toast('Formel für „'+m.label+'“ übernommen');
+    });
+    inp.addEventListener('keydown', e=>{ if (e.key==='Enter'){ e.preventDefault(); inp.blur(); } });
+    const btns=el('span',{class:'row'});
+    if (overridden) btns.append(el('button',{type:'button', class:'btn small', text:'Standard', title:'Standardformel: '+m.fx, onclick:()=>{ delete S.settings.formulas[m.key]; markDirty([],true); renderAll(); toast('Standardformel für „'+m.label+'“ wiederhergestellt'); }}));
+    if (isCustom) btns.append(el('button',{type:'button', class:'btn small danger', text:'Entfernen', onclick:async()=>{
+      if (!await ask('Die berechnete Größe „'+m.label+'“ wird entfernt. Gespeicherte Messwerte bleiben unverändert.','Entfernen')) return;
+      S.settings.derivedCustom=S.settings.derivedCustom.filter(x=>x.key!==m.key);
+      S.settings.charts.forEach(c=>c.metrics=c.metrics.filter(k=>k!==m.key)); S.settings.dash.tiles=S.settings.dash.tiles.filter(k=>k!==m.key);
+      S.settings.goals=S.settings.goals.filter(g=>g.key!==m.key); markDirty([],true); renderAll(); }}));
+    box.append(el('div',{class:'fx-row'+(overridden?' changed':'')},
+      el('div',{class:'fx-head'}, el('b',{text:m.label}), el('small',{text:(m.unit?m.unit+' · ':'')+'Name: '+varOf(m.key)+(overridden?' · geändert':'')}), btns),
+      inp, out, FX_NOTE[m.key] ? el('p',{class:'hint', style:'margin:0', text:FX_NOTE[m.key]}) : null));
+    if (keepFocus===m.key) inp.focus();
+  }
+  // verfügbare Namen
+  const vl=$('#fxVars'); vl.replaceChildren();
+  for (const [n,lbl] of CTX_VARS) vl.append(el('div',{}, el('code',{text:n}), document.createTextNode(' – '+lbl)));
+  for (const [n,x] of varMap()) vl.append(el('div',{}, el('code',{text:n}), document.createTextNode(' – '+x.label+(x.unit?' ('+x.unit+')':''))));
+}
+$('#btnAddFx').onclick=()=>{
+  const label=$('#fxLabel').value.trim(), unit=$('#fxUnit').value.trim(), dec=+$('#fxDec').value, src=$('#fxSrc').value.trim();
+  if (!label){ toast('Bitte einen Namen eingeben'); return; }
+  let key='d_'+norm(label), k=key, n=2; while (metric(k)) k=key+'_'+(n++);
+  const m={key:k, label, unit, dec, csv:norm(label)+(unit?'_'+norm(unit):''), better:0, derived:true, fx:src};
+  S.settings.derivedCustom.push(m); invalidate();
+  const e=checkFormula(k, src);
+  if (e){ S.settings.derivedCustom.pop(); invalidate(); $('#fxAddMsg').textContent=e; return; }
+  $('#fxAddMsg').textContent=''; ['#fxLabel','#fxUnit','#fxSrc'].forEach(s=>$(s).value='');
+  markDirty([],true); renderAll(); toast('„'+label+'“ wird jetzt berechnet');
+};
+
+/* Ziele */
+function renderGoals(){
+  const box=$('#goalList'); if (!box) return; box.replaceChildren();
+  const goals=S.settings.goals;
+  if (!goals.length) box.append(el('p',{class:'hint', style:'margin:0', text:'Noch keine Ziele. Lege unten eins an – die Übersicht zeigt dann Fortschritt, Restwert und Prognose.'}));
+  for (const g of goals){
+    const m=metric(g.key); if (!m) continue;
+    const t=el('input',{type:'text', inputmode:'decimal', value:String(g.target).replace('.',','), style:'width:100px', 'aria-label':'Zielwert '+m.label});
+    const d=el('input',{type:'date', value:g.date||'', 'aria-label':'Zieldatum '+m.label});
+    t.onchange=()=>{ const n=parseInputNum(t.value); if (n==null||isNaN(n)){ toast('Bitte einen Zielwert eingeben'); t.value=String(g.target).replace('.',','); return; } g.target=n; markDirty([],true); setTimeout(renderAll, 0); };
+    d.onchange=()=>{ g.date=d.value||''; markDirty([],true); setTimeout(renderAll, 0); };
+    box.append(el('div',{class:'goal-row'},
+      el('b',{text:m.label}),
+      el('label',{class:'inline'}, document.createTextNode('Ziel'), t, document.createTextNode(m.unit||'')),
+      el('label',{class:'inline'}, document.createTextNode('bis'), d),
+      el('small',{class:'hint', style:'margin:0', text:g.start ? 'Start '+fmt(g.start.v,m.dec)+(m.unit?' '+m.unit:'')+' am '+deDate(g.start.d) : ''}),
+      el('button',{type:'button', class:'btn small', text:'Start neu setzen', title:'Aktuellen Wert als Ausgangspunkt nehmen', onclick:()=>{ const ld=lastDateOf(g.key); if (ld){ g.start={d:ld, v:val(ld,g.key)}; markDirty([],true); renderAll(); } }}),
+      el('button',{type:'button', class:'btn small danger', text:'Entfernen', onclick:()=>{ S.settings.goals=S.settings.goals.filter(x=>x!==g); markDirty([],true); renderAll(); }})));
+  }
+  const sel=$('#goalMetric'), keep=sel.value; sel.replaceChildren();
+  for (const m of allMetrics()) sel.append(el('option',{value:m.key, text:m.label+(m.unit?' ('+m.unit+')':'')}));
+  sel.value=keep || 'weight';
+}
+$('#btnAddGoal').onclick=()=>{
+  const key=$('#goalMetric').value, n=parseInputNum($('#goalTarget').value), m=metric(key);
+  if (!m) return; if (n==null || isNaN(n)){ toast('Bitte einen Zielwert eingeben'); return; }
+  const ld=lastDateOf(key), start=ld ? {d:ld, v:val(ld,key)} : null;
+  const g={key, target:n, date:$('#goalDate').value||'', start};
+  const i=S.settings.goals.findIndex(x=>x.key===key); if (i>=0) S.settings.goals[i]=g; else S.settings.goals.push(g);
+  $('#goalTarget').value=''; $('#goalDate').value='';
+  markDirty([],true); renderAll(); toast('Ziel für „'+m.label+'“ gespeichert');
+};
+
+/* App-Installation (PWA) */
+let installPrompt=null, swState='none', swErr='', pageIsServer=false;
+addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); installPrompt=e; renderPwaBox(); });
+addEventListener('appinstalled', ()=>{ installPrompt=null; toast('Körperdaten wurde als App installiert'); renderPwaBox(); });
+function renderPwaBox(){
+  const box=$('#pwaInfo'); if (!box) return; box.replaceChildren();
+  const standalone=matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  const caUrl=(pageIsServer ? pageBase() : srvBase())+'/ca.crt';
+  if (standalone){ box.append(el('p',{class:'storage-file'}, el('b',{text:'Läuft als installierte App.'}))); return; }
+  if (!pageIsServer){
+    box.append(el('p',{class:'hint', style:'margin:0', text:'Als App installieren lässt sich der Tracker, wenn du ihn über die Adresse deines Körperdaten-Servers öffnest (z. B. https://192.168.178.40:8443). Eine lokal geöffnete Datei kann nicht installiert werden.'}));
+    return;
+  }
+  if (installPrompt){
+    box.append(el('div',{class:'row'}, el('button',{type:'button', class:'btn primary', text:'Als App installieren', onclick:async()=>{ installPrompt.prompt(); const r=await installPrompt.userChoice.catch(()=>null); installPrompt=null; renderPwaBox(); if (r && r.outcome==='accepted') toast('Wird installiert …'); }})),
+      el('p',{class:'hint', text:'Der Tracker bekommt ein eigenes Symbol auf dem Startbildschirm und öffnet ohne Browserleiste.'}));
+  } else if (swState==='error'){
+    box.append(el('p',{class:'storage-file'}, el('b',{text:'Noch nicht installierbar: '}), document.createTextNode('Der Browser vertraut dem Zertifikat des Servers noch nicht. Installiere einmalig das CA-Zertifikat (Schritte unten) und lade die Seite neu.')));
+  } else {
+    box.append(el('p',{class:'hint', style:'margin:0', text:'In Chrome: Menü ⋮ → „App installieren“ bzw. „Zum Startbildschirm hinzufügen“. Erscheint das nicht, zuerst das CA-Zertifikat installieren (Schritte unten).'}));
+  }
+  box.append(el('details',{class:'sub', open:swState==='error'}, el('summary',{text:'CA-Zertifikat auf dem Handy installieren (einmalig)'}),
+    el('div',{class:'sub-body'},
+      el('p',{style:'margin:0'}, document.createTextNode('Damit Chrome deinem Server vertraut, braucht das Handy das Zertifikat der Zertifizierungsstelle, die der Server selbst angelegt hat.')),
+      el('ol',{class:'steps'},
+        el('li',{}, el('a',{href:caUrl, download:'koerperdaten-ca.crt', text:'CA-Zertifikat herunterladen'}), document.createTextNode(' (koerperdaten-ca.crt)')),
+        el('li',{text:'Android: Einstellungen → Sicherheit und Datenschutz → Weitere Sicherheitseinstellungen → Verschlüsselung & Anmeldedaten → Zertifikat installieren → CA-Zertifikat. Die Warnung bestätigen und die Datei aus „Downloads“ wählen. Die Menünamen weichen je nach Hersteller etwas ab; die Suche in den Einstellungen nach „CA-Zertifikat“ hilft.'}),
+        el('li',{text:'Chrome ganz schließen, die Server-Adresse neu öffnen – das Schloss erscheint ohne Warnung.'}),
+        el('li',{text:'Menü ⋮ → „App installieren“.'})),
+      el('p',{class:'hint', style:'margin:0', text:'Windows-PC: Datei doppelklicken → Zertifikat installieren → Lokaler Computer → „Vertrauenswürdige Stammzertifizierungsstellen“. Android zeigt nach der Installation dauerhaft den Hinweis „Netzwerk wird eventuell überwacht“ – das ist bei selbst installierten Zertifikaten normal. Das Zertifikat gilt nur für deinen eigenen Server.'}))));
+}
+
 /* ---------- Beispieldaten ---------- */
 function loadSample(){
   const end=tsOf(todayStr()), days=540; let seed=7; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
@@ -1756,7 +2300,7 @@ function loadSample(){
     if (rnd()<.4) continue;
     const t=1-i/days, ts=end-i*DAY, d=dOf(ts), season=Math.sin((new Date(ts).getUTCMonth()/12)*Math.PI*2)*0.6;
     const r={ weight:+(89-6.5*t+season+noise(.6)).toFixed(1), bodyfat:+(25-4.8*t+noise(.5)).toFixed(1), rhr:Math.round(63-6*t+noise(2)), steps:Math.round(7000+3500*t+noise(2500)), sleep:+(6.6+0.6*t+noise(.6)).toFixed(1),
-      kcalOut:Math.round(2600+300*t+noise(250)), kcalIn:Math.round(2150+noise(350)) };
+      kcalActive:Math.round(450+300*t+noise(220)), kcalIn:Math.round(2150+noise(350)) };
     if (rnd()<.35){ r.waist=+(97-6.5*t+noise(.7)).toFixed(1); r.belly=+(101-7.5*t+noise(.8)).toFixed(1); r.hip=+(104-3*t+noise(.6)).toFixed(1); r.muscle=+(37.5+1.3*t+noise(.3)).toFixed(1); }
     if (rnd()<.06) r.note='Beispiel: Refeed-Tag';
     S.rows[d]=r; touched.push(d);
@@ -1789,7 +2333,12 @@ new MutationObserver(renderVisible).observe(document.documentElement,{attributes
   addEventListener('scroll', ()=>h.classList.toggle('scrolled', scrollY>4), {passive:true}); })();
 
 /* ---------- Start ---------- */
+S.settings=defaultSettings();
 $('#entryDate').value=todayStr();
+if (/^https?:$/.test(location.protocol)) isTrackerServer(pageBase()).then(ok=>{
+  pageIsServer=ok; renderPwaBox();
+  if (ok && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js',{scope:'./'}).then(()=>{ swState='ok'; renderPwaBox(); }).catch(e=>{ swState='error'; swErr=e.message; renderPwaBox(); });
+});
 if (typeof Chart!=='undefined') Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;
 renderAll();
 initStorage();
