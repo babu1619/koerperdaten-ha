@@ -70,6 +70,8 @@ else
   for n in $(printf '%s\n' "${NAMES[@]}" | sort -u); do
     ARGS+=(--name "${n}")
   done
+  # Stammzertifikat zusätzlich im Samba-Ordner „share“ ablegen (nur der öffentliche Teil)
+  ARGS+=(--ca-kopie /share/koerperdaten-ca.crt)
 fi
 
 # ---- Umzug: Daten für eine andere Installation bereitstellen

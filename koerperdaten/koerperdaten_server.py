@@ -679,8 +679,11 @@ class Handler(BaseHTTPRequestHandler):
         if m == "GET" and path == "/ca.crt":
             if not (self.ca_file and self.ca_file.exists()):
                 raise ApiError(404, "Dieser Server verwendet kein eigenes CA-Zertifikat")
-            return self._send(200, self.ca_file.read_bytes(), "application/x-x509-ca-cert",
-                              {"Content-Disposition": 'attachment; filename="koerperdaten-ca.crt"'})
+            # DER-Format als neutraler Download: Android würde einen als CA-Zertifikat gekennzeichneten
+            # Download sofort an den Installer geben und dort abweisen, statt ihn zu speichern
+            der = ssl.PEM_cert_to_DER_cert(self.ca_file.read_text(encoding="ascii"))
+            return self._send(200, der, "application/octet-stream",
+                              {"Content-Disposition": 'attachment; filename="koerperdaten-ca.crt"', "Cache-Control": "no-store"})
 
         if m == "GET" and path == "/api/status":
             return self._json(200, {"app": APP, "version": VERSION, "datenbank_version": SCHEMA_VERSION, "https": self.https,
@@ -1037,6 +1040,7 @@ def main():
         target.add_argument("--sicherungen", type=int, default=100, help="Sicherungen je Benutzer (Standard: 100)")
         target.add_argument("--html", default=str(here / "Koerperdaten.html"), help="Pfad zur Tracker-Seite")
         target.add_argument("--leise", action="store_true", help="keine Zugriffe protokollieren")
+        target.add_argument("--ca-kopie", help="Datei, in die eine Kopie des CA-Zertifikats (öffentlicher Teil) geschrieben wird")
         target.add_argument("--uebergabe", help="Ordner, in den beim Start und beim Beenden eine Kopie der Datenbank für einen Umzug geschrieben wird")
     a1 = sub.add_parser("benutzer-anlegen", parents=[common], help="Benutzer anlegen")
     a1.add_argument("name")
@@ -1179,6 +1183,12 @@ def main():
             cert, key = folder / "zertifikat" / "zertifikat.pem", folder / "zertifikat" / "schluessel.pem"
             ensure_certificate(cert, key, a.name)
             Handler.ca_file = folder / "zertifikat" / "ca.pem"
+            if getattr(a, "ca_kopie", None) and Handler.ca_file.exists():
+                try:      # nur das öffentliche Stammzertifikat, nie den Schlüssel
+                    dest = Path(a.ca_kopie).expanduser()
+                    dest.write_bytes(ssl.PEM_cert_to_DER_cert(Handler.ca_file.read_text(encoding="ascii")))
+                except OSError as e:
+                    print(f"Hinweis: CA-Zertifikat konnte nicht nach {a.ca_kopie} kopiert werden: {e}")
         ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         ctx.minimum_version = ssl.TLSVersion.TLSv1_2
         try:

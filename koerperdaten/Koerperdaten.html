@@ -2259,6 +2259,18 @@ $('#btnAddGoal').onclick=()=>{
 };
 
 /* App-Installation (PWA) */
+/* Zertifikat über die bestehende Verbindung laden und lokal speichern. Ein normaler Link würde
+   auf Android vom Download-Manager bzw. Zertifikat-Installer neu abgerufen und dort scheitern. */
+async function downloadCa(url){
+  try {
+    const r=await fetch(url,{cache:'no-store'});
+    if (!r.ok) throw new Error(r.status===404 ? 'Dieser Server hat kein eigenes CA-Zertifikat (eigenes Zertifikat eingestellt?)' : 'Fehler '+r.status);
+    const blob=new Blob([await r.arrayBuffer()],{type:'application/octet-stream'});
+    const a=el('a',{href:URL.createObjectURL(blob), download:'koerperdaten-ca.crt'}); document.body.append(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),10000);
+    toast('koerperdaten-ca.crt gespeichert');
+  } catch(e){ toast('Herunterladen fehlgeschlagen: '+(e.message||e)); }
+}
 let installPrompt=null, swState='none', swErr='', pageIsServer=false;
 addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); installPrompt=e; renderPwaBox(); });
 addEventListener('appinstalled', ()=>{ installPrompt=null; toast('Körperdaten wurde als App installiert'); renderPwaBox(); });
@@ -2283,11 +2295,11 @@ function renderPwaBox(){
     el('div',{class:'sub-body'},
       el('p',{style:'margin:0'}, document.createTextNode('Damit Chrome deinem Server vertraut, braucht das Handy das Zertifikat der Zertifizierungsstelle, die der Server selbst angelegt hat.')),
       el('ol',{class:'steps'},
-        el('li',{}, el('a',{href:caUrl, download:'koerperdaten-ca.crt', text:'CA-Zertifikat herunterladen'}), document.createTextNode(' (koerperdaten-ca.crt)')),
+        el('li',{}, el('a',{href:caUrl, download:'koerperdaten-ca.crt', text:'CA-Zertifikat herunterladen', onclick:e=>{ e.preventDefault(); downloadCa(caUrl); }}), document.createTextNode(' (koerperdaten-ca.crt, landet in „Downloads“)')),
         el('li',{text:'Android: Einstellungen → Sicherheit und Datenschutz → Weitere Sicherheitseinstellungen → Verschlüsselung & Anmeldedaten → Zertifikat installieren → CA-Zertifikat. Die Warnung bestätigen und die Datei aus „Downloads“ wählen. Die Menünamen weichen je nach Hersteller etwas ab; die Suche in den Einstellungen nach „CA-Zertifikat“ hilft.'}),
         el('li',{text:'Chrome ganz schließen, die Server-Adresse neu öffnen – das Schloss erscheint ohne Warnung.'}),
         el('li',{text:'Menü ⋮ → „App installieren“.'})),
-      el('p',{class:'hint', style:'margin:0', text:'Windows-PC: Datei doppelklicken → Zertifikat installieren → Lokaler Computer → „Vertrauenswürdige Stammzertifizierungsstellen“. Android zeigt nach der Installation dauerhaft den Hinweis „Netzwerk wird eventuell überwacht“ – das ist bei selbst installierten Zertifikaten normal. Das Zertifikat gilt nur für deinen eigenen Server.'}))));
+      el('p',{class:'hint', style:'margin:0', text:'Klappt das Herunterladen nicht: In Home Assistant liegt die Datei auch im Samba-Ordner „share“ als koerperdaten-ca.crt; von dort per USB, Mail oder Cloud aufs Handy bringen. Windows-PC: Datei doppelklicken → Zertifikat installieren → Lokaler Computer → „Vertrauenswürdige Stammzertifizierungsstellen“. Android zeigt nach der Installation dauerhaft den Hinweis „Netzwerk wird eventuell überwacht“ – das ist bei selbst installierten Zertifikaten normal. Das Zertifikat gilt nur für deinen eigenen Server.'}))));
 }
 
 /* ---------- Beispieldaten ---------- */

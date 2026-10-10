@@ -25,6 +25,8 @@ Der Server erstellt beim ersten Start eine eigene kleine Zertifizierungsstelle (
 
 **Stammzertifikat laden:** Im Tracker unter Einstellungen → **Als App installieren** auf „Stammzertifikat laden“ tippen oder `https://<IP>:8443/ca.crt` aufrufen.
 
+Klappt der Download nicht, liegt das Stammzertifikat auch im Samba-Ordner `share` als `koerperdaten-ca.crt`. Von dort per USB, Mail oder Cloud aufs Handy bringen.
+
 **Android (Chrome):**
 1. Die Datei `koerperdaten-ca.crt` herunterladen.
 2. Einstellungen → Sicherheit und Datenschutz → Weitere Sicherheitseinstellungen → Verschlüsselung und Anmeldedaten → **Zertifikat installieren** → **CA-Zertifikat** → „Trotzdem installieren“ → Datei wählen. (Der Weg heißt je nach Hersteller etwas anders; in den Einstellungen nach „Zertifikat“ suchen.)
