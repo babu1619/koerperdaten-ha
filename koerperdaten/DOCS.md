@@ -23,7 +23,7 @@ Die Verbindung ist trotzdem verschlüsselt. Dauerhaft ohne Warnung und als App a
 
 Unter Einstellungen → **Darstellung** wählst du zwischen zwei Designs:
 
-- **Modern** (Standard): Startseite „Heute“ mit Wochentagen, Ziel-Ring, Kalorien als Ringe für Gegessen und Verbraucht, Gewicht der letzten 8 Wochen und „Deine Woche“ mit Schritten, Schlaf, Ruhepuls und Kalorien-Bilanz. Am Handy liegt die Navigation unten, mit einem großen Knopf zum Eintragen; Daten und Einstellungen findest du unter „Mehr“.
+- **Modern** (Standard): Startseite „Heute“ mit Wochentagen (Tippen auf einen Tag zeigt die Übersicht für diesen Tag, die Pfeile blättern wochenweise; „Zu heute“ oder „Heute“ in der Leiste führt zurück), Ziel-Ring, Kalorien als Ringe für Gegessen und Verbraucht, Gewicht der letzten 8 Wochen und „Deine Woche“ mit Schritten, Schlaf, Ruhepuls und Kalorien-Bilanz. Am Handy liegt die Navigation unten, mit einem großen Knopf zum Eintragen; Daten und Einstellungen findest du unter „Mehr“.
 - **Klassisch**: das bisherige Design mit Maßband und Reitern oben.
 
 Das Design wird mit deinen Einstellungen gespeichert und gilt auf allen Geräten. Die **Farben** (Automatisch, Hell, Dunkel) stellst du je Gerät ein.

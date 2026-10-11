@@ -432,7 +432,7 @@ html[data-design="modern"] .foto-sess.is-after, html[data-design="modern"] .foto
 html[data-design="modern"] #dashArea{ display:grid; grid-template-columns:minmax(0,1fr); gap:14px; align-items:start; }
 @media (min-width:900px){
   html[data-design="modern"] #dashArea{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-  html[data-design="modern"] #dashArea > :is(.m-hello,.m-week,.notice,.m-sec,.m-wgrid,.m-list,.m-last,.empty){ grid-column:1 / -1; }
+  html[data-design="modern"] #dashArea > :is(.m-hello,.m-week,.m-weekbar,.notice,.m-sec,.m-wgrid,.m-list,.m-last,.empty){ grid-column:1 / -1; }
   .m-wgrid{ grid-template-columns:repeat(4,minmax(0,1fr)) !important; }
 }
 .m-hello{ display:flex; justify-content:space-between; align-items:flex-end; gap:10px; }
@@ -442,7 +442,13 @@ html[data-design="modern"] #dashArea{ display:grid; grid-template-columns:minmax
 .m-day{ display:flex; flex-direction:column; align-items:center; gap:3px; min-height:64px; padding:8px 0; border:0; border-radius:16px; background:var(--surface); color:var(--ink); font:inherit; cursor:pointer; box-shadow:var(--m-shadow); }
 .m-day .wd{ font-size:.75rem; color:var(--ink-2); font-weight:600; } .m-day b{ font-size:1rem; font-weight:800; }
 .m-day .dot{ width:6px; height:6px; border-radius:50%; background:var(--line); } .m-day .dot.on{ background:var(--m-c1); }
-.m-day.today{ background:var(--accent); color:var(--accent-ink); } .m-day.today .wd{ color:inherit; opacity:.85; } .m-day.today .dot.on{ background:#F2C46B; }
+.m-day.today{ box-shadow:inset 0 0 0 2px var(--accent); } .m-day.today .wd{ color:var(--accent); font-weight:800; }
+.m-day.sel{ background:var(--accent); color:var(--accent-ink); box-shadow:var(--m-shadow); } .m-day.sel .wd{ color:inherit; opacity:.85; } .m-day.sel .dot.on{ background:#F2C46B; }
+.m-weekbar{ display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:6px; align-items:center; }
+.m-wk-nav{ width:32px; height:64px; border:0; border-radius:12px; background:transparent; color:var(--ink-2); display:grid; place-items:center; cursor:pointer; padding:0; }
+.m-wk-nav:disabled{ opacity:.3; cursor:default; }
+.m-wk-nav:not(:disabled):hover{ background:var(--surface); }
+.m-hello-b{ display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
 .m-day.future{ opacity:.45; cursor:default; }
 .m-card{ background:var(--surface); border-radius:24px; padding:18px; box-shadow:var(--m-shadow); display:flex; flex-direction:column; gap:12px; min-width:0; }
 .m-h2{ margin:0; font-size:1.08rem; font-weight:800; letter-spacing:-.01em; }
@@ -3169,34 +3175,58 @@ function weekChange(k, ld){
 const SHORT_LABEL={waist:'Taille', belly:'Bauch', hip:'Hüfte', chest:'Brust'};
 function softSection(title, ...kids){ return el('section',{class:'m-card'}, title ? el('h2',{class:'m-h2', text:title}) : null, ...kids); }
 
+let dashRef=null;   // gewählter Tag in der Übersicht (null = heute)
+function lastOn(k, ref){ const d=sortedDates(); for (let i=d.length-1;i>=0;i--){ if (d[i]>ref) continue; if (val(d[i],k)!=null) return d[i]; } return null; }
+function setDashDay(d){ dashRef = (!d || d>=todayStr()) ? null : d; renderDash(); window.scrollTo({top:0, behavior:'smooth'}); }
+function goalAt(gl, ref){
+  const m=metric(gl.key); if (!m) return null;
+  const ld=lastOn(gl.key, ref); if (!ld) return null;
+  const cur=val(ld,gl.key), start=gl.start?.v ?? cur, target=gl.target;
+  const dir=Math.sign(target-start) || Math.sign(target-cur);
+  const reached = dir===0 || (dir<0 ? cur<=target : cur>=target);
+  const progress = start===target ? 1 : Math.max(0, Math.min(1, (start-cur)/(start-target)));
+  return {m, g:gl, ld, cur, target, remaining:target-cur, reached, progress};
+}
 function renderDashModern(area){
   const st=S.settings, today=todayStr(), dates=sortedDates(), last=dates[dates.length-1];
+  if (dashRef && dashRef>=today) dashRef=null;
+  const ref=dashRef||today, isToday=!dashRef, tR=tsOf(ref), t0=tsOf(today);
   const shown=new Set();
-  // Begrüßung
+  const dayName=d=>new Date(tsOf(d)).toLocaleDateString('de-DE',{weekday:'long', timeZone:'UTC'});
+  const editDay=()=>{ $('#entryDate').value=ref; showTab('entry'); fillEntry(); window.scrollTo(0,0); };
+  // Kopf: Begrüßung bzw. gewählter Tag
   area.append(el('div',{class:'m-hello'},
-    el('div',{}, el('span',{class:'m-date', text:new Date(tsOf(today)).toLocaleDateString('de-DE',{weekday:'long', timeZone:'UTC'})+', '+longDate(today)}),
-      el('h2',{class:'m-greet', text:greeting()})),
-    el('button',{class:'btn small', type:'button', text:'Anpassen', onclick:openDashDlg})));
-  // Wochentage (Mo–So der laufenden Woche)
-  const t0=tsOf(today), dow=(new Date(t0).getUTCDay()+6)%7, mon=t0-dow*DAY;
-  const week=el('div',{class:'m-week', role:'list', 'aria-label':'Diese Woche'});
+    el('div',{}, el('span',{class:'m-date', text:dayName(ref)+', '+longDate(ref)+(ref.slice(0,4)===today.slice(0,4)?'':' '+ref.slice(0,4))}),
+      el('h2',{class:'m-greet', text:isToday ? greeting() : (ref===dOf(t0-DAY) ? 'Gestern' : 'Rückblick')})),
+    el('div',{class:'m-hello-b'},
+      isToday ? null : el('button',{class:'btn small primary', type:'button', text:'Zu heute', onclick:()=>setDashDay(null)}),
+      el('button',{class:'btn small', type:'button', text:S.rows[ref]?'Werte bearbeiten':'Werte eintragen', onclick:editDay}),
+      isToday ? el('button',{class:'btn small', type:'button', text:'Anpassen', onclick:openDashDlg}) : null)));
+  // Wochentage Mo–So der Woche des gewählten Tages; Tippen zeigt die Übersicht für diesen Tag
+  const dow=(new Date(tR).getUTCDay()+6)%7, mon=tR-dow*DAY, thisMon=t0-((new Date(t0).getUTCDay()+6)%7)*DAY;
+  const week=el('div',{class:'m-week', role:'group', 'aria-label':'Tag auswählen'});
   for (let i=0;i<7;i++){
     const d=dOf(mon+i*DAY), has=!!S.rows[d], fut=d>today;
-    week.append(el('button',{type:'button', role:'listitem', class:'m-day'+(d===today?' today':'')+(fut?' future':''), disabled:fut,
-      'aria-label':deDate(d)+(has?', Werte eingetragen':', keine Werte')+(fut?'':' – zum Eintragen öffnen'), 'aria-current':d===today?'date':null,
-      onclick:()=>{ $('#entryDate').value=d; showTab('entry'); fillEntry(); window.scrollTo(0,0); }},
+    week.append(el('button',{type:'button', class:'m-day'+(d===today?' today':'')+(d===ref?' sel':'')+(fut?' future':''), disabled:fut,
+      'aria-pressed':String(d===ref), 'aria-label':dayName(d)+', '+deDate(d)+(has?', Werte eingetragen':', keine Werte'), 'aria-current':d===today?'date':null,
+      onclick:()=>setDashDay(d)},
       el('span',{class:'wd', text:WD[(i+1)%7]}), el('b',{text:String(+d.slice(8,10))}), el('span',{class:'dot'+(has?' on':'')})));
   }
-  area.append(week);
+  area.append(el('div',{class:'m-weekbar'},
+    el('button',{type:'button', class:'m-wk-nav', 'aria-label':'Vorherige Woche', onclick:()=>setDashDay(dOf(tR-7*DAY))}, sv('svg',{viewBox:'0 0 24 24', width:20, height:20, 'aria-hidden':'true'}, sv('path',{d:'M15 5l-7 7 7 7', fill:'none', stroke:'currentColor', 'stroke-width':2.2, 'stroke-linecap':'round', 'stroke-linejoin':'round'}))),
+    week,
+    el('button',{type:'button', class:'m-wk-nav', 'aria-label':'Nächste Woche', disabled:mon>=thisMon, onclick:()=>setDashDay(dOf(Math.min(tR+7*DAY, t0)))}, sv('svg',{viewBox:'0 0 24 24', width:20, height:20, 'aria-hidden':'true'}, sv('path',{d:'M9 5l7 7-7 7', fill:'none', stroke:'currentColor', 'stroke-width':2.2, 'stroke-linecap':'round', 'stroke-linejoin':'round'})))));
+  if (!isToday && !S.rows[ref]) area.append(el('div',{class:'notice'}, el('span',{text:'Am '+deDate(ref)+' ist nichts eingetragen. Gezeigt werden die letzten Werte davor.'})));
   const miss=[]; if (!st.height) miss.push('Körpergröße'); if (!st.sex) miss.push('Geschlecht'); if (!st.birth) miss.push('Geburtsdatum');
-  if (miss.length) area.append(el('div',{class:'notice'}, el('span',{text:'Für BMI und Grundumsatz fehlen noch: '+miss.join(', ')+'.'}), el('button',{class:'btn small', text:'Ergänzen', onclick:()=>showTab('settings')})));
+  if (isToday && miss.length) area.append(el('div',{class:'notice'}, el('span',{text:'Für BMI und Grundumsatz fehlen noch: '+miss.join(', ')+'.'}), el('button',{class:'btn small', text:'Ergänzen', onclick:()=>showTab('settings')})));
 
-  // Ziel mit Ring
-  const gis=(st.goals||[]).map(goalInfo).filter(g=>g && !g.noData);
+  // Ziel mit Ring (heute mit Prognose, sonst Stand an diesem Tag)
+  const gis=(st.goals||[]).map(gl=>{ if (isToday){ const gi=goalInfo(gl); return gi && !gi.noData ? gi : null; } return goalAt(gl, ref); }).filter(Boolean);
   const g=gis[0];
   if (g){
     const m=g.m, u=m.unit?' '+m.unit:''; shown.add(m.key);
-    const status = g.reached ? 'Glückwunsch, Ziel erreicht!' : g.status==='onway' ? (g.g.date ? (g.late?'Etwas später als geplant – ':'Im Plan – ') : '')+'voraussichtlich am '+longDate(dOf(g.eta))+'.'
+    const status = !isToday ? 'Stand am '+deDate(g.ld)+'.'
+      : g.reached ? 'Glückwunsch, Ziel erreicht!' : g.status==='onway' ? (g.g.date ? (g.late?'Etwas später als geplant – ':'Im Plan – ') : '')+'voraussichtlich am '+longDate(dOf(g.eta))+'.'
       : g.status==='away' ? 'Der Trend geht gerade in die andere Richtung.' : g.status==='far' ? 'Bei diesem Tempo dauert es noch sehr lange.' : 'Eine Prognose gibt es ab etwa 10 Tagen mit Messwerten.';
     area.append(el('section',{class:'m-card m-hero'},
       el('div',{class:'m-ring'}, ring(136,58,14,g.progress,'var(--accent)','var(--m-track)', Math.round(g.progress*100)+' Prozent des Ziels erreicht'),
@@ -3211,7 +3241,7 @@ function renderDashModern(area){
       area.append(el('section',{class:'m-card m-goal2'}, el('div',{class:'m-row'}, el('b',{text:o.m.label}), el('span',{class:'m-sub', text:o.reached?'erreicht':'noch '+fmt(Math.abs(o.remaining),o.m.dec)+u2+' bis '+fmt(o.target,o.m.dec)+u2})), bar));
     }
   } else {
-    const ld=lastDateOf('weight');
+    const ld=lastOn('weight', ref);
     area.append(el('section',{class:'m-card m-hero'},
       el('div',{class:'m-ring'}, ring(136,58,14,0,'var(--accent)','var(--m-track)'), el('div',{class:'m-ring-c'}, el('b',{text:ld?fmt(val(ld,'weight'),1):'–'}), el('span',{text:'kg'}))),
       el('div',{class:'m-hero-t'}, el('span',{class:'m-kicker', text:'Dein Ziel'}), el('b',{class:'m-big', text:'Noch kein Ziel festgelegt'}),
@@ -3226,7 +3256,7 @@ function renderDashModern(area){
   for (const k of [...st.dash.tiles, 'waist','bodyfat','bmi']){
     if (small.length>=3) break;
     if (shown.has(k) || ENERGY.has(k) || WEEK.includes(k) || small.some(x=>x.m.key===k)) continue;
-    const m=metric(k); if (!m) continue; const ld=lastDateOf(k); if (!ld) continue;
+    const m=metric(k); if (!m) continue; const ld=lastOn(k, ref); if (!ld) continue;
     small.push({m, ld});
   }
   if (small.length){
@@ -3234,22 +3264,24 @@ function renderDashModern(area){
       shown.add(m.key);
       const v=val(ld,m.key), ch=weekChange(m.key, ld);
       const foot = m.key==='bmi' ? el('span',{class:'m-foot good', text:rate('bmi',v,{age:ageAt(ld)}).txt})
-        : ch!=null ? el('span',{class:'m-foot '+trendClass(m,ch), text:sgn(ch,m.dec)+' diese Woche'}) : el('span',{class:'m-foot', text:'am '+deDate(ld)});
+        : ch!=null ? el('span',{class:'m-foot '+trendClass(m,ch), text:sgn(ch,m.dec)+(isToday?' diese Woche':' in 7 Tagen')}) : el('span',{class:'m-foot', text:'am '+deDate(ld)});
       return el('div',{class:'m-tile'}, el('span',{class:'m-lab', text:SHORT_LABEL[m.key]||m.label}), el('b',{class:'m-val'}, document.createTextNode(fmt(v,m.dec)), m.unit?el('small',{text:' '+m.unit}):null), foot);
     })));
   }
 
-  // Kalorien: Ringe für gegessen und verbraucht
-  let cd=null; for (let i=0;i<7;i++){ const d=dOf(t0-i*DAY); if (val(d,'kcalIn')!=null || val(d,'kcalBurn')!=null){ cd=d; break; } }
+  // Kalorien: Ringe für gegessen und verbraucht (heute: letzter Tag der Woche mit Werten, sonst genau der gewählte Tag)
+  let cd=null;
+  if (isToday){ for (let i=0;i<7;i++){ const d=dOf(t0-i*DAY); if (val(d,'kcalIn')!=null || val(d,'kcalBurn')!=null){ cd=d; break; } } }
+  else if (val(ref,'kcalIn')!=null || val(ref,'kcalBurn')!=null) cd=ref;
   if (cd){
     ['kcalIn','kcalBurn','kcalActive','kcalOut','balance','bmr','fatloss'].forEach(k=>shown.add(k));
     const ein=val(cd,'kcalIn'), aus=val(cd,'kcalBurn'), bmr=val(cd,'bmr'), act=val(cd,'kcalActive'), bal=val(cd,'balance');
     const scale=Math.max(ein||0, aus||0, 1)*1.12;
-    const from30=dOf(t0-29*DAY), bals=dates.filter(d=>d>=from30).map(d=>val(d,'balance')).filter(v=>v!=null);
+    const from30=dOf(tsOf(cd)-29*DAY), bals=dates.filter(d=>d>=from30 && d<=cd).map(d=>val(d,'balance')).filter(v=>v!=null);
     const avg=bals.length ? bals.reduce((a,b)=>a+b,0)/bals.length : null, kg=bals.length ? -bals.reduce((a,b)=>a+b,0)/7700 : null;
     const lead = bal==null ? '' : Math.abs(bal)<150 ? 'Fast ausgeglichen. ' : bal<0 ? 'Weniger gegessen als verbraucht. ' : 'Mehr gegessen als verbraucht. ';
-    const sentence = avg==null ? lead : lead+'In den letzten 30 Tagen hast du im Schnitt '+fmt(Math.abs(avg),0)+' kcal '+(avg<0?'weniger':'mehr')+' gegessen als verbraucht – theoretisch etwa '+fmt(Math.abs(kg),1)+' kg Fett '+(kg>=0?'weniger':'mehr')+'.';
-    const head = cd===today ? 'Heute gegessen & verbraucht' : (cd===dOf(t0-DAY)?'Gestern':'Am '+deDate(cd))+' gegessen & verbraucht';
+    const sentence = avg==null ? lead : lead+'In den 30 Tagen bis '+(cd===today?'heute':'zum '+deDate(cd))+' hast du im Schnitt '+fmt(Math.abs(avg),0)+' kcal '+(avg<0?'weniger':'mehr')+' gegessen als verbraucht – theoretisch etwa '+fmt(Math.abs(kg),1)+' kg Fett '+(kg>=0?'weniger':'mehr')+'.';
+    const head = cd===today ? 'Heute gegessen & verbraucht' : cd===dOf(t0-DAY) ? 'Gestern gegessen & verbraucht' : 'Gegessen & verbraucht am '+deDate(cd);
     const leg=(cls,lab,v,extra)=>el('div',{class:'m-leg'}, el('span',{class:'m-lab'}, el('i',{class:'sw '+cls}), document.createTextNode(lab)), el('b',{text:v==null?'–':fmt(v,0)+' kcal'}), extra?el('span',{class:'m-foot', text:extra}):null);
     area.append(softSection(head,
       el('div',{class:'m-energy'},
@@ -3261,10 +3293,10 @@ function renderDashModern(area){
           leg('eat','Gegessen',ein),
           leg('burn','Verbraucht',aus, bmr!=null && act!=null ? fmt(bmr,0)+' Grundumsatz + '+fmt(act,0)+' Bewegung' : null))),
       sentence ? el('p',{class:'m-note', text:sentence}) : null));
-  }
+  } else if (!isToday) area.append(softSection('Gegessen & verbraucht', el('p',{class:'m-sub', style:'margin:0', text:'Für den '+deDate(ref)+' sind keine Kalorien eingetragen.'})));
 
-  // Gewicht der letzten 8 Wochen
-  const ldw=lastDateOf('weight');
+  // Gewicht der 8 Wochen bis zum gewählten Tag
+  const ldw=lastOn('weight', ref);
   if (ldw){
     const pts=series('weight', dOf(tsOf(ldw)-55*DAY), ldw, 'week');
     if (pts.length>=2){
@@ -3281,14 +3313,14 @@ function renderDashModern(area){
       const dotWrap=el('div',{class:'m-curve-wrap'}, svg, el('span',{class:'m-dot'}));
       dotWrap.lastChild.style.left=(lastP[0]/W*100)+'%'; dotWrap.lastChild.style.top=(lastP[1]/H*100)+'%';
       area.append(softSection(null,
-        el('div',{class:'m-row'}, el('h2',{class:'m-h2', text:'Gewicht, letzte '+pts.length+' Wochen'}), el('b',{class:trendClass(wm,dlt), text:sgn(dlt,1,' kg')})),
+        el('div',{class:'m-row'}, el('h2',{class:'m-h2', text:'Gewicht, '+(isToday?'letzte ':'')+pts.length+' Wochen'}), el('b',{class:trendClass(wm,dlt), text:sgn(dlt,1,' kg')})),
         dotWrap,
         el('div',{class:'m-row m-axis'}, el('span',{text:longDate(dOf(pts[0].b)).replace(/ \d{4}$/,'')}), el('span',{text:'Woche bis '+deDate(ldw)}))));
     }
   }
 
-  // Deine Woche: letzte 7 Tage
-  const days=[...Array(7)].map((_,i)=>dOf(t0-(6-i)*DAY));
+  // Die 7 Tage bis zum gewählten Tag
+  const days=[...Array(7)].map((_,i)=>dOf(tR-(6-i)*DAY));
   const wk=[{k:'steps', cls:'c1', avg:v=>'Ø '+fmt(v,0)+' pro Tag'}, {k:'sleep', cls:'c2', avg:v=>'Ø '+fmt(v,1)+' h pro Nacht'}, {k:'rhr', cls:'c3', avg:v=>'Ø '+fmt(v,0)+' Schläge'}, {k:'balance', cls:'c4', avg:null}];
   const tiles=[];
   for (const w of wk){
@@ -3314,18 +3346,22 @@ function renderDashModern(area){
       el('div',{class:'m-days'}, ...days.map(d=>el('span',{text:WD[new Date(tsOf(d)).getUTCDay()].slice(0,1)}))),
       el('span',{class:'m-foot', text:w.k==='balance' ? 'kcal pro Tag im Schnitt' : w.avg(avg)})));
   }
-  if (tiles.length) area.append(el('h2',{class:'m-h2 m-sec', text:'Deine Woche'}), el('div',{class:'m-wgrid'}, ...tiles));
+  if (tiles.length) area.append(el('h2',{class:'m-h2 m-sec', text:isToday?'Deine Woche':'Die 7 Tage bis zum '+deDate(ref)}), el('div',{class:'m-wgrid'}, ...tiles));
 
   // Weitere Werte aus der Übersicht
-  const rest=st.dash.tiles.filter(k=>!shown.has(k)).map(metric).filter(Boolean).map(m=>({m, t:tileData(m)})).filter(x=>x.t);
+  const rest=st.dash.tiles.filter(k=>!shown.has(k)).map(metric).filter(Boolean).map(m=>{
+    if (isToday){ const t=tileData(m); return t ? {m, v:t.v, dec:t.dec, unit:t.unit, rating:t.rating} : null; }
+    const ld=lastOn(m.key, ref); if (!ld) return null; const v=val(ld,m.key);
+    return {m, v, dec:m.dec, unit:m.unit, rating:rate(m.key, v, {age:ageAt(ld), slope:null})};
+  }).filter(Boolean);
   if (rest.length){
     area.append(el('h2',{class:'m-h2 m-sec', text:'Weitere Werte'}),
-      el('div',{class:'m-card m-list'}, ...rest.map(({m,t})=>el('div',{class:'m-li lvl-'+t.rating.lvl},
-        el('span',{class:'m-lab', text:m.label}),
-        el('b',{text:(m.key==='balance'?sgn(t.v,t.dec):fmt(t.v,t.dec))+(t.unit?' '+t.unit:'')}),
+      el('div',{class:'m-card m-list'}, ...rest.map(t=>el('div',{class:'m-li lvl-'+t.rating.lvl},
+        el('span',{class:'m-lab', text:t.m.label}),
+        el('b',{text:(t.m.key==='balance'?sgn(t.v,t.dec):fmt(t.v,t.dec))+(t.unit?' '+t.unit:'')}),
         el('span',{class:'badge', text:t.rating.txt})))));
   }
-  area.append(el('p',{class:'hint m-last', text:'Letzte Messung am '+deDate(last)+'. Alle Verläufe findest du unter „Verlauf“.'}));
+  area.append(el('p',{class:'hint m-last', text:isToday ? 'Letzte Messung am '+deDate(last)+'. Tippe oben auf einen Tag für den Rückblick, alle Verläufe findest du unter „Verlauf“.' : 'Rückblick auf den '+deDate(ref)+'. Werte ohne Eintrag an diesem Tag stammen vom letzten Tag davor.'}));
 }
 
 /* Navigation: Symbole für die Reiter, „Mehr“-Menü im modernen Design */
@@ -3377,7 +3413,7 @@ function showTab(t){
   if (t==='dash') renderDash();
   if (t==='fotos') renderFotos();
 }
-document.querySelector('nav.tabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if (b) showTab(b.dataset.tab); });
+document.querySelector('nav.tabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if (!b) return; if (b.dataset.tab==='dash') dashRef=null; showTab(b.dataset.tab); });
 function renderTape(){
   const d=lastDateOf('weight'); const t=$('#tapeRead');
   t.textContent=d?fmt(S.rows[d].weight,1)+' kg am '+deDate(d):''; t.hidden=!d;

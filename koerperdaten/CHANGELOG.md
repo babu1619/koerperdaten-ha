@@ -1,5 +1,9 @@
 # Änderungen
 
+## 2.7.1
+
+- Wochentage zeigen die Übersicht des gewählten Tages
+
 ## 2.7.0
 
 - Offline-Betrieb mit automatischer Synchronisierung und Modernes Design
