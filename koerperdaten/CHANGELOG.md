@@ -1,5 +1,9 @@
 # Änderungen
 
+## 2.7.0
+
+- Offline-Betrieb mit automatischer Synchronisierung und Modernes Design
+
 ## 2.5.0
 
 - Fotos: Vorher/Nachher-Vergleich mit Zuschnitt

@@ -19,6 +19,25 @@ Die Verbindung ist trotzdem verschlüsselt. Dauerhaft ohne Warnung und als App a
 2. Den ersten Benutzer anlegen. Er wird Administrator.
 3. Weitere Benutzer legst du unter Einstellungen → Speicherort → **Benutzerverwaltung** an.
 
+## Darstellung
+
+Unter Einstellungen → **Darstellung** wählst du zwischen zwei Designs:
+
+- **Modern** (Standard): Startseite „Heute“ mit Wochentagen, Ziel-Ring, Kalorien als Ringe für Gegessen und Verbraucht, Gewicht der letzten 8 Wochen und „Deine Woche“ mit Schritten, Schlaf, Ruhepuls und Kalorien-Bilanz. Am Handy liegt die Navigation unten, mit einem großen Knopf zum Eintragen; Daten und Einstellungen findest du unter „Mehr“.
+- **Klassisch**: das bisherige Design mit Maßband und Reitern oben.
+
+Das Design wird mit deinen Einstellungen gespeichert und gilt auf allen Geräten. Die **Farben** (Automatisch, Hell, Dunkel) stellst du je Gerät ein.
+
+## Offline nutzen
+
+Die installierte App (und der Tracker im Browser) funktioniert auch ohne Verbindung zum Server, zum Beispiel unterwegs ohne VPN:
+
+- Auf dem Gerät liegen immer die Messwerte der **letzten 31 Tage** und deine Einstellungen. Ohne Verbindung startet die App damit; oben steht „Offline – Daten der letzten 31 Tage“.
+- Neue oder geänderte Einträge werden sofort auf dem Gerät gesichert, auch wenn du die App gleich schließt.
+- Sobald der Server wieder erreichbar ist, überträgt die App die Änderungen von selbst („Offline-Änderungen übertragen“). Sie werden tageweise in den aktuellen Stand auf dem Server eingearbeitet; was ein anderes Gerät inzwischen gespeichert hat, bleibt erhalten. Wurde derselbe Tag auf zwei Geräten geändert, gilt die zuletzt übertragene Version.
+- Fotos, CSV-Export und Diagramme über mehr als einen Monat gibt es erst wieder mit Verbindung.
+- Beim Abmelden wird die Kopie auf dem Gerät gelöscht.
+
 ## Fotos: Vorher/Nachher-Vergleich
 
 Im Reiter **Fotos** legst du je Termin Bilder von vorne, von der Seite und von hinten ab und vergleichst zwei Termine nebeneinander, mit Schieberegler oder überblendet. Dazu zeigt der Tracker, wie sich Gewicht, Taille und Körperfett zwischen den beiden Terminen verändert haben.

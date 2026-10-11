@@ -24,3 +24,7 @@ Ausführliche Hinweise stehen in der [App-Dokumentation](koerperdaten/DOCS.md).
 | `.github/workflows/` | automatische Prüfung und optional vorgebaute Images |
 
 Die Daten der Benutzer liegen nur auf dem Home-Assistant-Gerät, nie im Repository.
+
+## Hinweis
+
+Weiterentwickelt wird nur noch diese Home-Assistant-App. Die eigenständige Server-Version (z. B. für den Raspberry Pi) und die reine XML-Datei-Variante bleiben auf dem Stand 2.4 und bekommen derzeit keine neuen Funktionen.

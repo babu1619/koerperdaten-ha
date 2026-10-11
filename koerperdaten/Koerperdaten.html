@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 /* Layout: Maßband-Kopf, Tabs, Übersicht als Kachelraster mit Bewertung, darunter Monatstrend */
@@ -353,6 +353,140 @@ dialog.foto-dlg.dragging{ outline:3px dashed var(--accent); outline-offset:-6px;
   .fe-foot{ position:sticky; bottom:0; background:var(--surface); padding-bottom:12px; z-index:2; }
   .fe-tip{ right:10px; }
 }
+/* ---------- Modernes Design ---------- */
+nav.tabs .ti, nav.tabs .tl-short, nav.tabs [data-tab="more"]{ display:none; }
+.more-menu{ position:fixed; right:16px; bottom:calc(92px + env(safe-area-inset-bottom,0px)); z-index:40; min-width:230px; background:var(--surface); color:var(--ink); border-radius:18px; box-shadow:0 12px 36px rgba(0,0,0,.2); padding:6px; display:flex; flex-direction:column; }
+.more-menu[hidden]{ display:none; }
+.more-menu button{ display:flex; align-items:center; gap:12px; min-height:48px; padding:0 14px; border:0; background:none; border-radius:12px; font:inherit; font-weight:600; color:inherit; cursor:pointer; text-align:left; }
+.more-menu button:hover, .more-menu button:focus-visible{ background:var(--sunk); }
+.look-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; max-width:540px; }
+.look-opt{ display:flex; flex-direction:column; gap:6px; text-align:left; padding:10px; border-radius:14px; border:2px solid var(--line); background:var(--surface); cursor:pointer; font:inherit; color:var(--ink); }
+.look-opt.on{ border-color:var(--accent); }
+.look-opt .hint{ margin:0; }
+.look-prev{ display:flex; flex-direction:column; gap:5px; height:84px; padding:8px; border-radius:10px; box-sizing:border-box; }
+.look-prev i{ display:block; flex:1; }
+.look-classic{ background:#F2F3EF; } .look-classic i{ background:#fff; border:1px solid #D5D9D2; border-radius:3px; } .look-classic i:first-child{ flex:none; height:10px; background:#E6B42E; border:0; border-radius:2px; }
+.look-modern{ background:#EDF1EE; } .look-modern i{ background:#fff; border-radius:10px; } .look-modern i:first-child{ flex:none; width:22px; height:22px; border-radius:50%; background:#1F6F78; }
+
+html[data-design="modern"]{
+  --bg:#EDF1EE; --surface:#FFFFFF; --sunk:#F1F5F3; --ink:#1B2422; --ink-2:#56635F; --line:#DFE7E3;
+  --accent:#1F6F78; --accent-ink:#FFFFFF; --good:#2D7A50; --bad:#B4452F;
+  --font:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif; --cond:"Manrope", system-ui, sans-serif;
+  --m-track:#E3ECE8; --m-burn:#1F6F78; --m-burn-t:#E2EEEC; --m-eat:#D98A1E; --m-eat-t:#F7ECD9;
+  --m-c1:#1F6F78; --m-c2:#5E6AC4; --m-c3:#C9614E;
+  --m-shadow:0 1px 2px rgba(27,36,34,.05), 0 8px 24px rgba(27,36,34,.06);
+}
+@media (prefers-color-scheme: dark){
+  html[data-design="modern"]:not([data-theme="light"]){
+    --bg:#0F1514; --surface:#18201E; --sunk:#141B1A; --ink:#E8EEEB; --ink-2:#A0ADA8; --line:#29332F;
+    --accent:#62B8C0; --accent-ink:#0B1A1B; --good:#6CC28F; --bad:#E88B78;
+    --m-track:#25312E; --m-burn:#62B8C0; --m-burn-t:#1E2A29; --m-eat:#F0B04F; --m-eat-t:#2E2719;
+    --m-c1:#62B8C0; --m-c2:#9EA6F2; --m-c3:#E88B78; --m-shadow:0 0 0 1px #222B29;
+  }
+}
+html[data-design="modern"][data-theme="dark"]{
+  --bg:#0F1514; --surface:#18201E; --sunk:#141B1A; --ink:#E8EEEB; --ink-2:#A0ADA8; --line:#29332F;
+  --accent:#62B8C0; --accent-ink:#0B1A1B; --good:#6CC28F; --bad:#E88B78;
+  --m-track:#25312E; --m-burn:#62B8C0; --m-burn-t:#1E2A29; --m-eat:#F0B04F; --m-eat-t:#2E2719;
+  --m-c1:#62B8C0; --m-c2:#9EA6F2; --m-c3:#E88B78; --m-shadow:0 0 0 1px #222B29; color-scheme:dark;
+}
+html[data-design="modern"] .tape{ display:none; }
+html[data-design="modern"] h1{ font-size:1.55rem; font-weight:800; letter-spacing:-.02em; line-height:1.1; }
+html[data-design="modern"] .titlebar{ align-items:center; padding-bottom:6px; }
+html[data-design="modern"] :is(.tile,.chart-card,.box,.entry,.empty,.foto-card,.foto-sess,.goal,.login-card,.tablewrap){ border-color:transparent; border-radius:20px; box-shadow:var(--m-shadow); }
+html[data-design="modern"] :is(.btn){ border-radius:12px; }
+html[data-design="modern"] :is(input[type=date],input[type=text],input[type=password],select,textarea){ border-radius:10px; }
+html[data-design="modern"] .seg{ border-radius:12px; } html[data-design="modern"] .seg button{ border-radius:9px; }
+html[data-design="modern"] .notice{ border-radius:16px; }
+html[data-design="modern"] dialog{ border-radius:20px; border:0; }
+html[data-design="modern"] :is(.section-title,.chart-card h2,.box h2,.empty h2,.foto-card h2){ font-weight:800; letter-spacing:-.01em; }
+html[data-design="modern"] :is(.t-val,.stat .now){ font-weight:800; letter-spacing:-.02em; }
+html[data-design="modern"] .foto-sess.is-after, html[data-design="modern"] .foto-sess.is-before{ box-shadow:none; }
+
+/* Navigation: am Handy unten, am PC als Leiste oben */
+@media (max-width:899px){
+  html[data-design="modern"] .wrap{ padding-bottom:116px; }
+  html[data-design="modern"] nav.tabs{ position:fixed; left:12px; right:12px; bottom:calc(12px + env(safe-area-inset-bottom,0px)); z-index:30; height:66px; margin:0; padding:0 4px; border:0; border-radius:24px; background:var(--surface); box-shadow:0 10px 30px rgba(0,0,0,.16); display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); align-items:center; overflow:visible; }
+  html[data-design="modern"] nav.tabs button{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; min-height:56px; padding:4px 0; margin:0; border:0; font-size:.7rem; font-weight:600; color:var(--ink-2); }
+  html[data-design="modern"] nav.tabs :is([data-tab="data"],[data-tab="settings"]){ display:none; }
+  html[data-design="modern"] nav.tabs .ti{ display:block; height:24px; }
+  html[data-design="modern"] nav.tabs .tl-long{ display:none; }
+  html[data-design="modern"] nav.tabs .tl-short{ display:block; }
+  html[data-design="modern"] nav.tabs [data-tab="more"]{ display:flex; }
+  html[data-design="modern"] nav.tabs button[aria-selected="true"]{ color:var(--accent); }
+  html[data-design="modern"] nav.tabs [data-tab="entry"]{ justify-self:center; width:58px; height:58px; min-height:0; margin-top:-30px; border-radius:20px; background:var(--accent); color:var(--accent-ink); box-shadow:0 8px 18px rgba(31,111,120,.35); }
+  html[data-design="modern"] nav.tabs [data-tab="entry"][aria-selected="true"]{ color:var(--accent-ink); outline:3px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset:2px; }
+  html[data-design="modern"] nav.tabs [data-tab="entry"] .tl-short{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  html[data-design="modern"] #toast{ bottom:calc(96px + env(safe-area-inset-bottom,0px)); }
+}
+@media (min-width:900px){
+  html[data-design="modern"] nav.tabs{ width:max-content; max-width:100%; gap:4px; margin-top:8px; padding:4px; border:0; border-radius:999px; background:var(--surface); box-shadow:var(--m-shadow); }
+  html[data-design="modern"] nav.tabs button{ display:inline-flex; align-items:center; gap:8px; margin:0; padding:9px 16px; border:0; border-radius:999px; font-weight:600; }
+  html[data-design="modern"] nav.tabs .ti{ display:inline-flex; } html[data-design="modern"] nav.tabs .ti svg{ width:18px; height:18px; }
+  html[data-design="modern"] nav.tabs button[aria-selected="true"]{ background:var(--accent); color:var(--accent-ink); }
+  html[data-design="modern"] .more-menu{ display:none; }
+  html[data-design="modern"] nav.tabs [data-tab="more"]{ display:none; }
+}
+
+/* Übersicht „Heute“ */
+html[data-design="modern"] #dashArea{ display:grid; grid-template-columns:minmax(0,1fr); gap:14px; align-items:start; }
+@media (min-width:900px){
+  html[data-design="modern"] #dashArea{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  html[data-design="modern"] #dashArea > :is(.m-hello,.m-week,.notice,.m-sec,.m-wgrid,.m-list,.m-last,.empty){ grid-column:1 / -1; }
+  .m-wgrid{ grid-template-columns:repeat(4,minmax(0,1fr)) !important; }
+}
+.m-hello{ display:flex; justify-content:space-between; align-items:flex-end; gap:10px; }
+.m-date{ font-size:.9rem; color:var(--ink-2); font-weight:500; }
+.m-greet{ margin:0; font-size:1.9rem; font-weight:800; letter-spacing:-.02em; line-height:1.1; }
+.m-week{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; }
+.m-day{ display:flex; flex-direction:column; align-items:center; gap:3px; min-height:64px; padding:8px 0; border:0; border-radius:16px; background:var(--surface); color:var(--ink); font:inherit; cursor:pointer; box-shadow:var(--m-shadow); }
+.m-day .wd{ font-size:.75rem; color:var(--ink-2); font-weight:600; } .m-day b{ font-size:1rem; font-weight:800; }
+.m-day .dot{ width:6px; height:6px; border-radius:50%; background:var(--line); } .m-day .dot.on{ background:var(--m-c1); }
+.m-day.today{ background:var(--accent); color:var(--accent-ink); } .m-day.today .wd{ color:inherit; opacity:.85; } .m-day.today .dot.on{ background:#F2C46B; }
+.m-day.future{ opacity:.45; cursor:default; }
+.m-card{ background:var(--surface); border-radius:24px; padding:18px; box-shadow:var(--m-shadow); display:flex; flex-direction:column; gap:12px; min-width:0; }
+.m-h2{ margin:0; font-size:1.08rem; font-weight:800; letter-spacing:-.01em; }
+.m-sec{ margin:8px 2px -4px; }
+.m-hero{ flex-direction:row; align-items:center; gap:18px; }
+@media (max-width:370px){ .m-hero{ flex-direction:column; align-items:flex-start; } }
+.m-ring{ position:relative; flex:none; width:136px; height:136px; } .m-ring-e{ width:148px; height:148px; }
+.m-ring svg{ display:block; }
+.m-ring-c{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.m-ring-c b{ font-size:1.85rem; font-weight:800; letter-spacing:-.03em; line-height:1; } .m-ring-e .m-ring-c b{ font-size:1.55rem; }
+.m-ring-c span{ font-size:.8rem; color:var(--ink-2); font-weight:600; }
+.m-hero-t{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; min-width:0; }
+.m-kicker{ font-size:.78rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.06em; }
+.m-big{ font-size:1.25rem; font-weight:700; line-height:1.2; }
+.m-sub{ font-size:.9rem; color:var(--ink-2); line-height:1.4; }
+.m-row{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+.m-bar{ height:8px; border-radius:99px; background:var(--m-track); overflow:hidden; } .m-bar span{ display:block; height:100%; border-radius:99px; background:var(--accent); }
+.m-trio{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.m-tile{ background:var(--surface); border-radius:20px; padding:14px 12px; display:flex; flex-direction:column; gap:4px; box-shadow:var(--m-shadow); min-width:0; }
+.m-lab{ font-size:.8rem; color:var(--ink-2); font-weight:600; display:inline-flex; align-items:center; gap:6px; }
+.m-val{ font-size:1.35rem; font-weight:800; letter-spacing:-.02em; white-space:nowrap; } .m-val small{ font-size:.8rem; font-weight:600; color:var(--ink-2); }
+.m-foot{ font-size:.75rem; font-weight:700; color:var(--ink-2); } .m-foot.good{ color:var(--good); } .m-foot.tr-good{ color:var(--good); } .m-foot.tr-bad{ color:var(--bad); }
+.m-energy{ display:flex; gap:16px; align-items:center; }
+.m-legs{ display:flex; flex-direction:column; gap:10px; min-width:0; } .m-leg{ display:flex; flex-direction:column; } .m-leg b{ font-size:1.2rem; font-weight:800; }
+.m-leg .m-foot{ font-weight:600; }
+.sw{ width:10px; height:10px; border-radius:50%; display:inline-block; } .sw.eat{ background:var(--m-eat); } .sw.burn{ background:var(--m-burn); }
+.m-note{ margin:0; padding:12px 14px; border-radius:16px; background:var(--sunk); font-size:.9rem; line-height:1.45; }
+.m-curve-wrap{ position:relative; height:110px; } .m-curve{ width:100%; height:100%; display:block; }
+.m-dot{ position:absolute; width:14px; height:14px; margin:-7px 0 0 -7px; border-radius:50%; background:var(--surface); border:3px solid var(--accent); box-sizing:border-box; }
+.m-axis span{ font-size:.75rem; color:var(--ink-2); font-weight:600; }
+.m-wgrid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.m-wtile{ gap:6px; }
+.m-bars{ display:flex; align-items:flex-end; gap:5px; height:40px; }
+.m-bars span{ flex:1; border-radius:4px; }
+.c1 .m-bars span{ background:color-mix(in srgb, var(--m-c1) 22%, transparent); } .c1 .m-bars span.now{ background:var(--m-c1); }
+.c2 .m-bars span{ background:color-mix(in srgb, var(--m-c2) 22%, transparent); } .c2 .m-bars span.now{ background:var(--m-c2); }
+.c3 .m-bars span{ background:color-mix(in srgb, var(--m-c3) 22%, transparent); } .c3 .m-bars span.now{ background:var(--m-c3); }
+.m-bars-svg{ width:100%; height:44px; display:block; }
+.m-days{ display:flex; gap:5px; } .m-days span{ flex:1; text-align:center; font-size:.65rem; color:var(--ink-2); font-weight:600; }
+.m-list{ gap:0; padding:4px 16px; }
+.m-li{ display:grid; grid-template-columns:minmax(0,1fr) auto auto; gap:10px; align-items:center; padding:11px 0; border-bottom:1px solid var(--line); }
+.m-li:last-child{ border-bottom:0; }
+.m-li b{ font-weight:800; white-space:nowrap; }
+.m-last{ margin:0; }
 </style>
 </head>
 <body>
@@ -438,6 +572,10 @@ dialog.foto-dlg.dragging{ outline:3px dashed var(--accent); outline-offset:-6px;
 
   <section class="panel" id="p-settings" hidden>
     <div class="settings">
+      <div class="box" id="lookBox">
+        <h2>Darstellung</h2>
+        <div id="lookInfo"></div>
+      </div>
       <div class="box">
         <h2>Speicherort</h2>
         <div id="storageInfo"></div>
@@ -626,7 +764,7 @@ dialog.foto-dlg.dragging{ outline:3px dashed var(--accent); outline-offset:-6px;
 (() => {
 'use strict';
 const DAY = 864e5;
-const TRACKER_VERSION = '2.5';
+const TRACKER_VERSION = '2.7';
 const SETTINGS_FORMAT = 3;   // Stand der Einstellungen; ältere werden beim Laden umgestellt
 const toOverview = () => { showTab('dash'); window.scrollTo(0,0); };
 /* better: -1 = sinkend ist günstig, 1 = steigend ist günstig, 0 = neutral. dash: wie die Kachel den Wert bildet.
@@ -881,7 +1019,7 @@ const setSync=t=>{ $('#sync').textContent=t; };
 
 function defaultSettings(){
   return { fv:SETTINGS_FORMAT, height:null, sex:'', birth:'', delim:';', exportDerived:false, custom:[], hidden:[...DEFAULT_HIDDEN],
-    derivedCustom:[], formulas:{}, goals:[],
+    derivedCustom:[], formulas:{}, goals:[], design:'modern',
     charts:JSON.parse(JSON.stringify(DEFAULT_CHARTS)), dash:JSON.parse(JSON.stringify(DEFAULT_DASH)), view:{...DEFAULT_VIEW} };
 }
 function mergeSettings(s){
@@ -920,14 +1058,20 @@ function choose(msg, a, b, title='Welche Daten verwenden?'){
 
 /* Speichern – je nach Speicherort */
 function markDirty(){
-  invalidate(); version++; dirty=true; updateStorageUI();
+  invalidate(); version++; dirty=true;
+  if (cfg.mode==='server') writeOffline();          // sofort auf dem Gerät sichern, auch wenn die App gleich geschlossen wird
+  updateStorageUI();
   const delay = cfg.mode==='browser' ? 300 : cfg.mode==='server' ? 800 : 600;
   clearTimeout(saveTimer); saveTimer=setTimeout(saveNow, delay);
 }
 async function saveNow(force=false){
   if (saving){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>saveNow(force), 400); return; }
   if (cfg.mode==='xml' && !(FSA && fileHandle && fileState==='ready')) { updateStorageUI(); return; }
-  if (cfg.mode==='server' && !(srvState==='ok' || srvState==='error')) { updateStorageUI(); return; }
+  if (cfg.mode==='server'){
+    writeOffline();                                     // Änderungen sofort auf dem Gerät sichern
+    if (srvState==='offline'){ updateStorageUI(); scheduleReconnect(); return; }
+    if (!(srvState==='ok' || srvState==='error')) { updateStorageUI(); return; }
+  }
   saving=true; const v=version; let ok=false;
   try {
     if (cfg.mode==='browser'){
@@ -942,7 +1086,8 @@ async function saveNow(force=false){
   } catch(e){
     errMsg=e.message;
     if (cfg.mode==='xml' && (e.name==='NotAllowedError' || e.name==='SecurityError')) fileState='needPerm';
-    if (cfg.mode==='server' && e.status!==401){ srvState='error'; clearTimeout(retryTimer); retryTimer=setTimeout(()=>{ if (dirty) saveNow(); }, 30000); }
+    if (cfg.mode==='server' && e.status===0){ srvState='offline'; scheduleReconnect(); }
+    else if (cfg.mode==='server' && e.status!==401){ srvState='error'; clearTimeout(retryTimer); retryTimer=setTimeout(()=>{ if (dirty) saveNow(); }, 30000); }
     if (cfg.mode!=='server') toast('Speichern fehlgeschlagen: '+e.message);
   } finally { saving=false; updateStorageUI(); }
 }
@@ -967,14 +1112,87 @@ async function serverGet(){
   if (!r.ok) throw new ApiErr(r.status, 'Server meldet Fehler '+r.status);
   srvVersion=r.headers.get('ETag'); return await r.text();
 }
-async function serverPut(force){
+async function serverPut(force, depth=0){
   if (!srvUser || dataOwner!==srvUser.name) return false;      // niemals Daten eines anderen Benutzers hochladen
+  if (partial && !force) return mergeSync(undefined, depth);   // offline gestartet: nur die Änderungen in den Server-Stand einarbeiten
   const headers={'Content-Type':'application/xml; charset=utf-8'}; if (!force) headers['If-Match']=srvVersion||'"neu"';
   const r=await api('/api/daten', {method:'PUT', headers, body:toXml()});
-  if (r.status===412){ onConflict(); return false; }
+  if (r.status===412){ if (depth<3) return mergeSync(undefined, depth+1); onConflict(); return false; }
   const j=await r.json().catch(()=>({}));
   if (!r.ok) throw new ApiErr(r.status, j.fehler||('Server meldet Fehler '+r.status));
-  srvVersion=r.headers.get('ETag')||j.etag||null; return true;
+  srvVersion=r.headers.get('ETag')||j.etag||null; partial=false; snapshotBase(); writeOffline(); return true;
+}
+
+/* ---- Offline: letzter Monat und noch nicht übertragene Änderungen bleiben auf dem Gerät ----
+   base = Stand, den der Server zuletzt bestätigt hat. Was davon abweicht, wird beim nächsten Kontakt
+   tageweise in den aktuellen Server-Stand eingearbeitet – auch wenn ein anderes Gerät inzwischen gespeichert hat. */
+const OFFLINE_DAYS=31;
+let partial=false, base=null, reconnectTimer=null;
+const stable=v=> v===null || typeof v!=='object' ? JSON.stringify(v) : Array.isArray(v) ? '['+v.map(stable).join(',')+']'
+  : '{'+Object.keys(v).sort().filter(k=>v[k]!==undefined).map(k=>JSON.stringify(k)+':'+stable(v[k])).join(',')+'}';
+const offKey=u=>'koerperdaten-offline|'+srvBase()+'|'+u;
+function snapshotBase(){ base={rows:new Map(Object.entries(S.rows).map(([d,r])=>[d,stable(r)])), settings:stable(S.settings)}; }
+function localDiff(){
+  if (!base) return {rows:{}, n:0, settings:null, empty:true};
+  const rows={}; let n=0;
+  for (const [d,r] of Object.entries(S.rows)) if (base.rows.get(d)!==stable(r)){ rows[d]=r; n++; }
+  for (const d of base.rows.keys()) if (!(d in S.rows)){ rows[d]=null; n++; }
+  const st=stable(S.settings)!==base.settings;
+  return {rows, n, settings:st?S.settings:null, empty:!n && !st};
+}
+function readOffline(u){ try { const c=JSON.parse(localStorage.getItem(offKey(u))||'null'); return c && c.v===1 && c.user===u ? c : null; } catch(e){ return null; } }
+function writeOffline(){
+  if (cfg.mode!=='server' || !dataOwner || !base || !lsOk) return;
+  const from=dOf(tsOf(todayStr())-(OFFLINE_DAYS-1)*DAY), diff=localDiff(), rows={}, baseRows={};
+  for (const [d,r] of Object.entries(S.rows)) if (d>=from || d in diff.rows) rows[d]=r;
+  for (const [d,j] of base.rows) if (d>=from || d in diff.rows) baseRows[d]=j;
+  const c={v:1, user:dataOwner, admin:!!srvUser?.admin, at:Date.now(), etag:srvVersion, info:srvInfo, from, rows, base:baseRows, settings:S.settings, baseSettings:base.settings};
+  try { localStorage.setItem(offKey(dataOwner), JSON.stringify(c)); if (cfg.lastUser!==dataOwner){ cfg.lastUser=dataOwner; saveCfg(); } } catch(e){}
+}
+function clearOffline(u){ try { localStorage.removeItem(offKey(u)); } catch(e){} }
+/* Ohne Verbindung starten: zwischengespeicherten Monat anzeigen */
+function startOffline(){
+  const c=cfg.token && cfg.lastUser ? readOffline(cfg.lastUser) : null;
+  if (!c) return false;
+  dataOwner=c.user; srvUser={name:c.user, admin:!!c.admin}; srvInfo=c.info||srvInfo; srvVersion=c.etag||null;
+  setData(c.rows, c.settings);
+  base={rows:new Map(Object.entries(c.base||{})), settings:c.baseSettings};
+  partial=true; srvState='offline';
+  loaded('');
+  if (!localDiff().empty){ dirty=true; version++; }
+  updateStorageUI(); scheduleReconnect();
+  return true;
+}
+/* Änderungen aus einem früheren Offline-Besuch, die noch nicht beim Server sind */
+function pendingFromCache(c){
+  const rows={}; let n=0;
+  const dates=new Set([...Object.keys(c.rows||{}), ...Object.keys(c.base||{})]);
+  for (const d of dates){ const r=c.rows?.[d]; const j=r==null ? undefined : stable(r); if (j!==c.base?.[d]){ rows[d]=r??null; n++; } }
+  const st=c.settings && stable(c.settings)!==c.baseSettings;
+  return {rows, n, settings:st?c.settings:null, empty:!n && !st};
+}
+function applyDiff(d){
+  for (const [k,r] of Object.entries(d.rows)){ if (r) S.rows[k]=r; else delete S.rows[k]; }
+  if (d.settings){ S.settings=defaultSettings(); mergeSettings(JSON.parse(JSON.stringify(d.settings))); }
+  invalidate();
+}
+async function mergeSync(txt, depth=0){
+  const d=localDiff();
+  if (txt===undefined) txt=await serverGet();            // setzt srvVersion auf den aktuellen Server-Stand
+  if (txt!=null) fromXml(txt); else setData({},null);
+  const wasPartial=partial; partial=false; snapshotBase();
+  if (d.empty){ writeOffline(); renderAll(); return true; }
+  applyDiff(d); renderAll();
+  const ok=await serverPut(false, depth);
+  if (ok && wasPartial) toast(d.n ? 'Offline-Änderungen übertragen ('+d.n+(d.n===1?' Tag)':' Tage)') : 'Offline-Änderungen übertragen');
+  return ok;
+}
+window.__sync={diff:()=>localDiff(), get partial(){ return partial; }, get state(){ return srvState; }};   // für Tests und Fehlersuche
+function scheduleReconnect(){ clearTimeout(reconnectTimer); reconnectTimer=setTimeout(reconnectNow, 20000); }
+function reconnectNow(){
+  clearTimeout(reconnectTimer);
+  if (cfg.mode!=='server' || !(srvState==='offline' || srvState==='error') || saving) return;
+  if (srvState==='error' && !partial && srvUser && dataOwner===srvUser.name && dirty) saveNow(); else serverConnect(false);
 }
 async function onConflict(){
   if (conflictOpen) return; conflictOpen=true;
@@ -986,7 +1204,8 @@ async function onConflict(){
 }
 async function serverConnect(interactive){
   if (!cfg.url){ srvState='none'; updateStorageUI(); return; }
-  srvState='connecting'; errMsg=''; updateStorageUI();
+  if (srvState!=='offline') srvState='connecting';      // offline: Anzeige bleibt ruhig, bis die Verbindung steht
+  errMsg=''; updateStorageUI();
   try {
     const info=await apiJson('/api/status'); srvInfo=info;
     if (info.app!=='koerperdaten') throw new ApiErr(0,'Unter dieser Adresse läuft kein Körperdaten-Server');
@@ -994,27 +1213,50 @@ async function serverConnect(interactive){
     if (!cfg.token){ srvState='login'; srvUser=null; updateStorageUI(); return; }
     srvUser=await apiJson('/api/ich');
     await loadUserData(interactive);
-  } catch(e){ if (srvState!=='login'){ srvState='error'; errMsg=e.message; } updateStorageUI(); }
+  } catch(e){
+    if (srvState==='login'){ updateStorageUI(); return; }
+    errMsg=e.message;
+    if (e.status===0){
+      if (dataOwner && (hasData() || base)){ srvState='offline'; if (dirty) writeOffline(); updateStorageUI(); scheduleReconnect(); return; }
+      if (startOffline()) return;
+      scheduleReconnect();
+    }
+    srvState='error'; updateStorageUI();
+  }
 }
 async function loadUserData(interactive){
   const me=srvUser.name, txt=await serverGet();
   srvState='ok';
   const mineUnsaved = dirty && dataOwner===me;
   const local = hasData() && dataOwner===null;
-  if (dataOwner && dataOwner!==me){ setData({},null); dirty=false; }      // Daten verschiedener Benutzer nie mischen
-  if (mineUnsaved){ updateStorageUI(); await saveNow(); return; }
+  if (dataOwner && dataOwner!==me){ setData({},null); dirty=false; partial=false; base=null; }      // Daten verschiedener Benutzer nie mischen
+  if (mineUnsaved || (partial && dataOwner===me)){
+    // Änderungen (auch offline gemachte) in den eben geladenen Server-Stand einarbeiten
+    saving=true; const v=version;
+    try { const ok=await mergeSync(txt); if (ok && version===v) dirty=false; if (ok) lastSaved=new Date(); }
+    catch(e){ errMsg=e.message; srvState = e.status===0 ? 'offline' : 'error'; if (e.status===0) scheduleReconnect(); }
+    finally { saving=false; }
+    renderAll(); updateStorageUI(); return;
+  }
   if (txt==null){
     if (local){
       const c = interactive ? await choose('Für '+me+' sind auf dem Server noch keine Daten gespeichert. Sollen die gerade angezeigten '+Object.keys(S.rows).length+' Messtage übernommen werden?', 'Übernehmen', 'Leer beginnen', 'Daten übernehmen?') : 'b';
       if (c==='a'){ dataOwner=me; version++; dirty=true; await saveNow(); toast('Daten wurden für '+me+' gespeichert'); return; }
     }
-    dataOwner=me; setData({},null); loaded(''); return;
+    dataOwner=me; setData({},null); partial=false; snapshotBase(); loaded('');
+    const c=readOffline(me), pend=c ? pendingFromCache(c) : null;
+    if (pend && !pend.empty){ applyDiff(pend); renderAll(); markDirty(); }
+    return;
   }
   if (local && interactive){
     const c=await choose('Für '+me+' liegen auf dem Server bereits Daten. Welche sollen gelten?', 'Server-Daten laden', 'Aktuelle Daten hochladen');
     if (c==='b'){ dataOwner=me; version++; dirty=true; await saveNow(true); toast('Aktuelle Daten wurden hochgeladen'); return; }
   }
-  dataOwner=me; const n=fromXml(txt); loaded(interactive ? 'Daten von '+me+' geladen, '+n+' Messtage' : '');
+  dataOwner=me; const n=fromXml(txt); partial=false; snapshotBase(); loaded(interactive ? 'Daten von '+me+' geladen, '+n+' Messtage' : '');
+  // noch offene Offline-Änderungen von einem früheren Besuch übernehmen
+  const c=readOffline(me), pend=c ? pendingFromCache(c) : null;
+  if (pend && !pend.empty){ applyDiff(pend); renderAll(); markDirty(); toast('Offline-Änderungen werden übertragen'); }
+  else writeOffline();
 }
 async function doLogin(path, body){
   const j=await apiJson(path, {method:'POST', json:body});
@@ -1024,12 +1266,14 @@ async function doLogin(path, body){
 async function logout(){
   if (dirty && hasData() && !await ask('Es gibt noch nicht gespeicherte Änderungen. Sie gehen beim Abmelden verloren.','Trotzdem abmelden','Abmelden')) return;
   try { await api('/api/abmelden', {method:'POST'}); } catch(e){}
-  cfg.token=''; saveCfg(); srvUser=null; dataOwner=null; srvVersion=null; setData({},null); srvState='login'; loaded('Abgemeldet');
+  if (dataOwner) clearOffline(dataOwner);
+  cfg.token=''; cfg.lastUser=''; saveCfg(); srvUser=null; dataOwner=null; srvVersion=null; partial=false; base=null; setData({},null); srvState='login'; loaded('Abgemeldet');
 }
 function pwPrompt(title){
   return new Promise(res=>{ const d=$('#pwDlg'); $('#pwTitle').textContent=title; $('#pwNew').value=''; d.returnValue=''; d.onclose=()=>res(d.returnValue==='ok' ? $('#pwNew').value : null); d.showModal(); });
 }
-addEventListener('online', ()=>{ if (cfg.mode==='server' && dirty) saveNow(); });
+addEventListener('online', ()=>setTimeout(reconnectNow, 500));
+document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState==='visible') reconnectNow(); });
 
 /* ---- Browser ---- */
 function browserStored(){ try { const j=JSON.parse(localStorage.getItem(LS)||'null'); return j && j.rows ? j : null; } catch(e){ return null; } }
@@ -1056,7 +1300,7 @@ function toXml(){
   L.push('  <messgroessen>');
   for (const m of storedMetrics()) L.push('    <messgroesse schluessel="'+xa(m.key)+'" name="'+xa(m.label)+'" einheit="'+xa(m.unit||'')+'" nachkommastellen="'+m.dec+'" csv="'+xa(m.csv||m.key)+'"'+(custom.has(m.key)?' eigene="ja"':'')+'/>');
   L.push('  </messgroessen>');
-  L.push('  <ansicht><![CDATA['+JSON.stringify({fv:st.fv, charts:st.charts, dash:st.dash, view:st.view, goals:st.goals, formulas:st.formulas, derivedCustom:st.derivedCustom}).replace(/]]>/g,']]]]><![CDATA[>')+']]></ansicht>');
+  L.push('  <ansicht><![CDATA['+JSON.stringify({fv:st.fv, design:st.design, charts:st.charts, dash:st.dash, view:st.view, goals:st.goals, formulas:st.formulas, derivedCustom:st.derivedCustom}).replace(/]]>/g,']]]]><![CDATA[>')+']]></ansicht>');
   L.push('  <eintraege anzahl="'+dates.length+'">');
   for (const d of dates){
     const r=S.rows[d];
@@ -1098,6 +1342,7 @@ function fromXml(text){
     if (Array.isArray(j.goals)) st.goals=j.goals.filter(x=>x && typeof x.key==='string' && typeof x.target==='number');
     if (j.formulas && typeof j.formulas==='object') st.formulas=Object.fromEntries(Object.entries(j.formulas).filter(([k,v])=>typeof v==='string'));
     if (Array.isArray(j.derivedCustom)) st.derivedCustom=j.derivedCustom.filter(x=>x && /^d_[a-z0-9_]+$/.test(x.key||'') && typeof x.fx==='string').map(x=>({key:x.key, label:String(x.label||x.key), unit:String(x.unit||''), dec:Math.min(3,Math.max(0,+x.dec||0)), csv:String(x.csv||x.key), better:0, derived:true, fx:x.fx}));
+    if (j.design==='classic' || j.design==='modern') st.design=j.design;
     if (j.fv) st.fv=j.fv; } catch(e){} }
   setData(rows, st);
   return Object.keys(rows).length;
@@ -1188,6 +1433,7 @@ function statusText(){
     if (srvState==='setup') return 'Server noch nicht eingerichtet';
     if (srvState==='login') return 'Nicht angemeldet';
     if (srvState==='error') return 'Server-Verbindung fehlgeschlagen'+(dirty?' – Änderungen noch nicht gespeichert':'');
+    if (srvState==='offline') return 'Offline'+(partial?' – Daten der letzten '+OFFLINE_DAYS+' Tage':'')+(dirty?' · Änderungen werden übertragen, sobald der Server erreichbar ist':'');
     const who=srvUser?srvUser.name+': ':'';
     return who+(dirty ? 'speichert …' : lastSaved ? 'gespeichert um '+timeStr(lastSaved) : 'auf dem Server');
   }
@@ -1202,7 +1448,8 @@ function fileButtons(primary){
   const b=(t,fn,p)=>el('button',{type:'button', class:'btn small'+(p?' primary':''), text:t, onclick:fn});
   if (cfg.mode==='browser') return [];
   if (cfg.mode==='server'){
-    if (srvState==='error') return [b('Erneut verbinden', ()=>srvUser && dirty ? saveNow() : serverConnect(false), true)];
+    if (srvState==='error') return [b('Erneut verbinden', ()=>srvUser && dirty && !partial ? saveNow() : serverConnect(false), true)];
+    if (srvState==='offline') return [b('Erneut verbinden', ()=>serverConnect(false))];
     if (srvState==='none') return [b('Server einrichten', ()=>showTab('settings'), true)];
     if (srvState==='ok' && srvUser) return [b('Abmelden', logout)];
     return [];
@@ -1217,7 +1464,7 @@ function fileButtons(primary){
 function updateStorageUI(){
   setSync(statusText());
   $('#versionInfo').textContent='Tracker-Version '+TRACKER_VERSION+(cfg.mode==='server' && srvInfo ? ', Server-Version '+srvInfo.version+(srvInfo.datenbank_version?' (Datenbank-Version '+srvInfo.datenbank_version+')':'') : '');
-  const warn=(cfg.mode==='server' && srvState==='error') || (cfg.mode==='browser' && !lsOk) || (cfg.mode==='xml' && dirty && hasData() && !(FSA && fileState==='ready'));
+  const warn=(cfg.mode==='server' && (srvState==='error' || (srvState==='offline' && dirty))) || (cfg.mode==='browser' && !lsOk) || (cfg.mode==='xml' && dirty && hasData() && !(FSA && fileState==='ready'));
   $('#sync').classList.toggle('unsaved', warn);
   $('#sync').title=errMsg||'';
   $('#fileBtns').replaceChildren(...fileButtons(true));
@@ -1403,7 +1650,9 @@ async function initStorage(){
     } catch(e){ fileState='needPerm'; updateStorageUI(); }
   }
 }
+addEventListener('pagehide', ()=>{ if (cfg.mode==='server' && dirty) writeOffline(); });
 addEventListener('beforeunload', e=>{
+  if (cfg.mode==='server' && dirty && dataOwner && base){ writeOffline(); return; }   // auf dem Gerät gesichert, wird beim nächsten Kontakt übertragen
   if (!dirty) return;
   if (cfg.mode==='browser' && lsOk){ try { localStorage.setItem(LS, JSON.stringify({rows:S.rows, settings:S.settings})); } catch(err){} return; }
   if (hasData()){ e.preventDefault(); e.returnValue=''; }
@@ -1636,6 +1885,7 @@ function renderDash(){
   const area=$('#dashArea'); area.replaceChildren();
   const dates=sortedDates();
   if (!dates.length){ area.append(emptyState()); return; }
+  if (designOf()==='modern'){ renderDashModern(area); return; }
   const last=dates[dates.length-1], ago=Math.round((tsOf(todayStr())-tsOf(last))/DAY);
   area.append(el('div',{class:'dash-head'},
     el('p',{text:'Letzte Messung am '+deDate(last)+(ago===0?' (heute)':ago===1?' (gestern)':ago>1?' (vor '+ago+' Tagen)':'')+'. Trends über die letzten 30 Tage, Ausgleichsgerade statt Einzelwerte.'}),
@@ -2192,6 +2442,7 @@ $('#importForm').addEventListener('submit', e=>{
 });
 $('#importCancel').onclick=()=>{ importPlan=null; $('#importDlg').close(); };
 function exportCSV(){
+  if (partial){ toast('Offline sind nur die letzten '+OFFLINE_DAYS+' Tage auf dem Gerät – den Export bitte mit Verbindung zum Server machen'); return; }
   const dates=sortedDates(); if (!dates.length){ toast('Keine Daten zum Exportieren'); return; }
   const d=S.settings.delim||';', dec=d===','?'.':',';
   const ms=storedMetrics().filter(m=>dates.some(x=>S.rows[x][m.key]!=null));
@@ -2477,6 +2728,7 @@ function renderFotos(){
       el('button',{class:'btn primary', type:'button', text:'Zum Speicherort', onclick:()=>{ showTab('settings'); }})));
     return;
   }
+  if (srvState==='offline' && !F.list.length){ box.append(el('div',{class:'empty'}, el('h2',{text:'Offline'}), el('p',{text:'Fotos sind wieder verfügbar, sobald der Körperdaten-Server erreichbar ist.'}))); return; }
   if (F.owner!==srvUser.name){ box.append(el('p',{class:'hint', text:'Fotos werden geladen …'})); loadFotos(); return; }
   if (F.err) box.append(el('div',{class:'notice'}, el('span',{text:'Fotos konnten nicht geladen werden: '+F.err}), el('button',{class:'btn small', type:'button', text:'Erneut versuchen', onclick:()=>loadFotos(true)})));
   const ss=fotoSessions();
@@ -2888,10 +3140,238 @@ async function saveFotoDlg(){
 })();
 
 window.__fotos={get E(){ return E; }, F};   // für Tests und Fehlersuche
+/* ---------- Modernes Design: Darstellung, Navigation unten, neue Übersicht ---------- */
+const DESIGNS={classic:'Klassisch', modern:'Modern'};
+const designOf=()=>S.settings?.design==='classic' ? 'classic' : 'modern';
+function applyLook(){
+  const h=document.documentElement;
+  h.dataset.design=designOf();
+  if (cfg.theme==='light' || cfg.theme==='dark') h.dataset.theme=cfg.theme; else delete h.dataset.theme;
+}
+const SVGNS='http://www.w3.org/2000/svg';
+function sv(tag, attrs={}, ...kids){ const e=document.createElementNS(SVGNS, tag); for (const [k,v] of Object.entries(attrs)) if (v!=null) e.setAttribute(k, v); for (const k of kids) if (k!=null) e.append(k); return e; }
+const WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
+const longDate=d=>new Date(tsOf(d)).toLocaleDateString('de-DE',{day:'numeric', month:'long', timeZone:'UTC'});
+function greeting(){ const h=new Date().getHours(); return h<11?'Guten Morgen':h<18?'Guten Tag':'Guten Abend'; }
+function ring(size, r, sw, frac, color, track, label){
+  const c=2*Math.PI*r, f=Math.max(0,Math.min(1,frac||0));
+  return sv('svg',{width:size, height:size, viewBox:'0 0 '+size+' '+size, role:label?'img':null, 'aria-label':label||null, 'aria-hidden':label?null:'true'},
+    sv('circle',{cx:size/2, cy:size/2, r, fill:'none', stroke:track, 'stroke-width':sw}),
+    f>0 ? sv('circle',{cx:size/2, cy:size/2, r, fill:'none', stroke:color, 'stroke-width':sw, 'stroke-linecap':'round', 'stroke-dasharray':(c*f).toFixed(1)+' '+c.toFixed(1), transform:'rotate(-90 '+size/2+' '+size/2+')'}) : null);
+}
+/* Wert vor etwa einer Woche (für „diese Woche“) */
+function weekChange(k, ld){
+  const now=val(ld,k); if (now==null) return null;
+  const target=tsOf(ld)-7*DAY; let best=null;
+  for (const d of sortedDates()){ if (d>=ld) break; const v=val(d,k); if (v==null) continue; const dist=Math.abs(tsOf(d)-target); if (dist<=4*DAY && (!best || dist<best.dist)) best={v,dist}; }
+  return best ? now-best.v : null;
+}
+const SHORT_LABEL={waist:'Taille', belly:'Bauch', hip:'Hüfte', chest:'Brust'};
+function softSection(title, ...kids){ return el('section',{class:'m-card'}, title ? el('h2',{class:'m-h2', text:title}) : null, ...kids); }
+
+function renderDashModern(area){
+  const st=S.settings, today=todayStr(), dates=sortedDates(), last=dates[dates.length-1];
+  const shown=new Set();
+  // Begrüßung
+  area.append(el('div',{class:'m-hello'},
+    el('div',{}, el('span',{class:'m-date', text:new Date(tsOf(today)).toLocaleDateString('de-DE',{weekday:'long', timeZone:'UTC'})+', '+longDate(today)}),
+      el('h2',{class:'m-greet', text:greeting()})),
+    el('button',{class:'btn small', type:'button', text:'Anpassen', onclick:openDashDlg})));
+  // Wochentage (Mo–So der laufenden Woche)
+  const t0=tsOf(today), dow=(new Date(t0).getUTCDay()+6)%7, mon=t0-dow*DAY;
+  const week=el('div',{class:'m-week', role:'list', 'aria-label':'Diese Woche'});
+  for (let i=0;i<7;i++){
+    const d=dOf(mon+i*DAY), has=!!S.rows[d], fut=d>today;
+    week.append(el('button',{type:'button', role:'listitem', class:'m-day'+(d===today?' today':'')+(fut?' future':''), disabled:fut,
+      'aria-label':deDate(d)+(has?', Werte eingetragen':', keine Werte')+(fut?'':' – zum Eintragen öffnen'), 'aria-current':d===today?'date':null,
+      onclick:()=>{ $('#entryDate').value=d; showTab('entry'); fillEntry(); window.scrollTo(0,0); }},
+      el('span',{class:'wd', text:WD[(i+1)%7]}), el('b',{text:String(+d.slice(8,10))}), el('span',{class:'dot'+(has?' on':'')})));
+  }
+  area.append(week);
+  const miss=[]; if (!st.height) miss.push('Körpergröße'); if (!st.sex) miss.push('Geschlecht'); if (!st.birth) miss.push('Geburtsdatum');
+  if (miss.length) area.append(el('div',{class:'notice'}, el('span',{text:'Für BMI und Grundumsatz fehlen noch: '+miss.join(', ')+'.'}), el('button',{class:'btn small', text:'Ergänzen', onclick:()=>showTab('settings')})));
+
+  // Ziel mit Ring
+  const gis=(st.goals||[]).map(goalInfo).filter(g=>g && !g.noData);
+  const g=gis[0];
+  if (g){
+    const m=g.m, u=m.unit?' '+m.unit:''; shown.add(m.key);
+    const status = g.reached ? 'Glückwunsch, Ziel erreicht!' : g.status==='onway' ? (g.g.date ? (g.late?'Etwas später als geplant – ':'Im Plan – ') : '')+'voraussichtlich am '+longDate(dOf(g.eta))+'.'
+      : g.status==='away' ? 'Der Trend geht gerade in die andere Richtung.' : g.status==='far' ? 'Bei diesem Tempo dauert es noch sehr lange.' : 'Eine Prognose gibt es ab etwa 10 Tagen mit Messwerten.';
+    area.append(el('section',{class:'m-card m-hero'},
+      el('div',{class:'m-ring'}, ring(136,58,14,g.progress,'var(--accent)','var(--m-track)', Math.round(g.progress*100)+' Prozent des Ziels erreicht'),
+        el('div',{class:'m-ring-c'}, el('b',{text:fmt(g.cur,m.dec)}), el('span',{text:m.unit||m.label}))),
+      el('div',{class:'m-hero-t'},
+        el('span',{class:'m-kicker', text:'Dein Ziel'+(gis.length>1?' · '+m.label:'')}),
+        el('b',{class:'m-big', text:g.reached ? fmt(g.target,m.dec)+u+' geschafft' : 'Noch '+fmt(Math.abs(g.remaining),m.dec)+u+' bis '+fmt(g.target,m.dec)+u}),
+        el('span',{class:'m-sub', text:Math.round(g.progress*100)+' % geschafft. '+status}))));
+    for (const o of gis.slice(1)){
+      shown.add(o.m.key); const u2=o.m.unit?' '+o.m.unit:'';
+      const bar=el('div',{class:'m-bar'}, el('span')); bar.firstChild.style.width=(o.progress*100).toFixed(1)+'%';
+      area.append(el('section',{class:'m-card m-goal2'}, el('div',{class:'m-row'}, el('b',{text:o.m.label}), el('span',{class:'m-sub', text:o.reached?'erreicht':'noch '+fmt(Math.abs(o.remaining),o.m.dec)+u2+' bis '+fmt(o.target,o.m.dec)+u2})), bar));
+    }
+  } else {
+    const ld=lastDateOf('weight');
+    area.append(el('section',{class:'m-card m-hero'},
+      el('div',{class:'m-ring'}, ring(136,58,14,0,'var(--accent)','var(--m-track)'), el('div',{class:'m-ring-c'}, el('b',{text:ld?fmt(val(ld,'weight'),1):'–'}), el('span',{text:'kg'}))),
+      el('div',{class:'m-hero-t'}, el('span',{class:'m-kicker', text:'Dein Ziel'}), el('b',{class:'m-big', text:'Noch kein Ziel festgelegt'}),
+        el('span',{class:'m-sub', text:'Mit einem Ziel zeigt der Ring deinen Fortschritt und wann du es voraussichtlich erreichst.'}),
+        el('button',{class:'btn small primary', type:'button', text:'Ziel festlegen', onclick:()=>{ showTab('settings'); $('#goalsBox')?.scrollIntoView({behavior:'smooth'}); }}))));
+    if (ld) shown.add('weight');
+  }
+
+  // drei kleine Kacheln
+  const ENERGY=new Set(['kcalIn','kcalActive','kcalBurn','kcalOut','balance','fatloss','bmr']), WEEK=['steps','sleep','rhr'];
+  const small=[];
+  for (const k of [...st.dash.tiles, 'waist','bodyfat','bmi']){
+    if (small.length>=3) break;
+    if (shown.has(k) || ENERGY.has(k) || WEEK.includes(k) || small.some(x=>x.m.key===k)) continue;
+    const m=metric(k); if (!m) continue; const ld=lastDateOf(k); if (!ld) continue;
+    small.push({m, ld});
+  }
+  if (small.length){
+    area.append(el('div',{class:'m-trio'}, ...small.map(({m,ld})=>{
+      shown.add(m.key);
+      const v=val(ld,m.key), ch=weekChange(m.key, ld);
+      const foot = m.key==='bmi' ? el('span',{class:'m-foot good', text:rate('bmi',v,{age:ageAt(ld)}).txt})
+        : ch!=null ? el('span',{class:'m-foot '+trendClass(m,ch), text:sgn(ch,m.dec)+' diese Woche'}) : el('span',{class:'m-foot', text:'am '+deDate(ld)});
+      return el('div',{class:'m-tile'}, el('span',{class:'m-lab', text:SHORT_LABEL[m.key]||m.label}), el('b',{class:'m-val'}, document.createTextNode(fmt(v,m.dec)), m.unit?el('small',{text:' '+m.unit}):null), foot);
+    })));
+  }
+
+  // Kalorien: Ringe für gegessen und verbraucht
+  let cd=null; for (let i=0;i<7;i++){ const d=dOf(t0-i*DAY); if (val(d,'kcalIn')!=null || val(d,'kcalBurn')!=null){ cd=d; break; } }
+  if (cd){
+    ['kcalIn','kcalBurn','kcalActive','kcalOut','balance','bmr','fatloss'].forEach(k=>shown.add(k));
+    const ein=val(cd,'kcalIn'), aus=val(cd,'kcalBurn'), bmr=val(cd,'bmr'), act=val(cd,'kcalActive'), bal=val(cd,'balance');
+    const scale=Math.max(ein||0, aus||0, 1)*1.12;
+    const from30=dOf(t0-29*DAY), bals=dates.filter(d=>d>=from30).map(d=>val(d,'balance')).filter(v=>v!=null);
+    const avg=bals.length ? bals.reduce((a,b)=>a+b,0)/bals.length : null, kg=bals.length ? -bals.reduce((a,b)=>a+b,0)/7700 : null;
+    const lead = bal==null ? '' : Math.abs(bal)<150 ? 'Fast ausgeglichen. ' : bal<0 ? 'Weniger gegessen als verbraucht. ' : 'Mehr gegessen als verbraucht. ';
+    const sentence = avg==null ? lead : lead+'In den letzten 30 Tagen hast du im Schnitt '+fmt(Math.abs(avg),0)+' kcal '+(avg<0?'weniger':'mehr')+' gegessen als verbraucht – theoretisch etwa '+fmt(Math.abs(kg),1)+' kg Fett '+(kg>=0?'weniger':'mehr')+'.';
+    const head = cd===today ? 'Heute gegessen & verbraucht' : (cd===dOf(t0-DAY)?'Gestern':'Am '+deDate(cd))+' gegessen & verbraucht';
+    const leg=(cls,lab,v,extra)=>el('div',{class:'m-leg'}, el('span',{class:'m-lab'}, el('i',{class:'sw '+cls}), document.createTextNode(lab)), el('b',{text:v==null?'–':fmt(v,0)+' kcal'}), extra?el('span',{class:'m-foot', text:extra}):null);
+    area.append(softSection(head,
+      el('div',{class:'m-energy'},
+        el('div',{class:'m-ring m-ring-e'},
+          sv('svg',{width:148, height:148, viewBox:'0 0 148 148', role:'img', 'aria-label':'Gegessen '+(ein==null?'unbekannt':fmt(ein,0)+' kcal')+', verbraucht '+(aus==null?'unbekannt':fmt(aus,0)+' kcal')},
+            ...ring(148,62,13,(aus||0)/scale,'var(--m-burn)','var(--m-burn-t)').childNodes, ...[...ring(148,45,13,(ein||0)/scale,'var(--m-eat)','var(--m-eat-t)').childNodes]),
+          el('div',{class:'m-ring-c'}, el('b',{text:bal==null?'–':sgn(bal,0)}), el('span',{text:'kcal'}))),
+        el('div',{class:'m-legs'},
+          leg('eat','Gegessen',ein),
+          leg('burn','Verbraucht',aus, bmr!=null && act!=null ? fmt(bmr,0)+' Grundumsatz + '+fmt(act,0)+' Bewegung' : null))),
+      sentence ? el('p',{class:'m-note', text:sentence}) : null));
+  }
+
+  // Gewicht der letzten 8 Wochen
+  const ldw=lastDateOf('weight');
+  if (ldw){
+    const pts=series('weight', dOf(tsOf(ldw)-55*DAY), ldw, 'week');
+    if (pts.length>=2){
+      const W=320, H=110, ys=pts.map(p=>p.y), y0=Math.min(...ys), y1=Math.max(...ys), pad=(y1-y0)*0.15||0.5;
+      const X=i=>8+i*(W-16)/(pts.length-1), Y=y=>12+(y1+pad-y)/((y1-y0)+2*pad)*(H-30);
+      const P=pts.map((p,i)=>[X(i),Y(p.y)]);
+      let d='M'+P[0][0].toFixed(1)+' '+P[0][1].toFixed(1);
+      for (let i=1;i<P.length;i++){ const [x0,y0_]=P[i-1], [x1,y1_]=P[i], cx=(x0+x1)/2; d+=' C '+cx.toFixed(1)+' '+y0_.toFixed(1)+', '+cx.toFixed(1)+' '+y1_.toFixed(1)+', '+x1.toFixed(1)+' '+y1_.toFixed(1); }
+      const lastP=P[P.length-1], dlt=pts[pts.length-1].y-pts[0].y, wm=metric('weight');
+      const svg=sv('svg',{viewBox:'0 0 '+W+' '+H, class:'m-curve', role:'img', 'aria-label':'Gewicht in '+pts.length+' Wochen von '+fmt(pts[0].y,1)+' auf '+fmt(pts[pts.length-1].y,1)+' kg (Wochenmittel)', preserveAspectRatio:'none'},
+        sv('line',{x1:8, y1:H-14, x2:W-8, y2:H-14, stroke:'var(--line)', 'stroke-width':1}),
+        sv('path',{d:d+' L '+lastP[0].toFixed(1)+' '+(H-14)+' L 8 '+(H-14)+' Z', fill:'var(--accent)', 'fill-opacity':'0.12'}),
+        sv('path',{d, fill:'none', stroke:'var(--accent)', 'stroke-width':3, 'stroke-linecap':'round', 'vector-effect':'non-scaling-stroke'}));
+      const dotWrap=el('div',{class:'m-curve-wrap'}, svg, el('span',{class:'m-dot'}));
+      dotWrap.lastChild.style.left=(lastP[0]/W*100)+'%'; dotWrap.lastChild.style.top=(lastP[1]/H*100)+'%';
+      area.append(softSection(null,
+        el('div',{class:'m-row'}, el('h2',{class:'m-h2', text:'Gewicht, letzte '+pts.length+' Wochen'}), el('b',{class:trendClass(wm,dlt), text:sgn(dlt,1,' kg')})),
+        dotWrap,
+        el('div',{class:'m-row m-axis'}, el('span',{text:longDate(dOf(pts[0].b)).replace(/ \d{4}$/,'')}), el('span',{text:'Woche bis '+deDate(ldw)}))));
+    }
+  }
+
+  // Deine Woche: letzte 7 Tage
+  const days=[...Array(7)].map((_,i)=>dOf(t0-(6-i)*DAY));
+  const wk=[{k:'steps', cls:'c1', avg:v=>'Ø '+fmt(v,0)+' pro Tag'}, {k:'sleep', cls:'c2', avg:v=>'Ø '+fmt(v,1)+' h pro Nacht'}, {k:'rhr', cls:'c3', avg:v=>'Ø '+fmt(v,0)+' Schläge'}, {k:'balance', cls:'c4', avg:null}];
+  const tiles=[];
+  for (const w of wk){
+    const m=metric(w.k); if (!m) continue;
+    const vs=days.map(d=>val(d,w.k)); const have=vs.filter(v=>v!=null); if (!have.length) continue;
+    shown.add(w.k);
+    const avg=have.reduce((a,b)=>a+b,0)/have.length, latest=[...vs].reverse().find(v=>v!=null);
+    const mx=Math.max(...have.map(Math.abs))||1;
+    let bars;
+    if (w.k==='balance'){
+      // unter der Linie: weniger gegessen als verbraucht, darüber: mehr
+      bars=sv('svg',{class:'m-bars-svg', viewBox:'0 0 140 44', preserveAspectRatio:'none', 'aria-hidden':'true'}, sv('line',{x1:0, y1:22, x2:140, y2:22, stroke:'var(--line)', 'stroke-width':1}));
+      vs.forEach((v,i)=>{ if (v==null) return; const h=Math.max(2,Math.abs(v)/mx*20), x=i*21;
+        bars.append(sv('rect',{x, y:v<0?22:22-h, width:14, height:h, rx:3, fill:v<0?'var(--good)':'var(--m-eat)', 'fill-opacity':i===6?1:0.55})); });
+    } else {
+      bars=el('div',{class:'m-bars', 'aria-hidden':'true'});
+      vs.forEach((v,i)=>{ const b=el('span',{class:i===6?'now':''}); b.style.height=(v==null?0:Math.max(6,v/mx*100))+'%'; bars.append(b); });
+    }
+    tiles.push(el('div',{class:'m-tile m-wtile '+w.cls},
+      el('span',{class:'m-lab', text:w.k==='balance'?'Kalorien-Bilanz':m.label}),
+      el('b',{class:'m-val', text:w.k==='balance' ? sgn(avg,0) : fmt(latest,m.dec)+(w.k==='sleep'?' h':'')}),
+      bars,
+      el('div',{class:'m-days'}, ...days.map(d=>el('span',{text:WD[new Date(tsOf(d)).getUTCDay()].slice(0,1)}))),
+      el('span',{class:'m-foot', text:w.k==='balance' ? 'kcal pro Tag im Schnitt' : w.avg(avg)})));
+  }
+  if (tiles.length) area.append(el('h2',{class:'m-h2 m-sec', text:'Deine Woche'}), el('div',{class:'m-wgrid'}, ...tiles));
+
+  // Weitere Werte aus der Übersicht
+  const rest=st.dash.tiles.filter(k=>!shown.has(k)).map(metric).filter(Boolean).map(m=>({m, t:tileData(m)})).filter(x=>x.t);
+  if (rest.length){
+    area.append(el('h2',{class:'m-h2 m-sec', text:'Weitere Werte'}),
+      el('div',{class:'m-card m-list'}, ...rest.map(({m,t})=>el('div',{class:'m-li lvl-'+t.rating.lvl},
+        el('span',{class:'m-lab', text:m.label}),
+        el('b',{text:(m.key==='balance'?sgn(t.v,t.dec):fmt(t.v,t.dec))+(t.unit?' '+t.unit:'')}),
+        el('span',{class:'badge', text:t.rating.txt})))));
+  }
+  area.append(el('p',{class:'hint m-last', text:'Letzte Messung am '+deDate(last)+'. Alle Verläufe findest du unter „Verlauf“.'}));
+}
+
+/* Navigation: Symbole für die Reiter, „Mehr“-Menü im modernen Design */
+const TAB_ICONS={dash:'M4 11l8-7 8 7v9h-5v-6H9v6H4z', charts:'M4 19l5-6 4 3 7-9', entry:'M12 5v14M5 12h14', data:'M4 6h16M4 12h16M4 18h16',
+  fotos:'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z', settings:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 12l2-1-1-3-2 .2-1.3-1.3L17 5l-3-1-1 2h-2L10 4 7 5l.3 2L6 8.3 4 8 3 11l2 1v0l-2 1 1 3 2-.2 1.3 1.3L7 19l3 1 1-2h2l1 2 3-1-.3-2 1.3-1.3 2 .3 1-3z',
+  more:'M5 12h.01M12 12h.01M19 12h.01'};
+const TAB_SHORT={dash:'Heute', charts:'Verlauf', entry:'Eintragen', data:'Daten', fotos:'Fotos', settings:'Einstellungen', more:'Mehr'};
+(()=>{
+  const nav=document.querySelector('nav.tabs');
+  nav.append(el('button',{role:'tab', 'data-tab':'more', 'aria-selected':'false', 'aria-haspopup':'menu', class:'tab-more'}, 'Mehr'));
+  for (const b of nav.querySelectorAll('button')){
+    const k=b.dataset.tab, label=b.textContent.trim();
+    b.replaceChildren(el('span',{class:'ti', 'aria-hidden':'true'}, sv('svg',{viewBox:'0 0 24 24', width:24, height:24}, sv('path',{d:TAB_ICONS[k]||'', fill:'none', stroke:'currentColor', 'stroke-width':k==='more'?3.2:2, 'stroke-linecap':'round', 'stroke-linejoin':'round'}))),
+      el('span',{class:'tl-long', text:label}), el('span',{class:'tl-short', text:TAB_SHORT[k]||label}));
+  }
+  const menu=el('div',{class:'more-menu', id:'moreMenu', role:'menu', hidden:true},
+    ...['data','settings'].map(k=>el('button',{type:'button', role:'menuitem', onclick:()=>{ menu.hidden=true; showTab(k); window.scrollTo(0,0); }},
+      el('span',{class:'ti', 'aria-hidden':'true'}, sv('svg',{viewBox:'0 0 24 24', width:22, height:22}, sv('path',{d:TAB_ICONS[k], fill:'none', stroke:'currentColor', 'stroke-width':2, 'stroke-linecap':'round', 'stroke-linejoin':'round'}))),
+      document.createTextNode(k==='data'?'Daten und Import':'Einstellungen'))));
+  document.body.append(menu);
+  addEventListener('click', e=>{ if (!menu.hidden && !e.target.closest('#moreMenu') && !e.target.closest('[data-tab="more"]')) menu.hidden=true; });
+  addEventListener('keydown', e=>{ if (e.key==='Escape') menu.hidden=true; });
+})();
+function toggleMoreMenu(){ const m=$('#moreMenu'); m.hidden=!m.hidden; if (!m.hidden) m.querySelector('button')?.focus(); }
+
+/* Einstellungen: Darstellung */
+function renderLookBox(){
+  const box=$('#lookInfo'); if (!box) return; box.replaceChildren();
+  const d=designOf(), th=cfg.theme||'auto';
+  const opt=(k,label,text)=>el('button',{type:'button', role:'radio', class:'look-opt'+(d===k?' on':''), 'aria-checked':String(d===k), onclick:()=>{ if (designOf()===k) return; S.settings.design=k; markDirty([],true); applyLook(); renderAll(); toast('Design „'+label+'“ aktiviert'); }},
+    el('span',{class:'look-prev look-'+k, 'aria-hidden':'true'}, el('i'), el('i'), el('i')), el('b',{text:label}), el('span',{class:'hint', text}));
+  box.append(el('div',{class:'look-grid', role:'radiogroup', 'aria-label':'Design'},
+      opt('classic','Klassisch','Bisheriges Design mit Maßband und Reitern oben'),
+      opt('modern','Modern','Ruhiges Design mit Ziel-Ring, Wochenübersicht und Leiste unten')),
+    el('p',{class:'hint', text:'Das Design wird mit deinen Einstellungen gespeichert und gilt auf allen Geräten.'}),
+    el('div',{class:'field', style:'margin-top:10px'}, document.createTextNode('Farben auf diesem Gerät'),
+      el('div',{class:'seg', role:'radiogroup', 'aria-label':'Farben'}, ...[['auto','Automatisch'],['light','Hell'],['dark','Dunkel']].map(([k,l])=>
+        el('button',{type:'button', role:'radio', 'aria-pressed':String(th===k), 'aria-checked':String(th===k), text:l, onclick:()=>{ cfg.theme=k; saveCfg(); applyLook(); renderLookBox(); }})))));
+}
+
 /* ---------- Tabs ---------- */
 const current=()=>document.querySelector('nav.tabs button[aria-selected="true"]').dataset.tab;
 function showTab(t){
-  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t));
+  if (t==='more'){ toggleMoreMenu(); return; }
+  $('#moreMenu') && ($('#moreMenu').hidden=true);
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t || (b.dataset.tab==='more' && (t==='data'||t==='settings'))));
   document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+t);
   if (t==='charts') renderCharts();
   if (t==='dash') renderDash();
@@ -2903,7 +3383,7 @@ function renderTape(){
   t.textContent=d?fmt(S.rows[d].weight,1)+' kg am '+deDate(d):''; t.hidden=!d;
 }
 function renderVisible(){ const t=current(); if (t==='charts') renderCharts(); if (t==='dash') renderDash(); if (t==='fotos') renderFotos(); }
-function renderAll(){ renderTape(); renderEntryGrid(); renderTable(); renderSettings(); renderVisible(); }
+function renderAll(){ applyLook(); renderLookBox(); renderTape(); renderEntryGrid(); renderTable(); renderSettings(); renderVisible(); }
 let rT; addEventListener('resize', ()=>{ clearTimeout(rT); rT=setTimeout(()=>{ const t=current(); if (t==='charts') renderCharts(); if (t==='dash') renderDash(); }, 250); });   // Fotos nicht neu aufbauen (Vollbild bliebe sonst nicht erhalten)
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', renderVisible);
 new MutationObserver(renderVisible).observe(document.documentElement,{attributes:true, attributeFilter:['data-theme']});
@@ -2915,9 +3395,10 @@ new MutationObserver(renderVisible).observe(document.documentElement,{attributes
 
 /* ---------- Start ---------- */
 S.settings=defaultSettings();
+applyLook();
 $('#entryDate').value=todayStr();
 if (/^https?:$/.test(location.protocol)) isTrackerServer(pageBase()).then(ok=>{
-  pageIsServer=ok; renderPwaBox();
+  pageIsServer=ok || !!navigator.serviceWorker?.controller; renderPwaBox();
   if (ok && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js',{scope:'./'}).then(()=>{ swState='ok'; renderPwaBox(); }).catch(e=>{ swState='error'; swErr=e.message; renderPwaBox(); });
 });
 if (typeof Chart!=='undefined') Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;
