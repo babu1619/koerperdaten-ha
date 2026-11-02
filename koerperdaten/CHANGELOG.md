@@ -1,5 +1,13 @@
 # Änderungen
 
+## 2.8.0
+
+- Moderne Übersicht anpassbar: Bereiche ein-/ausblenden, drei Kacheln festlegen, Werte für „Deine Woche“ wählen
+- Doppelklick oder langes Drücken auf eine Kachel öffnet den Verlauf mit wählbarem Zeitraum (wird gemerkt) und der Empfehlung
+- Tooltips mit Empfehlungen (WHO, DAG, AASM u. a.) auf den Kacheln
+- Kalorienbilanz der letzten 7 und 30 Tage zusammengezählt
+- BMI für Kinder und Jugendliche nach WHO-Perzentilen (Alter und Geschlecht); neue Messgröße Körpergröße für wachsende Kinder
+
 ## 2.7.1
 
 - Wochentage zeigen die Übersicht des gewählten Tages

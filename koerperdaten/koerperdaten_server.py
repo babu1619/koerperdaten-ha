@@ -56,7 +56,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 APP = "koerperdaten"
-VERSION = "2.7"
+VERSION = "2.8"
 MAX_BODY = 20 * 1024 * 1024        # XML-Daten
 MAX_FOTO_BODY = 48 * 1024 * 1024   # ein Foto mit Original, Zuschnitt und Vorschau (Base64)
 MAX_JSON = 64 * 1024               # Anmeldung, Verwaltung

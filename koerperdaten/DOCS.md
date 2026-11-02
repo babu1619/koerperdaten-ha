@@ -28,6 +28,16 @@ Unter Einstellungen → **Darstellung** wählst du zwischen zwei Designs:
 
 Das Design wird mit deinen Einstellungen gespeichert und gilt auf allen Geräten. Die **Farben** (Automatisch, Hell, Dunkel) stellst du je Gerät ein.
 
+In der modernen Übersicht:
+
+- **Anpassen** (oben rechts): Bereiche ein- und ausblenden, die drei Kacheln unter dem Ziel festlegen und wählen, welche Werte unter „Deine Woche“ erscheinen.
+- **Doppelklick oder langes Drücken** auf eine Kachel öffnet ihren Verlauf als Diagramm. Der Zeitraum ist wählbar (1 Woche bis Alles), der zuletzt gewählte bleibt gespeichert. Darunter steht die Empfehlung, etwa nach WHO, DAG oder AASM; am PC erscheint sie auch beim Darüberfahren mit der Maus.
+- Unter „Gegessen & verbraucht“ steht zusätzlich die zusammengezählte Kalorienbilanz der letzten 7 und 30 Tage mit dem theoretischen Fettverlust.
+
+## Kinder und Jugendliche
+
+Liegt das Geburtsdatum weniger als 19 Jahre zurück, bewertet der Tracker den BMI nicht nach den Grenzen für Erwachsene, sondern nach den **WHO-Perzentilen** für Alter und Geschlecht (2 bis 5 Jahre: WHO-Wachstumsstandards, 5 bis 19 Jahre: WHO-Referenz 2007). Angezeigt werden Perzentile und Einstufung, zum Beispiel „Normalgewicht (P53)“. Weil Kinder wachsen, trägst du die **Körpergröße** am besten regelmäßig unter Erfassen → Weitere Werte ein; der BMI rechnet immer mit der zuletzt gemessenen Größe. Jedes Kind bekommt dafür ein eigenes Konto mit eigenem Geburtsdatum und Geschlecht.
+
 ## Offline nutzen
 
 Die installierte App (und der Tracker im Browser) funktioniert auch ohne Verbindung zum Server, zum Beispiel unterwegs ohne VPN:
