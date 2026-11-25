@@ -14,7 +14,7 @@ Die Bedienung für Anwender steht in der [App-Dokumentation](../koerperdaten/DOC
 | [Datenformate](datenformate.md) | XML-Format, Einstellungen, CSV-Import und -Export, Messgrößen |
 | [Offline und Synchronisierung](offline.md) | Offline-Kopie, Abgleich mit dem Server, Konflikte |
 | [Betrieb in Home Assistant](betrieb.md) | App-Konfiguration, Startskript, Updates, Umzug, Sicherung, Sicherheit |
-| [Entwicklung](entwicklung.md) | Versionsnummern, Release-Ablauf, Prüfungen, Tests, Wunschliste, Konventionen |
+| [Entwicklung](entwicklung.md) | Versionsnummern, Release-Ablauf, Prüfungen, Tests (`tests/`), Wunschliste, Konventionen |
 | [Entscheidungen](entscheidungen.md) | alle wichtigen Entscheidungen mit Begründung, in zeitlicher Reihenfolge |
 
 ## Kurzüberblick

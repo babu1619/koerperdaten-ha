@@ -80,15 +80,29 @@ Beim Changelog-Eintrag für Anwender gilt: kurze Stichpunkte in Alltagssprache, 
 
 ## Tests
 
-Ein Test-Ordner liegt nicht im Repository. Neue Funktionen wurden bisher so geprüft:
+Die Tests liegen in `tests/` und starten jeweils einen echten Server ohne HTTPS auf einem freien Port, mit leerem Datenordner.
 
-- **Server:** echten Server mit einem Datenordner unter `/tmp` starten und die API mit `urllib` oder `curl` aufrufen, z. B. für Konflikte (412), Fotos, Umzug und Migrationen.
-- **Tracker:** Playwright (Chromium) gegen den laufenden Server, mit Handy-Ansicht (390×844) und Desktop sowie hell und dunkel.
-  - Chart.js ist dabei durch einen Platzhalter ersetzt, weil die Testumgebung das CDN nicht erreicht. Das echte Zeichnen der Diagramme ist so nicht abgedeckt.
-  - Zugriff auf interne Zustände über `window.__sync` und `window.__fotos`.
-  - Screenshots ansehen, bevor eine Änderung als fertig gilt.
-- **Offline:** Netz in Playwright abschalten (`context.set_offline`), Fälle A–D aus [Offline und Synchronisierung](offline.md).
-- **Kinder-BMI:** Stichproben gegen WHO-Tabellen, z. B. Junge 10 Jahre mit BMI 16,44 → P50.
+```
+python -m unittest discover -s tests -v        # alle Tests
+python -m unittest discover -s tests -p "test_server.py"    # nur Server, ohne Browser
+```
+
+Für die Oberflächentests einmalig: `pip install playwright` und `python -m playwright install chromium`. Ohne Playwright werden sie übersprungen.
+
+| Datei | Inhalt |
+|---|---|
+| `tests/testserver.py` | Hilfen: `Testserver` (starten, `stoppen`, `cli`, `anfrage`, `einrichten`, `anmelden`) und `xml()` für Testdatensätze |
+| `tests/test_server.py` | Status, Seite und Service Worker, Einrichtung nur einmal, Anmeldung, Daten mit ETag und 412, ungültiges XML, Sicherungen, getrennte Benutzer und Adminrechte, Fotos (Speichern, Abrufen, falscher Bildtyp, Löschen), Befehle `pruefen` und `benutzer-liste`, Sicherung vor Update |
+| `tests/test_tracker.py` | Playwright: moderne Übersicht (Handy hell und dunkel, PC), alle Reiter, Eintrag speichern, Offline-Fall A, Offline-Start mit Kopie, Konflikt mit anderem Gerät (tageweises Einarbeiten), Wochentag zeigt Übersicht des Tages, Umschalten auf Klassisch und zurück |
+
+**Hinweise zu den Oberflächentests:**
+- Chart.js wird durch einen Platzhalter ersetzt, Google Fonts werden leer beantwortet. Das echte Zeichnen der Diagramme ist so nicht abgedeckt.
+- Die Funktionen des Trackers sind von außen nicht erreichbar. Tests bedienen die Seite deshalb über Klicks (`reiter()`) und lesen Zustände über `window.__sync` und `window.__fotos`.
+- Screenshots landen in `tests/bilder/` (nicht im Repository). Nach Änderungen an der Oberfläche ansehen.
+- Fehler in der Browser-Konsole lassen einen Test scheitern.
+- GitHub Actions führt die Tests nicht aus. Vor jedem Push lokal laufen lassen.
+
+**Noch nicht automatisiert, bei Bedarf von Hand prüfen:** Fotos über die Oberfläche (Zuschnitt), CSV-Import, Umzug über `run.sh`, Kinder-BMI. Stichprobe für den Kinder-BMI: Junge, 10 Jahre, BMI 16,44 → P50.
 
 Laufende Testserver beendest du gezielt über die PID:
 

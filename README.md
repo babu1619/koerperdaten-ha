@@ -23,6 +23,7 @@ Ausführliche Hinweise stehen in der [App-Dokumentation](koerperdaten/DOCS.md).
 | `tools/pruefen.py` | Prüfung vor dem Hochladen |
 | `.github/workflows/` | automatische Prüfung und optional vorgebaute Images |
 | `docs/` | Entwickler-Doku: Aufbau, Abläufe und alle Entscheidungen ([Übersicht](docs/README.md)) |
+| `tests/` | automatische Tests (`python -m unittest discover -s tests`) |
 | `CLAUDE.md` | Arbeitsanweisungen für Claude |
 
 Die Daten der Benutzer liegen nur auf dem Home-Assistant-Gerät, nie im Repository.

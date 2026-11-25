@@ -17,6 +17,7 @@ koerperdaten/
   translations/de|en.yaml  Beschriftungen der Optionen
 tools/release.py           Version erhöhen, Changelog, prüfen, committen, taggen, pushen
 tools/pruefen.py           Prüfung (lokal und in GitHub Actions)
+tests/                     Server- und Playwright-Tests gegen einen echten Server (siehe docs/entwicklung.md)
 docs/                      Entwickler-Doku: Architektur, Tracker, Server, Datenformate, Offline, Betrieb, Entwicklung, Entscheidungen
 ```
 
@@ -39,6 +40,7 @@ docs/                      Entwickler-Doku: Architektur, Tracker, Server, Datenf
 
 ```
 python tools/pruefen.py                                   # vor jedem Commit
+python -m unittest discover -s tests -v                   # alle Tests (Playwright-Tests werden ohne Playwright übersprungen)
 python tools/release.py patch|minor "Text" [--ohne-push]  # Version erhöhen und veröffentlichen
 python koerperdaten/koerperdaten_server.py start --daten /tmp/kd --port 8443 --leise   # Testserver
 python koerperdaten/koerperdaten_server.py pruefen --daten /tmp/kd
@@ -79,12 +81,11 @@ ps -eo pid,args | awk '/python3 koerperdaten_server.py/ && !/awk/ {print $1}' | 
 
 ## Testen, bevor etwas als fertig gilt
 
-- **Server:** echten Server in einem temporären Ordner starten und die API aufrufen (Konflikte 412, Fotos, Migration, Umzug).
-- **Tracker:** Playwright (Chromium) gegen den laufenden Server.
-  - Handy 390×844 und Desktop, hell und dunkel, beide Designs.
-  - Screenshots ansehen.
-  - Chart.js ist in der Testumgebung meist nicht erreichbar. Dann durch einen Platzhalter ersetzen und das im Ergebnis erwähnen.
-  - Test-Hooks: `window.__sync`, `window.__fotos`.
+- `python -m unittest discover -s tests -v` muss grün sein. Neue Funktionen bekommen einen Test in `tests/test_server.py` bzw. `tests/test_tracker.py`.
+- **Tracker-Tests** laufen mit Playwright (Chromium) gegen einen echten Server, am Handy (390×844) und am PC, hell und dunkel, in beiden Designs.
+  - Danach die Screenshots in `tests/bilder/` ansehen.
+  - Chart.js ist durch einen Platzhalter ersetzt. Das im Ergebnis erwähnen.
+  - Funktionen des Trackers sind von außen nicht erreichbar, deshalb über Klicks bedienen. Zustände liefern `window.__sync` und `window.__fotos`.
 - **Offline-Änderungen:** Fälle A–D aus `docs/offline.md` durchspielen.
 - `python tools/pruefen.py` muss „In Ordnung“ melden.
 
@@ -104,5 +105,5 @@ ps -eo pid,args | awk '/python3 koerperdaten_server.py/ && !/awk/ {print $1}' | 
 
 - **Neue Funktion für Anwender** → `koerperdaten/DOCS.md` und `CHANGELOG.md`.
 - **Technische Änderung** → passende Datei in `docs/`.
-- **Neue oder geänderte Entscheidung** → neuer Eintrag in `docs/entscheidungen.md` (E37, E38 …). Alte Einträge bleiben stehen und bekommen einen Verweis.
+- **Neue oder geänderte Entscheidung** → neuer Eintrag in `docs/entscheidungen.md` (E38, E39 …). Alte Einträge bleiben stehen und bekommen einen Verweis.
 - **Neue Version** → „Stand“ in `docs/README.md` sowie die Versionsangaben in dieser Datei anpassen.

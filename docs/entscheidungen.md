@@ -119,7 +119,7 @@ Die Fotos sind nur mit Server verfügbar und nicht im CSV-Export. `sichern` und 
 ### E23 – Hinzufügen aus Kamera, Galerie oder Datei
 **Neben der Kamera gibt es das Hochladen vom Handy und von der Festplatte, am PC auch per Ziehen. Zuschneiden folgt direkt nach dem Hinzufügen.**
 *Wunsch nach dem ersten Mockup.*
-Der Ablauf wurde vorher als Mockup abgestimmt (Design-Canvas „Körperdaten – Fotos vorher/nachher“).
+Der Ablauf wurde vorher als Mockup abgestimmt: Design-Canvas „Körperdaten – Fotos vorher/nachher“, https://claude.ai/artifact/NJq23SJosdu21Zx5yJrvZT (privat, nur über das Claude-Konto des Nutzers erreichbar).
 
 ## Offline und neues Design (2.7.0, intern 2.5 und 2.6)
 
@@ -141,7 +141,7 @@ Neue Funktionen dürfen den Server voraussetzen. Der alte Code wird nicht entfer
 - **Navigation:** am Handy unten mit großem „+“, am PC oben
 
 **Das Design ist in den Einstellungen umschaltbar (Modern/Klassisch), Standard ist Modern.**
-*Wunsch: moderner und weniger technisch. Aus drei Entwürfen hat der Nutzer diese Kombination gewählt (Design-Canvas „Körperdaten – Dashboard neu“).*
+*Wunsch: moderner und weniger technisch. Aus drei Entwürfen hat der Nutzer diese Kombination gewählt: Design-Canvas „Körperdaten – Dashboard neu“, https://claude.ai/artifact/2qczpi1S3A6UYkzLfbiXSb (privat).*
 Das Design wird mit den Daten gespeichert und gilt so auf allen Geräten. Die Farben (Hell/Dunkel/Automatisch) gelten je Gerät.
 
 ### E27 – Versionsnummern: GitHub ist maßgeblich
@@ -194,3 +194,8 @@ Autor der Commits ist „Claude“. Der Nutzer holt vor eigenen Änderungen den 
 **Architektur, Abläufe und Entscheidungen stehen unter `docs/`, Arbeitsanweisungen für Claude in `CLAUDE.md` (November 2026).**
 *Damit spätere Änderungen, auch in neuen Sitzungen ohne den bisherigen Gesprächsverlauf, auf dem gleichen Wissensstand aufbauen.*
 Bei neuen Entscheidungen diese Datei ergänzen.
+
+### E37 – Automatische Tests im Repository
+**Server- und Oberflächentests liegen in `tests/` (unittest, Oberfläche mit Playwright). Sie laufen lokal vor jedem Push, nicht in GitHub Actions (November 2026).**
+*Die früheren Testskripte lagen nur in der jeweiligen Arbeitsumgebung und gingen verloren. Mit Tests im Repository kann jede neue Sitzung prüfen, ob eine Änderung etwas kaputt macht. In CI würde der Browser-Test die Prüfung langsam und abhängig von Chromium machen.*
+Die Server-Tests brauchen nur die Standardbibliothek und könnten später leicht in `pruefen.yaml` aufgenommen werden.

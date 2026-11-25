@@ -63,6 +63,7 @@ Die Rechenlogik liegt vollständig im Tracker. Der Server kennt die einzelnen Me
 | `.gitattributes` | erzwingt LF-Zeilenenden (sonst startet `run.sh` nicht) |
 | `.gitignore` | hält Datenbanken und Daten aus dem Repository |
 | `ANLEITUNG-GITHUB.md` | Einrichtung von Repository und App, Umzug von der lokalen App |
+| `tests/` | Server- und Oberflächentests |
 | `docs/` | diese Dokumentation |
 | `CLAUDE.md` | Arbeitsanweisungen für Claude |
 
