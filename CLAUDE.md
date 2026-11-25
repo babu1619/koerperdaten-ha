@@ -96,7 +96,7 @@ ps -eo pid,args | awk '/python3 koerperdaten_server.py/ && !/awk/ {print $1}' | 
 - **Beim Push:**
   - auf `main`
   - Commit-Text „Version X.Y.Z: Kurzbeschreibung“
-  - Tag `vX.Y.Z` (`git push --follow-tags`)
+  - Tag `vX.Y.Z` (`git push --follow-tags`). Aus der Cloud-Umgebung von Claude wird das Pushen von Tags abgelehnt (HTTP 403). Dann nur `main` pushen und dem Nutzer den Befehl für den Tag geben: `git pull`, `git tag -a vX.Y.Z -m "Version X.Y.Z"`, `git push origin vX.Y.Z`.
   - danach prüfen, ob die GitHub Actions „Prüfen“ und „Images bauen“ grün sind
 - Nach einem Push den Nutzer daran erinnern, vor eigenen Änderungen `git pull` auszuführen.
 - In Anleitungen für den Nutzer Windows-Befehle verwenden (`python tools\release.py …`).
